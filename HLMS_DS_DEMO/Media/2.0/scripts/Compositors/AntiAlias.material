@@ -1,0 +1,102 @@
+
+// GLSL shaders
+vertex_program AntiAlias_vs_GLSL glsl
+{
+	source AntiAlias_vs.glsl
+    default_params
+    {
+        param_named_auto worldViewProj worldviewproj_matrix
+        param_named_auto texture_size texture_size 0
+    }
+}
+
+fragment_program AntiAlias_ps_GLSL glsl
+{
+	source AntiAlias_ps.glsl
+	default_params
+	{
+	param_named_auto worldViewProj  worldviewproj_matrix
+		param_named final int 0
+		param_named normal int 1
+
+		
+	}
+	
+}
+
+// HLSL shaders
+vertex_program AntiAlias_HLSL hlsl
+{
+    source AntiAlias_vs.hlsl
+    entry_point main
+    target vs_5_0 vs_4_0 vs_4_0_level_9_1 vs_4_0_level_9_3
+
+    default_params
+    {
+        param_named_auto worldViewProj worldviewproj_matrix
+        param_named_auto texture_size texture_size 0
+        
+    }
+}
+
+fragment_program AntiAlias_ps_HLSL hlsl
+{
+	source AntiAlias_ps.hlsl
+	entry_point main
+	target ps_5_0 ps_4_0 ps_4_0_level_9_1 ps_4_0_level_9_3
+}
+
+// Unified definitions
+vertex_program AntiAlias_vs unified
+{
+	delegate AntiAlias_vs_HLSL
+	delegate AntiAlias_vs_GLSL
+}
+
+fragment_program AntiAlias_ps unified
+{
+	delegate AntiAlias_ps_HLSL
+	delegate AntiAlias_ps_GLSL
+}
+
+// Material definition
+material AntiAlias
+{
+	technique
+	{
+		pass
+		{
+			depth_check on
+			depth_write off
+
+			cull_hardware none
+
+			vertex_program_ref AntiAlias_vs
+			{
+			}
+
+			fragment_program_ref AntiAlias_ps
+			{
+			}
+
+
+			texture_unit normal
+			{
+				texture  MarioKart.jpg
+			
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering trilinear
+			}
+			texture_unit diffuse
+			{
+				texture swiss.jpg
+			
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering trilinear
+			}
+
+		}
+	}
+}

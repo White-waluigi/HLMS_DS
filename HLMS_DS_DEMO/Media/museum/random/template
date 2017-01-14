@@ -1,0 +1,10 @@
+hlms %{name} ds
+{
+	diffuse 		%{diffuse}
+	specular		%{specular}
+	glow 			%{glow}
+	
+	diffuse_map		'file=%{diffuse_map}'
+	%(opacitydecl)
+	
+}

@@ -1,0 +1,366 @@
+{
+	"samplers": {
+		"Samplerblock_Wrap1": {
+			"min": "anisotropic",
+			"mag": "anisotropic",
+			"mip": "anisotropic",
+			"u": "wrap",
+			"v": "wrap",
+			"w": "wrap",
+			"miplodbias": 0,
+			"max_anisotropic": 1,
+			"compare_function": "disabled",
+			"border": [
+				1,
+				1,
+				1,
+				1
+			],
+			"min_lod": -3.40282e+038,
+			"max_lod": 3.40282e+038
+		},
+		"DoomSB": {
+			"min": "none",
+			"mag": "none",
+			"mip": "none",
+			"u": "wrap",
+			"v": "wrap",
+			"w": "wrap",
+			"miplodbias": 0,
+			"max_anisotropic": 1,
+			"compare_function": "disabled",
+			"border": [
+				1,
+				1,
+				1,
+				1
+			],
+			"min_lod": -3.40282e+038,
+			"max_lod": 3.40282e+038
+		}
+	},
+	"macroblocks": {
+		"Macroblock_1": {
+			"scissor_test": false,
+			"depth_check": true,
+			"depth_write": true,
+			"depth_function": "less_equal",
+			"depth_bias_constant": 0,
+			"depth_bias_slope_scale": 0,
+			"cull_mode": "clockwise",
+			"polygon_mode": "solid"
+		}
+	},
+	"blendblocks": {
+		"Blendblock_1": {
+			"alpha_to_coverage": false,
+			"blendmask": "rgba",
+			"separate_blend": false,
+			"src_blend_factor": "one",
+			"dst_blend_factor": "zero",
+			"blend_operation": "replace"
+		}
+	},
+	"ds": {
+		"glowTilesTempl": {
+			"meta": {
+				"type": "template",
+				"inheritDefault": false
+			},
+			"settings": {
+				"macroblock": "Macroblock_1",
+				"blendblock": "Blendblock_1",
+				"shadow_const_bias": 0.01,
+				"renderer": "deferred",
+				"optimizable": true,
+				"category": "default",
+				"opacity": true,
+				"opacity-sharp": false
+			},
+			"params": {
+				"MB1": {
+					"type": "mappingblock",
+					"UVscalex":0.1,
+					"UVscaley":0.1,
+					"UVoffsetx":0.1,
+					"UVoffsety":0.1		
+				},
+				"scroll": {
+					"type": "mappingblock",
+					"animation": {
+						"VScroll":{
+							"type":"scroll",
+							"speedx":0.1,
+							"speedy":0.03,
+							"timescale":1
+						}
+					}
+				},
+				"clockMMB":{
+					"type": "mappingblock",
+					"animation":{
+						"xrotate":{
+							"type":"rotate",
+							"speed":0.1,
+							"centerx":0.5,
+							"centery":0.5,
+							"timescale":1
+						}
+					}
+				},
+				"clockSMB":{
+					"type": "mappingblock",
+					"animation":{
+						"xrotate":{
+							"type":"rotate",
+							"speed":0.1,
+							"centerx":0.5,
+							"centery":0.5,
+							"timescale":60
+						}
+						
+					}
+				},
+				"screenMB":{
+					"type": "mappingblock",
+					"animation":{
+						"movie":{
+							"type":"frame",
+							"numUV":6,
+							"fps":60.0,
+							"pulse":true	
+						}
+					}
+				},
+				"leaf": {
+					"type": "paired",
+					"helper": true,
+					"datatype": "vec4",
+					"modulator": "",
+					"texData": {
+						"type": "file",
+						"file": "perlin.png",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "scroll"
+					},
+					"varData": {
+						"type": "manual",
+						"_comment": "seams ovrecompliacted, but makes this very flexible manual is default",
+						"value": [
+							0.8,
+							0.3,
+							0.2,
+							1
+						]
+					}
+				},
+				"testmap": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"type": "file",
+						"file": "Rocks_Diffuse.tga",
+						"sampler": "Samplerblock_Wrap1"
+					}
+				},
+				"perlin": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "perlins.jpg",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "scroll"
+
+					}
+				},
+				"glow": {
+					"type": "variable",
+					"varData": {
+						"value": [
+							0,
+							0.0,
+							0.0,
+							0
+						]
+					}
+				},
+				"specular": {
+					"type": "variable",
+					"datatype": "vec4",
+					"varData": {
+						"value": [
+							0.0,
+							0.0,
+							0.0,
+							0
+						]
+					}
+				},
+				"testvar55": {
+					"type": "variable",
+					"datatype": "vec4",
+					"helper": true,
+					"varData": {
+						"value": [
+							0.2,
+							0.2,
+							0.5,
+							0
+						]
+					}
+				},
+				"wave": {
+					"type": "variable",
+					"helper": true,
+					"varData": {
+						"_type": "autoparam",
+						"params": {
+							"type": "timer",
+							"pulse": "on",
+							"time": 1000
+						},
+						"type": "manual",
+						"value": [
+							0,
+							1,
+							0.5,
+							0
+						]
+					}
+				},
+				"glowEffect": {
+					"type": "piece",
+					"shadertype": "pixel",
+					"optional": false,
+					"_comment": "options: add, to add after previous piece, first puts it before existing piece, replace to replace previous piece, noReplace to not replace if previous Piece exists,  child materials have replace priority",
+					"method": "add",
+					"id": "custom_post_material",
+					"shader": {
+						"glsl": {
+							"_comment": "use Array for multiline shader",
+							"code": "// glow *= tan(material.wave.x)*2.0;"
+						},
+						"hlsl": {
+							"_comment": "use Array for multiline shader",
+							"code": "// glow *= tan(material.vec4_wave.x)*2.0;"
+						}
+					}
+				},
+				"testmapshader": {
+					"type": "piece",
+					"shadertype": "pixel",
+					"optional": false,
+					"_comment": "options: add, to add after previous piece, first puts it before existing piece, replace to replace previous piece, noReplace to not replace if previous Piece exists,  child materials have replace priority",
+					"method": "add",
+					"id": "custom_GBuffer",
+					"shader": {
+						"glsl": {
+							"_comment": "use Array for multiline shader",
+							"code": [
+								"diffuse=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);",
+								"//opacity*=sqrt(1-pow(leaf.r,2.0));"
+							]
+						},
+						"hlsl": {
+							"_comment": "use Array for multiline shader",
+							"code": [
+								"glow=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);"
+							]
+						}
+					}
+				}
+			}
+		},
+		"glowTiles": {
+			"meta": {
+				"type": "material",
+				"template": "glowTilesTempl"
+			},
+			"params": {
+				"rainbowGlow": {
+					"type": "property",
+					"value": 1
+				},
+				"diffuse": {
+					"helper": false,
+					"type": "variable",
+					"datatype": "vec4",
+					"varData": {
+						"value": [
+							0.2,
+							0.2,
+							0.5,
+							0
+						]
+					}
+				}
+			}
+		},
+		"sine": {
+			"meta": {
+				"type": "material",
+				"inheritDefault": false
+			},
+			"settings": {
+				"macroblock": "Macroblock_1",
+				"blendblock": "Blendblock_1",
+				"shadow_const_bias": 0.01,
+				"renderer": "deferred",
+				"optimizable": true,
+				"category": "default",
+				"opacity": true,
+				"opacity-sharp": false
+			},
+			"params": {
+				"perlin": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "perlins.jpg",
+						"sampler": "DoomSB",
+						"mappingblock": "scroll"
+
+					}
+				},
+				"diffuse": {
+					"helper": false,
+					"type": "variable",
+					"datatype": "vec4",
+					"varData": {
+						"value": [
+							0.2,
+							0.2,
+							0.5,
+							0
+						]
+					}
+				},
+				"testmapshader": {
+					"type": "piece",
+					"shadertype": "pixel",
+					"optional": false,
+					"_comment": "options: add, to add after previous piece, first puts it before existing piece, replace to replace previous piece, noReplace to not replace if previous Piece exists,  child materials have replace priority",
+					"method": "add",
+					"id": "custom_GBuffer",
+					"shader": {
+						"glsl": {
+							"_comment": "use Array for multiline shader",
+							"code": [
+								"diffuse=perlin;"
+							]
+						},
+						"hlsl": {
+							"_comment": "use Array for multiline shader",
+							"code": [
+								"glow=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);"
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}
