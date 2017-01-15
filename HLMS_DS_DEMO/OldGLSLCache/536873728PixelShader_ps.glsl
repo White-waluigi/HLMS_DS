@@ -308,10 +308,7 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	
-	if(floatBitsToUint(pass.debug.x)==9u){
- 		glow=material.idColor;	
- 	}
+
  	
 
 
@@ -333,6 +330,10 @@ void main() {
 	
 	diffuse.a=0.9;
 
+	
+	if(floatBitsToUint(pass.debug.x)==9u){
+ 		glow=material.idColor;	
+ 	}
  }
  
  

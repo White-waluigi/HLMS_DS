@@ -36,10 +36,8 @@ mat4x3 UNPACK_MAT4x3( samplerBuffer matrixBuf, uint pixelIdx )
 
 in vec4 vertex;
 
-in vec3 normal;
+in vec4 qtangent;
 
-
-in vec3 tangent;
 
 
 
@@ -63,6 +61,8 @@ out block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -119,6 +119,38 @@ layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
+
+vec3 xAxis( vec4 qQuat )
+{
+	float fTy  = 2.0 * qQuat.y;
+	float fTz  = 2.0 * qQuat.z;
+	float fTwy = fTy * qQuat.w;
+	float fTwz = fTz * qQuat.w;
+	float fTxy = fTy * qQuat.x;
+	float fTxz = fTz * qQuat.x;
+	float fTyy = fTy * qQuat.y;
+	float fTzz = fTz * qQuat.z;
+
+	return vec3( 1.0-(fTyy+fTzz), fTxy+fTwz, fTxz-fTwy );
+}
+
+
+vec3 yAxis( vec4 qQuat )
+{
+	float fTx  = 2.0 * qQuat.x;
+	float fTy  = 2.0 * qQuat.y;
+	float fTz  = 2.0 * qQuat.z;
+	float fTwx = fTx * qQuat.w;
+	float fTwz = fTz * qQuat.w;
+	float fTxx = fTx * qQuat.x;
+	float fTxy = fTy * qQuat.x;
+	float fTyz = fTz * qQuat.y;
+	float fTzz = fTz * qQuat.z;
+
+	return vec3( fTxy-fTwz, 1.0-(fTxx+fTzz), fTyz+fTwx );
+}
+
+ 
 
 
 //layout(binding = 0) uniform instanceBuffer
@@ -208,6 +240,11 @@ void main()
 		outVs.uv0 = uv0;    
     
     outVs.vertex=vertex.xyz;
+
+	//Decode qTangent to TBN with reflection
+	vec3 normal		= xAxis( normalize( qtangent ) );
+	vec3 tangent	= yAxis( qtangent );
+	outVs.biNormalReflection = sign( qtangent.w ); //We ensure in C++ qtangent.w is never 0
 		
 		
 	//Lighting is in view space

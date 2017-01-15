@@ -95,8 +95,9 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_specular;
-	 vec4 vec4_reflection;
+		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
+	 vec4 vec4_glow;
 
 
 
@@ -107,14 +108,6 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
 
 	
 
@@ -228,6 +221,8 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -273,17 +268,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -302,9 +292,13 @@ void main() {
 	
 
 	
-		
-		glow.rgb=vec3(0);	
-		
+	
+		glow.rgb=material.vec4_glow.rgb;	
+			
+	
+		glow*=  texture( textureMaps[0], vec3(
+		 (vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
+		 f2u( material.texloc_0 ) ) );
 	
 
 	
@@ -316,20 +310,9 @@ void main() {
 				
 
 	
-	
-		float reflection=material.vec4_reflection.r;
 		
-			
-	
-		//Not sure about this
-		//vec3 rNormal=(vec4(normal.xyz,0)*pass.View).xyz;
-		vec3 rNormal=reflect(normalize(-inPs.pos.xyz),normal.xyz);
+		float reflection=0.5;	
 		
-		vec2 ruv=vec2(asin(rNormal.x)/3.14159625 + 0.5 ,asin(rNormal.y)/3.14159625 + 0.5);
-		diffuse=mix(diffuse,  
-		texture( textureMaps[0], vec3(ruv,
-		 f2u( material.texloc_1 ) ) ),  
-		 reflection);
 	
 
 	
@@ -342,10 +325,7 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	
-	if(floatBitsToUint(pass.debug.x)==9u){
- 		glow=material.idColor;	
- 	}
+
  	
 
 
@@ -367,6 +347,10 @@ void main() {
 	
 	diffuse.a=0.9;
 
+	
+	if(floatBitsToUint(pass.debug.x)==9u){
+ 		glow=material.idColor;	
+ 	}
  }
  
  
