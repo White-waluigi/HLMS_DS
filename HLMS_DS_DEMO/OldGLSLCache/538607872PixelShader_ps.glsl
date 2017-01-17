@@ -480,7 +480,7 @@ void main() {
 
 		vec2 samplingoffset=vec2(0,0);
 
-		samplerate=3;
+		samplerate=1;
 		samplesize=0.2;
 
 		float varx=shadowRes.z;
@@ -495,7 +495,7 @@ void main() {
 		for(int i=-samplerate;i<=samplerate;i++){
 			for(int ii=-samplerate;ii<=samplerate;ii++){
 				
-				samplingoffset=vec2(i,-ii);
+				samplingoffset=vec2(i,ii);
 
 
 

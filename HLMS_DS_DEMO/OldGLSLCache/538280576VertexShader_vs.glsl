@@ -36,10 +36,8 @@ mat4x3 UNPACK_MAT4x3( samplerBuffer matrixBuf, uint pixelIdx )
 
 in vec4 vertex;
 
-in vec3 normal;
+in vec4 qtangent;
 
-
-in vec3 tangent;
 
 
 
@@ -63,6 +61,8 @@ out block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -120,27 +120,42 @@ layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
+vec3 xAxis( vec4 qQuat )
+{
+	float fTy  = 2.0 * qQuat.y;
+	float fTz  = 2.0 * qQuat.z;
+	float fTwy = fTy * qQuat.w;
+	float fTwz = fTz * qQuat.w;
+	float fTxy = fTy * qQuat.x;
+	float fTxz = fTz * qQuat.x;
+	float fTyy = fTy * qQuat.y;
+	float fTzz = fTz * qQuat.z;
 
-//layout(binding = 0) uniform instanceBuffer
-//{
-//	vec4 colour;
-
-	//mat4 view;
-	//mat4 model;
-	//mat4 proj;
-
-//} instance;
+	return vec3( 1.0-(fTyy+fTzz), fTxy+fTwz, fTxz-fTwy );
+}
 
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
+vec3 yAxis( vec4 qQuat )
+{
+	float fTx  = 2.0 * qQuat.x;
+	float fTy  = 2.0 * qQuat.y;
+	float fTz  = 2.0 * qQuat.z;
+	float fTwx = fTx * qQuat.w;
+	float fTwz = fTz * qQuat.w;
+	float fTxx = fTx * qQuat.x;
+	float fTxy = fTy * qQuat.x;
+	float fTyz = fTz * qQuat.y;
+	float fTzz = fTz * qQuat.z;
+
+	return vec3( fTxy-fTwz, 1.0-(fTxx+fTzz), fTyz+fTwx );
+}
+
+ 
+
+
+
+
+
 
 
 
@@ -150,20 +165,12 @@ void main()
 
 	outVs.drawId=drawId; 
 	mat4 final;
-//	final[0]=uintBitsToFloat(test.viewProj0);
-//	final[1]=uintBitsToFloat(test.viewProj1);
-	//final[2]=uintBitsToFloat(test.viewProj2);
-	//final[3]=uintBitsToFloat(test.viewProj3);
-	
+
 	mat4 testm=mat4(	1.358,0,0,0,
 						0, 2.41421, 0, 0,
 						0, 0, -1.0004, -0.40008,
 						0, 0, -1, 0 );
 	
-	// mat4x3 worldMat = UNPACK_MAT4x3( worldMatBuf, drawId << 1u);
-	// mat4x3 worldMat = UNPACK_MAT4x3( worldMatBuf, drawId<< 1u );
-    //mat4 worldView = UNPACK_MAT4( worldMatBuf, (drawId << 1u) + 1u );
-    //vec4 worldPos = vec4( (worldView*vertex) );
 
 
 
@@ -171,11 +178,13 @@ void main()
 	
     mat4 worldView = UNPACK_MAT4( worldMatBuf, (drawId<<1) + 1u );
 	
-	vec4	worldPos = vec4( (worldView*vertex) );
-	//worldPos = vec4( (worldMat * vertex).xyz, 1.0f );
+	//vec4	worldPos = vec4( (worldView*vertex) );
 	
-  
+	
+	
 
+ 
+	vec4	worldPos;
  
  
  	worldPos.xyz =  vec4( (worldMat * vertex) ).xyz;
@@ -197,37 +206,33 @@ void main()
 	
 
 
-    	//vcolor.xyz =vec3(0.5,1,0);
-    	
-    
-    //gl_Position =final*vertex;
-   // gl_Position = pass.viewProj*worldPos;
-    
 
 	
 		outVs.uv0 = uv0;    
     
     outVs.vertex=vertex.xyz;
+
+	//Decode qTangent to TBN with reflection
+	vec3 normal		= xAxis( normalize( qtangent ) );
+	vec3 tangent	= yAxis( qtangent );
+	outVs.biNormalReflection = sign( qtangent.w ); //We ensure in C++ qtangent.w is never 0
 		
 		
-	//Lighting is in view space
-	//outVs.pos		= (worldView * vertex).xyz;
 
   
   outVs.tangent	= mat3(worldView) * tangent;
   
 
-	outVs.pos		=pass.View*worldPos;
-    outVs.normal	= mat3(worldView) * normal;
+
+
+		outVs.pos		=pass.View*worldPos;
+	    outVs.normal	= mat3(worldView) * normal;
 
     gl_Position = pass.Proj *(outVs.pos);
 
-    //outVs.glPosition=gl_Position;
-	//outVs.glPosition.x = (length(outVs.pos.xyz))*pass.depthrange.x;
 	outVs.glPosition =gl_Position;
-	//outVs.depth =gl_Position.z*pass.Invdepthrange;
-	
-            	  vcolor=vertex;
+
+        vcolor=vertex;
     
     
 

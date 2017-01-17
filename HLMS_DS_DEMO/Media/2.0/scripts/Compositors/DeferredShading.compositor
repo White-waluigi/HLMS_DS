@@ -21,8 +21,9 @@ compositor_node DSNode
 		   	identifier 31;
 		
 			expose GBuffer
-			//colour_value 0.2 0.4 0.6 1
-			colour_value 0.0 0.0 0.0 1
+			//colour_value 0.2 0.4 0.6 0
+			colour_value 0.0 0.0 0.0 0
+			depth_value 1.1
 		}
 		
 		pass render_scene{

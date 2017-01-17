@@ -2,13 +2,17 @@
 
 
 
-//Gbuffer Material
+//Light Material 
+	
+//AMBIENT
+		
 
+
+	
 
 
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
-#extension GL_EXT_texture_array : enable
 
 
 vec4 cubic(float v){
@@ -57,35 +61,11 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
 
 
 
-
-
-
-vec4 rainbow(float phase)
-{
-	float p=mod(phase,1.0);
-	float c=p*3.0;
-	float level = c;
-
-	float x=mod(c,1.0);
-	float y=1-mod(c,1.0);
-
-	float r,g,b;
-	if(level<1){
-		r=y;
-		g=x;
-		b=0;
-	}else if(level<2){
-		r=0;
-		g=y;
-		b=x;
-	}else if(level<3){
-		r=x;
-		g=0;
-		b=y;
-	}
-
-	return vec4(r,g,b,0);
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
+
+
 
 
 
@@ -95,35 +75,12 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_specular;
+		 vec4 vec4_diffuse;
+	 vec4 vec4_lightparams;
 
 
 
 
-	
-	vec4 texloc_0;
-	
-
-	
-	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
-
-	
-	
-	vec4 texloc_2;
-	
-
-	
-	mat4 texmat_2;
-
-	
 
 /**/
 
@@ -173,28 +130,14 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
+		
+			vec4 pssmSplitPoints[3];
+				ShadowData shadowD[6];
+	
 } pass;
 
 
 
-
-
-
-
-
-uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
-
-
-vec3 getTSNormal( vec3 uv )
-{
-	vec3 tsNormal;
-	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[1], uv ).xy;
-
-	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
-
-	return tsNormal;
-}
 
 
 //Uniforms that change per Item/Entity
@@ -220,6 +163,7 @@ layout(binding = 2) uniform InstanceBuffer
 //	uvec4 viewProj3;
 	
 //} test;
+//uniform samplerBuffer worldMatBuf;
 
 //layout(binding = 2) uniform InstanceBuffer
 //{
@@ -234,6 +178,16 @@ layout(binding = 2) uniform InstanceBuffer
     //uvec4 worldMaterialIdx[4096];
 //} instance;
 
+		
+			uniform sampler2D texShadowMap[6];
+		
+		uniform sampler2D GBuffer0;
+		uniform sampler2D GBuffer1;
+		uniform sampler2D GBuffer2;
+		uniform sampler2D GBuffer3;
+		uniform sampler2D GBuffer4;
+	
+
 in block
 {
 
@@ -247,19 +201,11 @@ in block
 		vec4 glPosition;
 		float depth;
 				
-			
-		vec2 uv0;		
-				
+					
+		
+			vec4 posL[6];		
 
 } inPs;
-in vec4 vcolor;
-
-
-out vec4 diffuse;
-out vec4 normal;
-out vec4 pos;
-out vec4 specular;
-out vec4 glow;
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -267,134 +213,267 @@ uint f2u(float f){
 uint f2u(vec4 f){
 	return floatBitsToUint(f)[0];
 }
+
+in vec4 vcolor;
+out vec4 final;
+
+
+
+vec4 rainbow(float phase)
+{
+	float p=mod(phase,1.0);
+	float c=p*3.0;
+	float level = c;
+
+	float x=mod(c,1.0);
+	float y=1-mod(c,1.0);
+
+	float r,g,b;
+	if(level<1){
+		r=y;
+		g=x;
+		b=0;
+	}else if(level<2){
+		r=0;
+		g=y;
+		b=x;
+	}else if(level<3){
+		r=x;
+		g=0;
+		b=y;
+	}
+
+	return vec4(r,g,b,0);
+}
+
+
 void main() {
+
 	
 	
-
-
-	float opacity=1.0;
 
 	vec2 screenPos=vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny));
 
 	vec2 texCoord=vec2(screenPos.x,screenPos.y);
+	
+
+		
+	vec3 diffuse=texture2D(GBuffer0 ,texCoord).rgb;
+	float depth=texture2D(GBuffer1 ,texCoord).a;
+	vec3 normal=texture2D(GBuffer1 ,texCoord).rgb;
+	vec3 specular=texture2D(GBuffer3 ,texCoord).rgb;
+	float rough=texture2D(GBuffer3 ,texCoord).w;
+	
+	float Sdepth=texture2D(GBuffer2 ,texCoord).x;
+	
+	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
 
 
-
-
-	diffuse=vec4(0);
-	normal=vec4(0);
-	specular=vec4(0);
-	glow=vec4(0.1);
-	
-	
-	
-		
-	
-	
-		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
 
 		
 
 	
+		
+	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
+
+	float light_power				=material.vec4_lightparams.y;	
+	
+	vec4 light_diffuse				=material.vec4_diffuse;
 
 	
 
 
-	normal.xyz=normalize(inPs.normal);
-	normal.w=1.0;
+	
+	if(floatBitsToUint(pass.debug.y)==1u){
+		diffuse=vec3(1);
+	}else if(floatBitsToUint(pass.debug.y)==2u){
+
+		normal=vec3(0);
+
+	}else if(floatBitsToUint(pass.debug.y)==3u){
+		glow=vec3(0);
+	}else if(floatBitsToUint(pass.debug.y)==4u){
+		depth=(0);
+	}else if(floatBitsToUint(pass.debug.y)==5u){
+		specular=vec3(0);
+	}else if(floatBitsToUint(pass.debug.y)==6u){
+		vec3 swap=diffuse;
+		diffuse=specular;
+		specular=swap;
+	}else if(floatBitsToUint(pass.debug.y)==8u){
+		light_diffuse=vec4(0);
+	}else if(floatBitsToUint(pass.debug.y)==9u){
+		if(light_type!=0u&&light_type!=4u){
+			final=vec4(0,0,0,0);
+			return;
+		}
+
+	}
+
+
 
 	
 	
-		vec3 geomNormal = normalize( inPs.normal );
-		vec3 vTangent = normalize( inPs.tangent );
-
-		//Get the TBN matrix
-    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
-		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
 	
-		normal.xyz= getTSNormal( vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,  
-		f2u(material.texloc_1 ) ) );
-		normal.xyz = normalize( (TBN * normal.xyz) );
+	//vec2 projPos=(vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny) )-0.5)/0.5;
+	
+	vec2 projPos=(vec2(texCoord.x,texCoord.y) - 0.5) / 0.5;
+	
+	vec3 ray = vec3(projPos.x,projPos.y, 1)*pass.farCorners.xyz;
+	vec3 viewPos = normalize(ray)*(depth*pass.farClip);
+ 
+ 	vec3 worldPos = (pass.InvView* vec4(viewPos, 1)).xyz;
+ 
+ 
+   	float f=pass.farClip;
+	float n = pass.nearClip;
+   	
+	vec3 objToLightVec ;
+	vec3 total_light_contrib;
+
+
+
+
+
+
+	
+		
+
+	//final.rgb=(light_diffuse.rgb*diffuse)+glow;
+	
+
 		
 		
+	
+	
+		
+	
+	
+
+	
+		
+		
+		
+
+	
+	
+		
+	if(floatBitsToUint(pass.debug.x)==0u){
+		final.rgb=(light_diffuse.rgb*diffuse)+glow;		
 			
-
+		return;
+	}	
+	else if(floatBitsToUint(pass.debug.x)==1u){
+			if(light_type>=1u){
 	
-			
-			specular=material.vec4_specular;	
-					
-	
-		specular.rgb*=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy,
-		f2u(material.texloc_2 ) ) ).rgb;
-	
-
-	
+				final=vec4(depth);
+			}else {
+				final=vec4(0);
+			}	
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==2u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(normal.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==3u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(diffuse.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==4u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(glow.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==5u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(specular.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==6u){
 		
-		glow.rgb=vec3(0);	
+		final.rgb=(light_diffuse.rgb*diffuse);		
+
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==7u){
 		
-	
+	uint numtex=6u;
 
-	
-
-
+	float fL=screenPos.x*3.0;
+	float ffL=(screenPos.y*float(3));
 		
-							
-			
+	uint i=uint(fL);
+	uint ii=uint(ffL);
+		
+	uint curid=((i)+ii*3u);
+	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
+	
+	final=texture(texShadowMap[curid], coords)+(diffuse.rgbb/100.0);
+	
+	if(curid>=numtex){
+		final.rgb=(light_diffuse.rgb*diffuse)+glow;
+
+	}
+
+
+		return;
+		
+	}else if(floatBitsToUint(pass.debug.x)==8u){
+	 	if(light_type==4u){
+			if(texCoord.x>0.666666){
+				if(texCoord.y>0.5){
+					final.rgb=normal.rgb;
+				}else {
+					final.rgb=diffuse.rgb;
+				}
 				
-
-	
+			}else if(texCoord.x>0.333333){
+				if(texCoord.y>0.5){
+					final.rgb=specular.rgb;
+				}
+				else {
+					final.rgb=(light_diffuse.rgb*diffuse)+glow;		
+				}
+				
+				
+			}else if(texCoord.x>0.133333){
+				if(texCoord.y>0.5){
+					final=vec4(1,0,0,0);
+				}
+				else {
+					final=vec4(0,0,1,0);
+				}		
+				}else {
 		
-		float reflection=0.5;	
-		
-	
+					if(texCoord.y>0.5){
+						final.rgb=glow.rgb;
+					}
+					else {
+					final=vec4(depth);
+					}
 
-	
-	
-		
-		
-	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
-	//Ogre Shadows want different depth than DS lighting
-	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
-
-
-
- 	
-
-
-
-
-
-	
-
-
-
-
-	
-		
-												
-		
+				}
 			
+			
+			}else {
+				final=vec4(0);
+			}
+	} else if (floatBitsToUint(pass.debug.x)==9u){
+	
+			final.rgb=glow.rgb;
+					
+ 	}
+	
+
 		
-	
-	
-	diffuse.a=0.9;
 
 	
-	if(floatBitsToUint(pass.debug.x)==9u){
- 		glow=material.idColor;	
- 	}
  }
  
- 
+
 

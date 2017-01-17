@@ -102,6 +102,7 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
 
 
 
@@ -288,7 +289,9 @@ vec4 perlin =  texture( textureMaps[0], vec3(
 f2u( material.texloc_0 ) ) ); 
 
 
-	diffuse=perlin;
+	diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
+normal=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r))+0.25;
+diffuse.rga=vec3(0);
 
 
 

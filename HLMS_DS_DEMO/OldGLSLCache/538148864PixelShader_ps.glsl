@@ -1,6 +1,8 @@
 //Datablock:	
 
 
+//	Json Material
+
 
 //Gbuffer Material
 
@@ -96,8 +98,11 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
 	 vec4 vec4_glow;
+	 vec4 vec4_leaf;
+	 vec4 vec4_specular;
+	 vec4 vec4_testvar55;
+	 vec4 vec4_wave;
 
 
 
@@ -108,6 +113,22 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
+
+	
+	
+	vec4 texloc_1;
+	
+
+	
+	mat4 texmat_1;
+
+	
+	
+	vec4 texloc_2;
+	
+
+	
+	mat4 texmat_2;
 
 	
 
@@ -168,7 +189,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[3];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -266,17 +287,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -307,8 +323,6 @@ void main() {
 							
 			
 				
-			opacity=diffuse.a;
-		
 
 	
 		
@@ -318,7 +332,8 @@ void main() {
 
 	
 	
-		
+
+	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
@@ -328,29 +343,73 @@ void main() {
 
 
  	
+// glow *= tan(material.wave.x)*2.0;
 
 
 
 
 
-	
+vec4 leaf=material.vec4_leaf;
+
+ leaf =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+vec4 perlin =  texture( textureMaps[1], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy, 
+f2u( material.texloc_1 ) ) ); 
+
+
+vec4 testmap =  texture( textureMaps[2], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy, 
+f2u( material.texloc_2 ) ) ); 
+
+
+vec4 testvar55=material.vec4_testvar55;
+
+vec4 wave=material.vec4_wave;
+
+	diffuse=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);
+//opacity*=sqrt(1-pow(leaf.r,2.0));
 
 
 
 
-	
+
 		
-							
+		
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
 			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
 		
 		
-			float cutoff=0.5;
-			
-				cutoff=1.0-(1.0/(10*1.0));
-			
-			if(opacity < cutoff) discard;
 		
-							
 		
 			
 		

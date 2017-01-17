@@ -317,7 +317,8 @@ void main() {
 
 	
 	
-		
+
+	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
@@ -351,6 +352,8 @@ void main() {
 	if(floatBitsToUint(pass.debug.x)==9u){
  		glow=material.idColor;	
  	}
+
+	gl_FragDepth =2-1;
  }
  
  

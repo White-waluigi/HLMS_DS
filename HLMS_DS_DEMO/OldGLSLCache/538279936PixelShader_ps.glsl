@@ -98,6 +98,7 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
 
 
 
@@ -221,6 +222,8 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -284,9 +287,9 @@ void main() {
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	
@@ -311,7 +314,8 @@ void main() {
 
 	
 	
-		
+
+	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
@@ -331,7 +335,9 @@ vec4 perlin =  texture( textureMaps[0], vec3(
 f2u( material.texloc_0 ) ) ); 
 
 
-	diffuse=perlin;
+	diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
+normal=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r))+0.25;
+diffuse.rga=vec3(0);
 
 
 

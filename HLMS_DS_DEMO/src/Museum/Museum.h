@@ -34,6 +34,7 @@ class Museum {
 		int side=0;
 		bool shadow=true;
 		Ogre::String label="";
+		bool infiniteAABB=false;
 		std::vector<Ogre::String> materialParams;
 		std::vector<Ogre::String> materialParams1;
 		std::vector<Ogre::String> materialParams2;
@@ -45,6 +46,7 @@ class Museum {
 		Ogre::SceneNode* sn;
 
 		Ogre::Vector3 position=Ogre::Vector3::ZERO;
+		bool positionAutoOffset=true;
 		Ogre::Vector3 positionoffset=Ogre::Vector3::ZERO;
 		Ogre::Vector3 direction=Ogre::Vector3(0,0,-1);
 
@@ -123,7 +125,7 @@ public:
 	Ogre::DSDatablock * getDatablock(std::vector<Ogre::String> params,Ogre::String name,exhibit exhibit);
 	Ogre::Vector3 setupPedestal(Ogre::Vector3 pos);
 
-
+	float randf(int treshhold =0);
 
 
 

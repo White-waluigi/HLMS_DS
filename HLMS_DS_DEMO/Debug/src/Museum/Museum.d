@@ -326,7 +326,8 @@ src/Museum/Museum.o: ../src/Museum/Museum.cpp ../src/Museum/Museum.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMesh.h \
  ../src/Museum/../PbsMaterialsGameState.h \
  ../src/Museum/../TutorialGameState.h ../src/Museum/../GameState.h \
- ../src/Museum/../InputListeners.h ../src/Museum/../Museum/Museum.h
+ ../src/Museum/../InputListeners.h ../src/Museum/../Museum/Museum.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMath.h
 
 ../src/Museum/Museum.h:
 
@@ -989,3 +990,5 @@ src/Museum/Museum.o: ../src/Museum/Museum.cpp ../src/Museum/Museum.h \
 ../src/Museum/../InputListeners.h:
 
 ../src/Museum/../Museum/Museum.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMath.h:

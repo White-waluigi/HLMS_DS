@@ -140,6 +140,12 @@ void DSMaterialDatablock::initializeParamTypes() {
 
 		type= DSPropertyParamType("opacity-sharp");
 		propertyParamTypes->push_back(type);
+
+		type= DSPropertyParamType("cdepth");
+		propertyParamTypes->push_back(type);
+
+		type= DSPropertyParamType("noCamTransf");
+		propertyParamTypes->push_back(type);
 	}
 	{
 		DSPieceParamType type= DSPieceParamType("custom_post_material",PixelShader);

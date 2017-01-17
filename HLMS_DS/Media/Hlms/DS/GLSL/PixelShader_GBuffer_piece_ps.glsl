@@ -133,9 +133,7 @@ void main() {
 	@insertpiece(reflection_value)
 	
 	
-	@property(rainbow)
-		diffuse=rainbow(inPs.uv0.x);
-	@end
+
 	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
@@ -203,6 +201,12 @@ void main() {
 	if(floatBitsToUint(pass.debug.x)==9u){
  		glow=material.idColor;	
  	}
+@end
+@property(rainbow)
+		glow=rainbow(inPs.uv0.x*screenPos.x);
+@end
+@property(cdepth)
+	gl_FragDepth =@value(cdepth)-1;
 @end
  }
  

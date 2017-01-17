@@ -221,6 +221,8 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -311,7 +313,8 @@ void main() {
 
 	
 	
-		
+
+	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
@@ -331,7 +334,8 @@ vec4 perlin =  texture( textureMaps[0], vec3(
 f2u( material.texloc_0 ) ) ); 
 
 
-	diffuse=perlin;
+	//diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
+diffuse.rga=perlin.rga;
 
 
 

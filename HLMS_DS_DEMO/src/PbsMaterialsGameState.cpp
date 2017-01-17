@@ -135,6 +135,7 @@ void PbsMaterialsGameState::createScene01(void) {
 
 	mGraphicsSystem->getCamera()->setPosition(-19.5,2,-15);
 	mGraphicsSystem->getCamera()->setDirection(1,0,0);
+	mGraphicsSystem->getCamera()->setFarClipDistance(10000);
 	hlmsDS = static_cast<Ogre::HlmsDS*>(hlmsManager->getHlms(Ogre::HLMS_PBS));
 	museum=new Museum(hlmsDS,sceneManager);
 	museum->initExhibits();

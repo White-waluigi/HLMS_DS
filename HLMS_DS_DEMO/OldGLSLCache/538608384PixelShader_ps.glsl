@@ -140,7 +140,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[6];
+				ShadowData shadowD[7];
 	
 } pass;
 
@@ -187,7 +187,7 @@ layout(binding = 2) uniform InstanceBuffer
 //} instance;
 
 		
-			uniform sampler2D texShadowMap[6];
+			uniform sampler2D texShadowMap[7];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -211,7 +211,7 @@ in block
 				
 					
 		
-			vec4 posL[6];		
+			vec4 posL[7];		
 
 } inPs;
 
@@ -480,7 +480,7 @@ void main() {
 
 		vec2 samplingoffset=vec2(0,0);
 
-		samplerate=3;
+		samplerate=1;
 		samplesize=0.2;
 
 		float varx=shadowRes.z;
@@ -495,7 +495,7 @@ void main() {
 		for(int i=-samplerate;i<=samplerate;i++){
 			for(int ii=-samplerate;ii<=samplerate;ii++){
 				
-				samplingoffset=vec2(i,-ii);
+				samplingoffset=vec2(i,ii);
 
 
 

@@ -24,7 +24,6 @@ void DSMBFrameAnimation::modulate() {
 	DSMBModulator::modulate();
 	float final=elapsed[0]*numUV;
 	parent->UVindexOffset=(int)final;
-	printf("index %f %f %f\n",1/(this->fps*numUV),elapsed[0],this->timeFrame[0]);
 }
 
 } /* namespace Ogre */
