@@ -4,6 +4,8 @@
 
 //Light Material 
 		
+//DIRECTIONAL
+	
 
 
 	
@@ -82,9 +84,10 @@ layout(binding = 1) uniform MaterialBuffer
 	 vec4 vec4_lightparams;
 	 vec4 vec4_shadowParams;
 	 vec4 vec4_shadowQualityParams;
-	 vec4 vec4_shadowRes[1];
-	 vec4 vec4_shadowDr[1];
-	 mat4 vec4_shadowMat[1];
+	 vec4 vec4_shadowRes[3];
+	 vec4 vec4_shadowDr[3];
+	 mat4 vec4_shadowMat[3];
+	 vec4 vec4_shadowPssmSplits[4];
 
 
 
@@ -361,58 +364,18 @@ void main() {
 
 
 		
-		
-	
-	
-		
-	
 	
 		
 
-	
-	objToLightVec =(vec4(light_position.xyz,1)).xyz-viewPos;
-	float len_sq = dot(objToLightVec, objToLightVec);
-	float len = sqrt(len_sq);
-	vec3 objToLightDir = objToLightVec/len;
-		
 	// Calculate diffuse colour
-	total_light_contrib = max(0.0,dot(objToLightDir, normal)) * light_diffuse.rgb*diffuse;
+	//Light Position is Direction for Directional Lights
+	total_light_contrib = max(0.0,dot(-light_position.xyz, normal)) * light_diffuse.rgb*diffuse;
 
-
-	vec4 rim=vec4(0);
+		
 	
-
 	
-	// Calculate specular component
-	vec3 viewDir = -normalize(viewPos);
-	vec3 h = normalize(viewDir + objToLightDir);
-	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
-	total_light_contrib += specular * final_specular;
-
-    //LT_DIRECTIONAL = 0,
-    //LT_POINT = 1,
-    // LT_SPOTLIGHT = 2,
-
-	float attenuation = dot(light_attenuation.yzw, vec3(1.0, len, len_sq));
-	total_light_contrib /= attenuation;
+		
 	
-	vec2 test =(vec4(light_position.xyz,1)).xy-viewPos.xy;
-	float len2_sq = dot(objToLightVec, objToLightVec);
-	float len2 = sqrt(len_sq);
-	vec2 objToLightDir2 = test/len2;
-	//final=vec4(0) ;
-	//if(len<15.0){
-	//	final=vec4( pow( (15.0-len)/15.0,2 ))*pass.flip;	
-	//}
-	
-
-
-
-	float spotlightAngle = clamp(dot(         ( vec4(light_spotDirection.xyz,0) ).xyz        , -objToLightDir), 0.0, 1.0);
-	float spotFalloff = clamp((spotlightAngle - light_spotParams.x) / (light_spotParams.y - light_spotParams.x), 0.0, 1.0);
-	total_light_contrib *= (1-spotFalloff);
-			
-
 	
 
 	
@@ -435,8 +398,48 @@ void main() {
 
 		
 		
-		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x);
 				
+		
+		
+		
+
+		uint inc=0u;
+		
+		float Pdepth	= (Sdepth  );
+
+
+			//ShadowVal=vec4(0.5,0.5,0.5,0);
+
+		
+		if((Pdepth)<= material.vec4_shadowPssmSplits[1].x){
+			//ShadowVal=vec4(0,1,1,0);
+       	}
+		
+		else if( (Pdepth)<= material.vec4_shadowPssmSplits[1+1].x ){
+			inc=1u;
+			
+			 
+			//ShadowVal=vec4(1==0,1==1,1==2,0);
+			
+		}
+
+		
+		else if( (Pdepth)<= material.vec4_shadowPssmSplits[2+1].x ){
+			inc=2u;
+			
+			 
+			//ShadowVal=vec4(2==0,2==1,2==2,0);
+			
+		}
+
+		
+
+		
+
+		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x)+inc;
+		IDoffset=inc;
+			
+		
 				
 
 
@@ -480,7 +483,7 @@ void main() {
 
 		vec2 samplingoffset=vec2(0,0);
 
-		samplerate=3;
+		samplerate=1;
 		samplesize=0.2;
 
 		float varx=shadowRes.z;
@@ -495,9 +498,15 @@ void main() {
 		for(int i=-samplerate;i<=samplerate;i++){
 			for(int ii=-samplerate;ii<=samplerate;ii++){
 				
-				samplingoffset=vec2(-i,-ii);
+				samplingoffset=vec2(i,ii);
 
-				
+
+
+			}
+		}
+		ShadowVal/=pow(samplerate*2+1,2);
+		samplingoffset=vec2(0);
+		
 
 
 		vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
@@ -559,12 +568,6 @@ void main() {
         }
 
 
-
-
-			}
-		}
-		ShadowVal/=pow(samplerate*2+1,2);
-		samplingoffset=vec2(0);
 
 		/*
 				

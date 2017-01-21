@@ -120,6 +120,14 @@ layout(binding = 1) uniform MaterialBuffer
 	mat4 texmat_1;
 
 	
+	
+	vec4 texloc_2;
+	
+
+	
+	mat4 texmat_2;
+
+	
 
 /**/
 
@@ -180,6 +188,17 @@ layout(binding = 0) uniform PassBuffer
 
 uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
+
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[1], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
 
 
 //Uniforms that change per Item/Entity

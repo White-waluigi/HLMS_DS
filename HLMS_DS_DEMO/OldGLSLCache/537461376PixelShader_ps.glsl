@@ -95,8 +95,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
-	 vec4 vec4_glow;
+		 vec4 vec4_specular;
+	 vec4 vec4_opacity;
 	 vec4 autoparam0;
 
 
@@ -108,14 +108,6 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
 
 	
 
@@ -177,7 +169,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -195,28 +187,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -298,25 +268,23 @@ void main() {
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	
-	
-		glow.rgb=material.vec4_glow.rgb;	
-			
-	
-		glow*=  texture( textureMaps[1], vec3(
-		 (vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,
-		 f2u( material.texloc_1 ) ) );
+		
+		glow.rgb=vec3(0);	
+		
 	
 
 	
 
 
 		
+				
+				opacity=material.vec4_opacity.r;							
 							
 			
 				
@@ -340,7 +308,7 @@ void main() {
 
 
  	
-glow *= tan(material.autoparam0.x)*2.0;
+opacity = ((material.autoparam0.x*2.0)-0.5);
 
 
 
@@ -351,6 +319,38 @@ glow *= tan(material.autoparam0.x)*2.0;
 
 
 	
+		
+				
+				
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
+		
 		
 												
 		

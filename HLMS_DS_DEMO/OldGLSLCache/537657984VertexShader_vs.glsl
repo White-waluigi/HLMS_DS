@@ -148,6 +148,8 @@ void main()
 	
 	//vec4	worldPos = vec4( (worldView*vertex) );
 	
+	
+	
 
  
 	vec4	worldPos;
@@ -184,14 +186,16 @@ void main()
   outVs.tangent	= mat3(worldView) * tangent;
   
 
-	outVs.pos		=pass.View*worldPos;
+
+
+		outVs.pos		=pass.View*worldPos;
 	    outVs.normal	= mat3(worldView) * normal;
 
     gl_Position = pass.Proj *(outVs.pos);
 
 	outVs.glPosition =gl_Position;
 
-            	  vcolor=vertex;
+        vcolor=vertex;
     
     
 

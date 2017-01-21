@@ -140,7 +140,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[5];
+				ShadowData shadowD[4];
 	
 } pass;
 
@@ -187,7 +187,7 @@ layout(binding = 2) uniform InstanceBuffer
 //} instance;
 
 		
-			uniform sampler2D texShadowMap[5];
+			uniform sampler2D texShadowMap[4];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -211,7 +211,7 @@ in block
 				
 					
 		
-			vec4 posL[5];		
+			vec4 posL[4];		
 
 } inPs;
 
@@ -437,7 +437,7 @@ void main() {
 		
 		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x);
 				
-				
+		
 
 
 		uint i=uint(fL);

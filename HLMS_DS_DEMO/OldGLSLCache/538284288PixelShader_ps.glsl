@@ -98,7 +98,6 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
 
 
 
@@ -172,6 +171,17 @@ layout(binding = 0) uniform PassBuffer
 uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[0], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
+
 
 //Uniforms that change per Item/Entity
 layout(binding = 2) uniform InstanceBuffer
@@ -187,28 +197,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -284,12 +272,27 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
+	
+	
+		vec3 geomNormal = normalize( inPs.normal );
+		vec3 vTangent = normalize( inPs.tangent );
+
+		//Get the TBN matrix
+    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
+		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
+	
+		normal.xyz= getTSNormal( vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
+		f2u(material.texloc_0 ) ) );
+		normal.xyz = normalize( (TBN * normal.xyz) );
+		
+		
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -330,14 +333,12 @@ void main() {
 
 
 
-vec4 perlin =  texture( textureMaps[0], vec3( 
+vec4 normal_map =  texture( textureMaps[0], vec3( 
 (vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
 f2u( material.texloc_0 ) ) ); 
 
 
-	diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
-normal=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r))+0.25;
-diffuse.rga=vec3(0);
+	//diffuse=perlin;
 
 
 

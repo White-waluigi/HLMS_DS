@@ -95,9 +95,7 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_glow;
+		 vec4 vec4_specular;
 
 
 
@@ -186,28 +184,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -221,8 +197,6 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
-		
-			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -268,12 +242,17 @@ void main() {
 		
 	
 	
-	
-			
-			diffuse.rgb=material.vec4_diffuse.rgb;	
-					
 		
-			
+		
+		diffuse=  texture( textureMaps[0], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
+		f2u(material.texloc_0) ) );
+//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
+		
+		
+		
+
+		
 
 	
 
@@ -292,13 +271,9 @@ void main() {
 	
 
 	
-	
-		glow.rgb=material.vec4_glow.rgb;	
-			
-	
-		glow*=  texture( textureMaps[0], vec3(
-		 (vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		 f2u( material.texloc_0 ) ) );
+		
+		glow.rgb=vec3(0);	
+		
 	
 
 	
@@ -352,8 +327,6 @@ void main() {
 	if(floatBitsToUint(pass.debug.x)==9u){
  		glow=material.idColor;	
  	}
-
-	gl_FragDepth =2-1;
  }
  
  

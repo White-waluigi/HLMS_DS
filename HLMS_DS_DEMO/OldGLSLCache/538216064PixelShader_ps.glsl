@@ -1,6 +1,8 @@
 //Datablock:	
 
 
+//	Json Material
+
 
 //Gbuffer Material
 
@@ -95,8 +97,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_specular;
-	 vec4 vec4_glow;
+		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
 
 
 
@@ -107,14 +109,6 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
 
 	
 
@@ -175,19 +169,8 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
-
-vec3 getTSNormal( vec3 uv )
-{
-	vec3 tsNormal;
-	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[1], uv ).xy;
-
-	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
-
-	return tsNormal;
-}
 
 
 //Uniforms that change per Item/Entity
@@ -239,6 +222,8 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -284,17 +269,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -304,21 +284,6 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
-	
-	
-		vec3 geomNormal = normalize( inPs.normal );
-		vec3 vTangent = normalize( inPs.tangent );
-
-		//Get the TBN matrix
-    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
-		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-	
-		normal.xyz= getTSNormal( vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,  
-		f2u(material.texloc_1 ) ) );
-		normal.xyz = normalize( (TBN * normal.xyz) );
-		
-		
 			
 
 	
@@ -328,9 +293,9 @@ void main() {
 	
 
 	
-	
-		glow.rgb=material.vec4_glow.rgb;	
-			
+		
+		glow.rgb=vec3(0);	
+		
 	
 
 	
@@ -365,14 +330,52 @@ void main() {
 
 
 
-	
+vec4 perlin =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+	//diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
+normal.xyz=normalize(vec3(perlin.x,sqrt(1-pow(perlin.x,2)),1)*normal.xyz);
+//diffuse.rgba=vec4(0,0,1,0);
 
 
 
 
-	
+
 		
-												
+		
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
+		
+		
+		
 		
 			
 		

@@ -281,12 +281,12 @@ src/Museum/Museum.o: ../src/Museum/Museum.cpp ../src/Museum/Museum.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreString.h \
  /home/marvin/workspace/HLMS_DS/src/Datablocks/Data/DSPieceParam.h \
  /home/marvin/workspace/HLMS_DS/src/Datablocks/Data/DSPieceParamType.h \
- /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/DSAutoTime.h \
- /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../Data/DSAutoParam.h \
- /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
  /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
+ /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
+ /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../Data/DSAutoParam.h \
+ /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h \
  /home/marvin/workspace/HLMS_DS/src/Datablocks/Data/DSShadowParam.h \
  /home/marvin/workspace/HLMS_DS/src/Datablocks/Data/DSShadowTexture.h \
  /home/marvin/workspace/HLMS_DS/src/Light/DSLightManager.h \
@@ -895,17 +895,17 @@ src/Museum/Museum.o: ../src/Museum/Museum.cpp ../src/Museum/Museum.h \
 
 /home/marvin/workspace/HLMS_DS/src/Datablocks/Data/DSPieceParamType.h:
 
-/home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/DSAutoTime.h:
+/home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/DSAutoParamParser.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
+
+/home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
 
 /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../Data/DSAutoParam.h:
 
 /home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
 
-/home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
-
-/home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/DSAutoParamParser.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
+/home/marvin/workspace/HLMS_DS/src/Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h:
 
 /home/marvin/workspace/HLMS_DS/src/Datablocks/Data/DSShadowParam.h:
 

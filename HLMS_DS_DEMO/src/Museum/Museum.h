@@ -108,7 +108,7 @@ public:
 		float dayphase;
 	};
 
-
+	Ogre::SceneNode * museum=0;
     bool slowDown=true;
 
 	Museum(Ogre::HlmsDS * hlmsDS,Ogre::SceneManager * sceneManager);

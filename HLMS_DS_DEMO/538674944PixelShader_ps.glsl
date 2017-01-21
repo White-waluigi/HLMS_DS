@@ -420,7 +420,7 @@ void main() {
 			
 			 
 			//ShadowVal=vec4(1==0,1==1,1==2,0);
-			
+
 		}
 
 		
@@ -429,7 +429,7 @@ void main() {
 			
 			 
 			//ShadowVal=vec4(2==0,2==1,2==2,0);
-			
+
 		}
 
 		
@@ -440,7 +440,7 @@ void main() {
 		IDoffset=inc;
 			
 		
-				
+		
 
 
 		uint i=uint(fL);

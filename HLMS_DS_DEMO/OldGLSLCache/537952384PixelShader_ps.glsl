@@ -99,9 +99,7 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_glow;
+		 vec4 vec4_specular;
 
 
 
@@ -112,6 +110,22 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
+
+	
+	
+	vec4 texloc_1;
+	
+
+	
+	mat4 texmat_1;
+
+	
+	
+	vec4 texloc_2;
+	
+
+	
+	mat4 texmat_2;
 
 	
 
@@ -172,8 +186,19 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
+
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[1], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
 
 
 //Uniforms that change per Item/Entity
@@ -263,7 +288,16 @@ void main() {
 
 	
 		
-			
+		
+		diffuse=  texture( textureMaps[0], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
+		f2u(material.texloc_0) ) );
+//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
+		
+		
+		
+
+		
 
 	
 

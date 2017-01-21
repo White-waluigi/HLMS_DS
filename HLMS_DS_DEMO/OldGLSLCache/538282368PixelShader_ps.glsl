@@ -98,6 +98,7 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
 
 
 
@@ -286,9 +287,9 @@ void main() {
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	
@@ -334,7 +335,11 @@ vec4 perlin =  texture( textureMaps[0], vec3(
 f2u( material.texloc_0 ) ) ); 
 
 
-	diffuse=perlin;
+	diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
+normal.x=(((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r));
+normal.y=sqrt(1-pow(normal.x,2));
+normal=normalize(normal);
+diffuse.rgba=vec4(0,0,1,0);
 
 
 

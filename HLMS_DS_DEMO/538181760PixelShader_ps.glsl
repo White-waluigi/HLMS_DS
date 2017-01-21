@@ -211,28 +211,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -299,11 +277,6 @@ void main() {
 
 
 
-// glow *= tan(material.wave.x)*2.0;
-
-
-
-
 
 vec4 leaf=material.vec4_leaf;
 
@@ -326,6 +299,11 @@ vec4 testvar55=material.vec4_testvar55;
 
 vec4 wave=material.vec4_wave;
 
+// glow *= tan(material.wave.x)*2.0;
+
+
+
+
 	diffuse=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);
 //opacity*=sqrt(1-pow(leaf.r,2.0));
 
@@ -333,39 +311,9 @@ vec4 wave=material.vec4_wave;
 
 
 
+	
 		
-		
-		
-		if(opacity<0.999&&opacity>0.001){
-			bool big=opacity>=0.5;
-			if(!big){	
-				float dval=opacity;
-				uint uval=uint(1/dval);
-				uint inc=uint(gl_FragCoord.y)%2u; 
-				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
-			
-				
-				if((offsetx)%uval!=0u){
-					discard;
-				}
-			}
-			else {	
-				float dval=abs(1-opacity);
-				uint uval=uint(1/dval);
-				
-				uint inc=uint(gl_FragCoord.y)%2u; 
-				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
-				
-				if((offsetx)%uval==0u){
-					discard;
-				}
-			}
-		}else if(opacity<0.001){
-			discard;
-		}
-		
-		
-		
+												
 	
 		
 		

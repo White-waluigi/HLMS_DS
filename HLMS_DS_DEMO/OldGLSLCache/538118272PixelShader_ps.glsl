@@ -1,6 +1,8 @@
 //Datablock:	
 
 
+//	Json Material
+
 
 //Gbuffer Material
 
@@ -95,7 +97,9 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-	
+		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
+
 
 
 
@@ -218,6 +222,8 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -263,17 +269,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -286,9 +287,9 @@ void main() {
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	
@@ -329,14 +330,52 @@ void main() {
 
 
 
-	
+vec4 perlin =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+	//diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
+normal.xyz=normalize(vec3(perlin.x,sqrt(1-pow(perlin.x,2)),1)*normal.xyz);
+//diffuse.rgba=vec4(0,0,1,0);
 
 
 
 
-	
+
 		
-												
+		
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
+		
+		
+		
 		
 			
 		

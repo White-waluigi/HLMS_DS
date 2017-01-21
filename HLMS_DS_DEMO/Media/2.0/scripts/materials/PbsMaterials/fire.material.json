@@ -74,7 +74,7 @@
 				"renderer": "deferred",
 				"optimizable": true,
 				"category": "default",
-				"opacity": true,
+				"opacity": false,
 				"opacity-sharp": false
 			},
 			"params": {
@@ -213,12 +213,6 @@
 					"type": "variable",
 					"helper": true,
 					"varData": {
-						"_type": "autoparam",
-						"params": {
-							"type": "timer",
-							"pulse": "on",
-							"time": 1000
-						},
 						"type": "manual",
 						"value": [
 							0,
@@ -312,7 +306,7 @@
 				"opacity-sharp": false
 			},
 			"params": {
-				"perlin": {
+				"normal_map": {
 					"helper": true,
 					"type": "texture",
 					"datatype": "vec4",
@@ -346,7 +340,7 @@
 						"glsl": {
 							"_comment": "use Array for multiline shader",
 							"code": [
-								"diffuse=perlin;"
+								"//diffuse=perlin;"
 							]
 						},
 						"hlsl": {
@@ -376,51 +370,47 @@
 			},
 			"params": {
 				"scrollwater": {
-					"UVscalex": 10,
+					"UVscalex": 3,
 					"UVscaley": 10,
 					"type": "mappingblock",
 					"animation": {
 						"VScroll": {
 							"type": "scroll",
-							"speedx": 0.01,
-							"speedy": 0.003,
+							"_speedx": 0.01,
+							"_speedy": 0.003,
+							"speedx": 0.0,
+							"speedy": 0.0,
 							"timescale": 1
 						}
 					}
 				},
-				"perlin": {
+				"normal_map": {
 					"helper": true,
 					"type": "texture",
 					"datatype": "vec4",
 					"texData": {
-						"file": "perlins.jpg",
+						"file": "water_n.jpg",
+						"sampler": "DoomSB",
 						"mappingblock": "scrollwater"
 					}
 				},
-				"diffuse": {
-					"helper": false,
-					"type": "variable",
-					"datatype": "vec4",
-					"varData": {
-						"value": [
-							0.2,
-							0.2,
-							0.5,
-							0
-						]
+				"wave": {
+					"type": "autoparam",
+					"helper": true,
+					"params": {
+						"type": "time",
+						"softpulse": true,
+						"time": 10000
 					}
 				},
-				"specular": {
+				"diffuse_map": {
 					"helper": false,
-					"type": "variable",
+					"type": "texture",
 					"datatype": "vec4",
-					"varData": {
-						"value": [
-							0.4,
-							0.4,
-							0.7,
-							15
-						]
+					"texData": {
+						"file": "grids.png",
+						"sampler": "DoomSB",
+						"mappingblock": "scrollwater"
 					}
 				},
 				"testmapshader": {
@@ -429,22 +419,30 @@
 					"optional": false,
 					"_comment": "options: add, to add after previous piece, first puts it before existing piece, replace to replace previous piece, noReplace to not replace if previous Piece exists,  child materials have replace priority",
 					"method": "add",
-					"id": "custom_GBuffer",
+					"id": "custom_GBuffer_No_Shadow",
 					"shader": {
 						"glsl": {
 							"_comment": "use Array for multiline shader",
+							"_code": [
+								"vec4 uv=vec4(inPs.uv@value(uvi_normal_map).xy,0,1)*material.texmat_@value(texd_normal_map);",
+								"normal.xyz= getTSNormal( vec3( ",
+								"( vec4(cos(uv.xy*10.0)*wave.x,0,1)).xy,  ",
+								"f2u(material.texloc_@value(texd_normal_map) ) ) );",
+								"",
+								"normal.xyz = normalize( (TBN * normal.xyz) );"
+							],
 							"code": [
-								"diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;",
-								"normal=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r))+0.25;",
-								"diffuse.rga=vec3(0);"
+								"vec2 uv=(vec4(inPs.uv@value(uvi_diffuse_map).xy,0,1)*material.texmat_@value(texd_diffuse_map)).xy;",
+								"uv.x=uv.x+sin(uv.x/100.0);",
+								"diffuse=  texture( textureMaps[@value(texv_diffuse_map)], vec3( ",
+								"uv,",
+								"f2u(material.texloc_@value(texd_diffuse_map)) ) );"
 							]
 						},
 						"hlsl": {
 							"_comment": "use Array for multiline shader",
 							"code": [
-								"diffuse.b=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b;",
-								"diffuse.rga=vec3(0);"
-
+								"glow=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);"
 							]
 						}
 					}

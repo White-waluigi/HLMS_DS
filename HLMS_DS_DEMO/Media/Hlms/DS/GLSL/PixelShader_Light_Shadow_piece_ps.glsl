@@ -41,7 +41,7 @@
 			
 			 
 			//ShadowVal=vec4(@n==0,@n==1,@n==2,0);
-			
+
 		}
 
 		@end 
@@ -53,7 +53,7 @@
 		@end 	
 		
 		@end
-		
+
 
 
 		uint i=uint(fL);

@@ -437,7 +437,7 @@ void main() {
 		
 		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x);
 				
-				
+		
 
 
 		uint i=uint(fL);

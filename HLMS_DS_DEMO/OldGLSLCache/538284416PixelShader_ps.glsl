@@ -335,9 +335,9 @@ vec4 perlin =  texture( textureMaps[0], vec3(
 f2u( material.texloc_0 ) ) ); 
 
 
-	diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
-normal=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r))+0.25;
-diffuse.rga=vec3(0);
+	//diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
+normal.xyz=normalize(vec3(perlin.x,sqrt(1-pow(perlin.x,2)),1)*normal.xyz);
+//diffuse.rgba=vec4(0,0,1,0);
 
 
 

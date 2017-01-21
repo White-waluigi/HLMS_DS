@@ -23,11 +23,6 @@
 
 
 
-@property( diffuse_map )	uint diffuseIdx;@end
-@property( normal_map )	uint normalIdx;@end
-@property( specular_map )	uint specularIdx;@end
-@property( roughness_map )	uint roughnessIdx;@end
-@property( detail_weight_map )	uint weightMapIdx;@end
 
 
 @property( num_textures )uniform sampler2DArray textureMaps[@value( num_textures )];@end
@@ -47,28 +42,6 @@ vec3 getTSNormal( vec3 uv )
 @end
 
 @insertpiece(InstanceDecl)
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -117,6 +90,7 @@ void main() {
 
 
 @end
+@insertpiece(param_helper_custom)
 
 @property( !hlms_shadowcaster)
 	diffuse=vec4(0);
@@ -142,13 +116,13 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
+	@insertpiece(custom_GBuffer_No_Shadow)
 
  	
 @end
 @insertpiece(custom_post_material)
 
 
-@insertpiece(param_helper_custom)
 
 	@insertpiece(custom_GBuffer)
 

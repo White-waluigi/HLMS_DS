@@ -97,20 +97,10 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-
-
-
-
-	
-	vec4 texloc_0;
 	
 
-	
-	mat4 texmat_0;
 
-	
+
 
 /**/
 
@@ -169,7 +159,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -187,28 +177,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -259,6 +227,7 @@ void main() {
 
 
 
+
 	diffuse=vec4(0);
 	normal=vec4(0);
 	specular=vec4(0);
@@ -270,9 +239,9 @@ void main() {
 	
 	
 	
-			
-			diffuse.rgb=material.vec4_diffuse.rgb;	
 					
+			diffuse.rgb=vec3(1);	
+			
 		
 			
 
@@ -287,9 +256,9 @@ void main() {
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -323,22 +292,14 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
+	
 
  	
 
 
 
 
-
-vec4 perlin =  texture( textureMaps[0], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
-f2u( material.texloc_0 ) ) ); 
-
-
-	diffuse.b=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r).b)+0.25;
-normal=(0.5*rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r))+0.25;
-diffuse.rga=vec3(0);
-
+	
 
 
 

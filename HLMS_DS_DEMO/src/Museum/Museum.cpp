@@ -287,7 +287,7 @@ void Museum::initExhibits() {
 	//	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
 		//jollyroger.materialParams.push_back("diffuse$1 1 1");
 	//	jollyroger.rqID=(0x00000001);
-		tree.position=Ogre::Vector3((randf()*500)+250,-1,(randf()*300)+50);
+		tree.position=Ogre::Vector3((randf()*250)+150,-1,(randf()*300)-200);
 
 
 		tree.pedastol=0;
