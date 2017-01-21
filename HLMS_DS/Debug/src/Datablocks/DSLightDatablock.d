@@ -279,13 +279,13 @@ src/Datablocks/DSLightDatablock.o: ../src/Datablocks/DSLightDatablock.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreString.h \
  ../src/Datablocks/Data/DSPieceParam.h \
  ../src/Datablocks/Data/DSPieceParamType.h \
- ../src/Datablocks/AutoParams/DSAutoTime.h \
- ../src/Datablocks/AutoParams/../Data/DSAutoParam.h \
- ../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- ../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
  ../src/Datablocks/AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h \
+ ../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/AutoParams/../Data/DSAutoParam.h \
+ ../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h \
  ../src/Datablocks/Data/DSShadowParam.h \
  ../src/Datablocks/Data/DSShadowTexture.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLight.h \
@@ -333,6 +333,7 @@ src/Datablocks/DSLightDatablock.o: ../src/Datablocks/DSLightDatablock.cpp \
  ../src/Datablocks/Data/DSMaterialParamType.h \
  ../src/Datablocks/Data/DSMaterialParam.h \
  ../src/Datablocks/Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/Data/../../DBParser/Template/MTMultiData.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Vao/OgreVaoManager.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Vao/OgreConstBufferPacked.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Vao/OgreTexBufferPacked.h \
@@ -899,19 +900,19 @@ src/Datablocks/DSLightDatablock.o: ../src/Datablocks/DSLightDatablock.cpp \
 
 ../src/Datablocks/Data/DSPieceParamType.h:
 
-../src/Datablocks/AutoParams/DSAutoTime.h:
-
-../src/Datablocks/AutoParams/../Data/DSAutoParam.h:
-
-../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
-
-../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
-
 ../src/Datablocks/AutoParams/DSAutoParamParser.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h:
+
+../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/AutoParams/../Data/DSAutoParam.h:
+
+../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h:
 
 ../src/Datablocks/Data/DSShadowParam.h:
 
@@ -1006,6 +1007,8 @@ src/Datablocks/DSLightDatablock.o: ../src/Datablocks/DSLightDatablock.cpp \
 ../src/Datablocks/Data/DSMaterialParam.h:
 
 ../src/Datablocks/Data/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/Data/../../DBParser/Template/MTMultiData.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/Vao/OgreVaoManager.h:
 

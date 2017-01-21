@@ -8,13 +8,11 @@
 #include "../../Datablocks/AutoParams/DSAutoParamTime.h"
 #include "OgreHardwareVertexBuffer.h"
 #include "OgreArchive.h"
-#include "DSAutoTime.h"
 #include "OgreTimer.h"
 #include "OgreStringConverter.h"
 #include "OgrePrerequisites.h"
 #include "OgreHlms.h"
 #include "DSAutoParamParser.h"
-#include "DSAutoTime.h"
 #include "OgreTimer.h"
 #include "OgreException.h"
 #include "OgreHlms.h"
@@ -43,7 +41,24 @@ void DSAutoParamTime::initialize(const HlmsParamVec& params) {
 	initData();
 
 }
+void Ogre::DSAutoParamTime::initialize(MT_MultiData* data) {
+	//"type=time,time=2000,pulse=on"
 
+	String paramVal;
+	this->type=VEC4;
+
+	if (data->has("time")) {
+		timeLenght=(data->getData("time").f);
+	}
+
+	pulse=data->getBool("pulse");
+
+
+	softpulse=data->getBool("softpulse");
+	timer=new Ogre::Timer();
+
+	initData();
+}
 DSAutoParamTime::~DSAutoParamTime() {
 	// TODO Auto-generated destructor stub
 }
@@ -58,9 +73,15 @@ void DSAutoParamTime::update() {
 			data[0]=(timeLenght-(timer->getMilliseconds()%timeLenght))/(timeLenght*1.0f);
 		}
 	}
-	data[1]=0.0;
-	data[2]=1.0;
+
+	if(softpulse){
+		data[0]=sin(data[0]*Math::PI*2);
+	}
+	data[1]=1-data[0];
+	data[2]=Math::Sqrt(1-pow(data[0],2));
 	data[3]=1/data[0];
 }
 
+
 } /* namespace Ogre */
+

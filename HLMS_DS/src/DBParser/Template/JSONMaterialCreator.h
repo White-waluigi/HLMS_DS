@@ -11,6 +11,7 @@
 #include "MTMultiData.h"
 #include "../../Helper/DSShaderGenerator.h"
 #include "../../Datablocks/Data/DSBlocks/MappingBlocks/DSMappingBlock.h"
+#include "../../Datablocks/AutoParams/DSAutoParamParser.h"
 namespace Ogre {
 class DSDatablock;
 class DSTextureParam;
@@ -21,6 +22,8 @@ class JSONMaterialCreator {
 	DSDatablock *db;
 	DSShaderGenerator::ShaderCode helper;
 	HlmsJson::NamedBlocks blocks;
+	DSAutoParamParser *APparser=NULL;
+
 
 public:
 	JSONMaterialCreator();
@@ -31,6 +34,8 @@ public:
 	void initializeMeta(MT_MultiData *mt);
 	void initializeSettings(MT_MultiData *mt);
 	void initializeParams(MT_MultiData *mt);
+
+	void initializeAutoparam(MT_MultiData *mt);
 
 	void initializeMappingBlock(MT_MultiData *mt);
 	void initializePaired(MT_MultiData *mt);

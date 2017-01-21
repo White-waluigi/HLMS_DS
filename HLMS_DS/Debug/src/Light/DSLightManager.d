@@ -282,12 +282,12 @@ src/Light/DSLightManager.o: ../src/Light/DSLightManager.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreString.h \
  ../src/Light/../Light/../Datablocks/Data/DSPieceParam.h \
  ../src/Light/../Light/../Datablocks/Data/DSPieceParamType.h \
- ../src/Light/../Light/../Datablocks/AutoParams/DSAutoTime.h \
- ../src/Light/../Light/../Datablocks/AutoParams/../Data/DSAutoParam.h \
- ../src/Light/../Light/../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- ../src/Light/../Light/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
  ../src/Light/../Light/../Datablocks/AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
+ ../src/Light/../Light/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
+ ../src/Light/../Light/../Datablocks/AutoParams/../Data/DSAutoParam.h \
+ ../src/Light/../Light/../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Light/../Light/../Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h \
  ../src/Light/../Light/../Datablocks/Data/DSShadowParam.h \
  ../src/Light/../Light/../Datablocks/Data/DSShadowTexture.h \
  ../src/Light/../Light/../Light/DSLightManager.h \
@@ -899,17 +899,17 @@ src/Light/DSLightManager.o: ../src/Light/DSLightManager.cpp \
 
 ../src/Light/../Light/../Datablocks/Data/DSPieceParamType.h:
 
-../src/Light/../Light/../Datablocks/AutoParams/DSAutoTime.h:
+../src/Light/../Light/../Datablocks/AutoParams/DSAutoParamParser.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
+
+../src/Light/../Light/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
 
 ../src/Light/../Light/../Datablocks/AutoParams/../Data/DSAutoParam.h:
 
 ../src/Light/../Light/../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
 
-../src/Light/../Light/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
-
-../src/Light/../Light/../Datablocks/AutoParams/DSAutoParamParser.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
+../src/Light/../Light/../Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h:
 
 ../src/Light/../Light/../Datablocks/Data/DSShadowParam.h:
 

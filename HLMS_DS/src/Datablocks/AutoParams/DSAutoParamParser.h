@@ -17,6 +17,7 @@
 #include "OgreHeaderPrefix.h"
 
 #include "../Data/DSAutoParam.h"
+#include "../../DBParser/Template/MTMultiData.h"
 
 namespace Ogre {
 class DSMaterialParam;
@@ -26,6 +27,7 @@ public:
 	virtual ~DSAutoParamParser();
 
 	DSMaterialParam*  getAutoParam(Ogre::String string);
+	DSMaterialParam*  getAutoParam(MT_MultiData * md);
 
 };
 

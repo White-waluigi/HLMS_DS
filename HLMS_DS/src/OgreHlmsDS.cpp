@@ -124,6 +124,8 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 
 	int GbufferTexID = -1;
 
+
+	//find the GBUffer Compoistor texture
 	int size = sceneManager->getCompositorTextures().size();
 	for (uint i = 0; i < size; i++) {
 		IdString name =
@@ -148,6 +150,8 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	}else{
 
 	}
+
+	//clear the old shadowMaps
 	mPreparedPass.shadowMaps.clear();
 
 	HlmsCache retVal = Hlms::preparePassHashBase(shadowNode, casterPass,
@@ -162,6 +166,7 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 		mPreparedPass.shadowMaps.push_back(
 				shadowNode->getLocalTextures()[i].textures[0]);
 
+	//check check if we are in the first pass
 	if (mWSListener->passType == HLMSDSWorkspaceListener::PT_SHADOW
 			&& !casterPass) {
 		lightmanager->CheckForNewLights(sceneManager, shadowNode,
@@ -179,7 +184,7 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 		mCurrentShadowmapSamplerblock = mShadowmapCmpSamplerblock;
 
 	Ogre::Camera * camera = sceneManager->getCameraInProgress();
-
+	//map all the matrixes to the passbuffer
 	static bool setonce = false;
 	view = sceneManager->getCameraInProgress()->getViewMatrix();
 	proj = sceneManager->getCameraInProgress()->getProjectionMatrix();
@@ -196,7 +201,6 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 
 	}
 
-//	if(!setonce||!casterPass){
 	setonce = true;
 
 	mPreparedPass.viewMatrix = view;
@@ -206,35 +210,10 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 
 //	}
 	Matrix4 tempTexProjMat;
-//	if (casterPass) {
-// 	    const Matrix4 PROJECTIONCLIPSPACE2DTOIMAGESPACE_PERSPECTIVE(
-// 	        0.5,    0,    0,  0.5,
-// 	        0,   -0.5,    0,  0.5,
-// 	        0,      0,    1,    0,
-// 	        0,      0,    0,    1);
-//
-//		Matrix4 viewMatrix;
-//		sceneManager->getCameraInProgress()->calcViewMatrixRelative(
-//				Vector3(0, 0, 0), viewMatrix);
-//		Matrix4 TextureViewProjMatrix;
-//
-//		TextureViewProjMatrix =
-//				PROJECTIONCLIPSPACE2DTOIMAGESPACE_PERSPECTIVE
-//						* sceneManager->getCameraInProgress()->getProjectionMatrixWithRSDepth()
-//						* viewMatrix;
-//
-//		if (LightCamMat.size() <= CurLightMat) {
-//			LightCamMat.push_back(TextureViewProjMatrix);
-//
-//		} else {
-//			LightCamMat.at(CurLightMat) = TextureViewProjMatrix;
-//		}
-//		//tempTexProjMat=TextureViewProjMatrix;
-//
-//	}
-//	CurLightMat++;
 
-//seams more modern to hold the data in a buffer, since its a few kb at most
+
+//seams more modern to hold the passbufferdata in a buffer instead of directly sending to thre GPU, since its a few kb at most and lets me keep better track of it and debug it easier
+
 	std::vector<float> * passbufferBuffer = new std::vector<float>();
 
 	//******************Debug Modes**********************************************
@@ -351,7 +330,7 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 
 	//**********************Shadow Info********************************************
 	//Why is this the only way to link shadow maps to lights?
-
+	//mapp all the required shadow map and their data to the Passbuffer (Deferred shadows use data in their Datablocks, but this is needed for the forwarded lights)
 	if (!casterPass && shadowNode != NULL) {
 
 		int numPssmSplits = getProperty(HlmsBaseProp::PssmSplits);
@@ -365,6 +344,7 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 			passbufferBuffer->push_back(0);
 
 		}
+
 		for (int j = 0; j < numShadowMaps; j++) {
 			int currentShadowMap = 0;
 
@@ -440,7 +420,6 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	maxBufferSize = 16 * 1024;
 
 	if (mCurrentPassBuffer >= mPassBuffers.size()) {
-		//todo fix this
 		mPassBuffers.push_back(
 				mVaoManager->createConstBuffer(maxBufferSize,
 						BT_DYNAMIC_PERSISTENT, 0, false));
@@ -451,6 +430,8 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 			maxBufferSize));
 
 	for (uint i = 0; i < passbufferBuffer->size(); i++) {
+		//finally map it to the Passsbuffer on the GPU
+
 		*passBufferPtr++ = passbufferBuffer->at(i);
 	}
 
@@ -466,6 +447,7 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 
 	passBuffer->unmap(UO_KEEP_PERSISTENT);
 
+
 	uploadDirtyDatablocks();
 	uploadDirtyDSDatablocks();
 
@@ -479,9 +461,11 @@ void HlmsDS::setProperties(Renderable* renderable, PiecesMap* inOutPieces,
 	IdString("hw_gamma_read");
 	setProperty(IdString("NumShadowMaps"), mPreparedPass.shadowMaps.size());
 
+	//might be obsolete soon
 	int dbType = getDatablocktype(renderable->getDatablock());
 
 	int count = 0;
+
 	if (dbType == DT_Forward) {
 		count++;
 		setProperty(DSProperty::isForward, 1);
@@ -494,16 +478,10 @@ void HlmsDS::setProperties(Renderable* renderable, PiecesMap* inOutPieces,
 	}
 
 	if (dbType == DT_GBuffer) {
-//		DSDatablock * datablock =
-//				dynamic_cast<DSDatablock*>(renderable->getDatablock());
+
 		count++;
 		setProperty(DSProperty::isGBuffer, 1);
 
-//		if (getProperty(DSProperty::NumTextures) != 0) {
-//
-//		}
-//		setProperty(DSProperty::DiffuseMap, 1);
-//		setProperty(DSProperty::NormalMap, 1);
 
 	}
 	assert(count == 1);
@@ -522,6 +500,7 @@ void HlmsDS::setProperties(Renderable* renderable, PiecesMap* inOutPieces,
 void HlmsDS::setPieces(Renderable* renderable, PiecesMap* inOutPieces,
 		bool bool1) {
 
+	//all necessary pieces are already defined in the datablocks
 	DSDatablock * datablock =
 			dynamic_cast<DSDatablock*>(renderable->getDatablock());
 
@@ -535,7 +514,6 @@ void HlmsDS::calculateHashForPreCreate(Renderable* renderable,
 		PiecesMap* inOutPieces) {
 	Ogre::String uwot = renderable->getDatablock()->getName().getFriendlyText();
 
-	std::cout << "*****************\n calculateHashForPreCreate:" << uwot;
 
 	setProperties(renderable, inOutPieces, false);
 	setPieces(renderable, inOutPieces, false);
@@ -554,18 +532,7 @@ void Ogre::HlmsDS::calculateHashForPreCaster(Renderable* renderable,
 	HlmsPropertyVec::iterator itor = mSetProperties.begin();
 	HlmsPropertyVec::iterator end = mSetProperties.end();
 
-//	while (itor != end) {
-//
-//		if (itor->keyName != HlmsBaseProp::Skeleton
-//				&& itor->keyName != HlmsBaseProp::BonesPerVertex
-//				&& itor->keyName != HlmsBaseProp::DualParaboloidMapping
-//				&& itor->keyName != HlmsBaseProp::AlphaTest) {
-//			itor = mSetProperties.erase(itor);
-//			end = mSetProperties.end();
-//		} else {
-//			++itor;
-//		}
-//	}
+	//todo skeleton, animation support
 
 	DSDatablock *datablock =
 			static_cast<DSDatablock*>(renderable->getDatablock());
@@ -580,7 +547,6 @@ void Ogre::HlmsDS::calculateHashForPreCaster(Renderable* renderable,
 }
 
 void HlmsDS::destroyAllBuffers(void) {
-	//std::cout <<"*****************************************\n"<<"destroyAllBuffers"<<"\n";
 	HlmsBufferManager::destroyAllBuffers();
 
 	mCurrentPassBuffer = 0;
@@ -615,7 +581,9 @@ void HlmsDS::destroyAllBuffers(void) {
 		mPassBuffers.clear();
 	}
 }
+//very usefull for testing if buffers are uploaded correctly
 Vector3 rainbow(float x) {
+
 	float div = (std::abs(fmod(x, 1.0f)) * 6);
 	int ascending = (int) (fmod(div, 1.0f) * 255);
 	int descending = 255 - ascending;
@@ -638,6 +606,8 @@ Vector3 rainbow(float x) {
 		return Vector3(1, 0, d);
 	}
 }
+
+//Also for testing
 Vector3 rainbow() {
 	static float r = 0;
 	r += 0.0001;
@@ -666,6 +636,7 @@ inline uint32 HlmsDS::fillBuffersFor(const HlmsCache* cache,
 //																		   passBuffer->getTotalSizeBytes() );
 		int texUnit = 5;
 
+		//map the Gbuffer
 		if (dbt == this->DT_Light) {
 			const DSLightDatablock *ldatablock =
 					static_cast<const DSLightDatablock*>(queuedRenderable.renderable->getDatablock());
@@ -899,9 +870,6 @@ HlmsDatablock* HlmsDS::createDatablockImpl(IdString datablockName,
 	bool light = false;
 
 	for (uint i = 0; i < paramVec.size(); i++) {
-		//std::cout<<IdString("type").mDebugString<<"\n";
-		//std::cout<<paramVec.at(i).first.mHash<<"\n";
-
 		if (paramVec.at(i).first == IdString("type")) {
 			light = paramVec[i].second.compare("light") == 0;
 		}
@@ -945,9 +913,9 @@ void HlmsDS::_changeRenderSystem(RenderSystem* newRs) {
 		samplerblock.mBorderColour = ColourValue::White;
 
 		if (mShaderProfile != "hlsl") {
-			samplerblock.mMinFilter = FO_POINT;
-			samplerblock.mMagFilter = FO_POINT;
-			samplerblock.mMipFilter = FO_NONE;
+			samplerblock.mMinFilter = FO_ANISOTROPIC;
+			samplerblock.mMagFilter = FO_ANISOTROPIC;
+			samplerblock.mMipFilter = FO_ANISOTROPIC;
 
 			if (!mShadowmapSamplerblock)
 				mShadowmapSamplerblock = mHlmsManager->getSamplerblock(
@@ -1092,80 +1060,23 @@ int HlmsDS::generateWorldMatrixBuffer(const HlmsCache* cache,
 
 	}
 
-	//uint worldMaterialIdx[]
 
-//	mat4x3 world
-
-	Matrix4 test = Matrix4 { 0.1, 0.9, 0.9, 0, 0.4, 0.9, 0.4, 0, 0.4, 0.6, 0.9,
-			0, 0.4, 0.6, 0.4, 0 };
-	//test=worldMat;
-//	incr += 0.01;
-//	incr = fmod(incr, 1.0);
-//	Vector3 colors = rainbow(incr);
-//	float tmpf[4];
-	//tmp[0]=tmpf[4];
-//	if (casterPass) {
-//
-//		for (int i = 0; i < 4; i++) {
-//			incr += 0.01;
-//			incr = fmod(incr, 1.0);
-//			Vector3 colors = rainbow(incr);
-//			float tmpf[4];
-//			float test=(i)/4.0;
-//			tmpf[0] = 1;
-//			tmpf[1] = 0;
-//			tmpf[2] = 0;
-//
-//			memcpy(currentMappedTexBuffer, &tmpf, 4 * sizeof(float));
-//			currentMappedTexBuffer += 4;
-//
-//		}
-//
-//	} else {
-
-//	if (!casterPass) {
 
 	memcpy(currentMappedTexBuffer, &worldMat, 4 * 4 * sizeof(float));
-//	}else{
-//		Matrix4 test=Matrix4::IDENTITY;
-//		memcpy(currentMappedTexBuffer, &test, 4 * 4 * sizeof(float));
-//	}
 
 	currentMappedTexBuffer += 16;
-//	}
-	//mat4 worldView
+
 	Matrix4 tmp = mPreparedPass.viewMatrix.concatenateAffine(worldMat);
 	tmp = mPreparedPass.viewMatrix * worldMat;
 #ifdef OGRE_GLES2_WORKAROUND_1
 	tmp = tmp.transpose();
 #endif
 
-//	if (casterPass) {
-//		test = Matrix4(incr, incr, incr, incr, incr, incr, incr, incr, incr,
-//				incr, incr, incr, incr, incr, incr, incr);
-//		for (int i = 0; i < 4; i++) {
-//			incr += 0.01;
-//			incr = fmod(incr, 1.0);
-//			Vector3 colors = rainbow(incr);
-//			float tmpf[4];
-//			float test=(i+4)/4.0;
-//
-//			tmpf[0] = colors[0];
-//			tmpf[1] = colors[1];
-//			tmpf[2] = colors[2];
-//			tmpf[0] = incr;
-//			tmpf[1] = incr;
-//			tmpf[2] = incr;
-//			memcpy(currentMappedTexBuffer, &tmpf, 4 * sizeof(float));
-//			currentMappedTexBuffer += 4;
-//
-//		}
-//	} else {
+
 
 	memcpy(currentMappedTexBuffer, &tmp, sizeof(Matrix4));
 	currentMappedTexBuffer += 16;
 
-//	}
 
 #else
 #error Not Coded Yet! (cannot use memcpy on Matrix4)
@@ -1189,22 +1100,25 @@ int HlmsDS::generateWorldMatrixBuffer(const HlmsCache* cache,
 void HlmsDS::_loadJson(const rapidjson::Value &jsonValue,
 		const HlmsJson::NamedBlocks &blocks, HlmsDatablock *datablock) const {
 
-
+	//take a default Datablock and transform it into a JSON Datablock
 	jsonDs->loadMaterial(jsonValue, blocks, datablock);
 }
 //-----------------------------------------------------------------------------------
 void HlmsDS::_saveJson(const HlmsDatablock *datablock,
 		String &outString) const {
+	//todo
 	jsonDs->saveMaterial(datablock, outString);
 }
 //-----------------------------------------------------------------------------------
 void HlmsDS::_collectSamplerblocks(
 		set<const HlmsSamplerblock*>::type &outSamplerblocks,
 		const HlmsDatablock *datablock) const {
+	//todo
 	JsonParser::collectSamplerblocks(datablock, outSamplerblocks);
 }
 #endif
 const HlmsSamplerblock* HlmsDS::getSamplerBlock(
+		//shortcut
 		HlmsSamplerblock hlmsSamplerblock) {
 	return mHlmsManager->getSamplerblock(hlmsSamplerblock);
 }

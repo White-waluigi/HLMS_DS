@@ -10,38 +10,6 @@
 namespace Ogre {
 
 
-//const VerticeData c_originalVertices[8] = { VerticeData(-1, -1, 1, -0.57737,
-//		-0.57737, 0.57737), VerticeData(1, -1, 1, 0.57737, -0.57737, 0.57737),
-//		VerticeData(1, 1, 1, 0.57737, 0.57737, 0.57737), VerticeData(-1, 1, 1,
-//				-0.57737, 0.57737, 0.57737), VerticeData(-1, -1, -1, -0.57737,
-//				-0.57737, -0.57737), VerticeData(1, -1, -1, 0.57737, -0.57737,
-//				-0.57737), VerticeData(1, 1, -1, 0.57737, 0.57737, -0.57737),
-//		VerticeData(-1, 1, -1, -0.57737, 0.57737, -0.57737) };
-//
-//const VerticeData c_Cone[8] = { VerticeData(-1, -1, 1, -0.57737, -0.57737,
-//		0.57737), VerticeData(1, -1, 1, 0.57737, -0.57737, 0.57737),
-//		VerticeData(1, 1, 1, 0.57737, 0.57737, 0.57737), VerticeData(-1, 1, 1,
-//				-0.57737, 0.57737, 0.57737), VerticeData(-1, -1, -1, -0.57737,
-//				-0.57737, -0.57737), VerticeData(1, -1, -1, 0.57737, -0.57737,
-//				-0.57737), VerticeData(1, 1, -1, 0.57737, 0.57737, -0.57737),
-//		VerticeData(-1, 1, -1, -0.57737, 0.57737, -0.57737) };
-//
-//const VerticeData c_Sphere[8] = { VerticeData(-1, -1, 1, -0.57737, -0.57737,
-//		0.57737), VerticeData(1, -1, 1, 0.57737, -0.57737, 0.57737),
-//		VerticeData(1, 1, 1, 0.57737, 0.57737, 0.57737), VerticeData(-1, 1, 1,
-//				-0.57737, 0.57737, 0.57737), VerticeData(-1, -1, -1, -0.57737,
-//				-0.57737, -0.57737), VerticeData(1, -1, -1, 0.57737, -0.57737,
-//				-0.57737), VerticeData(1, 1, -1, 0.57737, 0.57737, -0.57737),
-//		VerticeData(-1, 1, -1, -0.57737, 0.57737, -0.57737) };
-//
-//const VerticeData c_Quad[8] = { VerticeData(-1, -1, 1, -0.57737, -0.57737,
-//		0.57737), VerticeData(1, -1, 1, 0.57737, -0.57737, 0.57737),
-//		VerticeData(1, 1, 1, 0.57737, 0.57737, 0.57737), VerticeData(-1, 1, 1,
-//				-0.57737, 0.57737, 0.57737), VerticeData(-1, -1, -1, -0.57737,
-//				-0.57737, -0.57737), VerticeData(1, -1, -1, 0.57737, -0.57737,
-//				-0.57737), VerticeData(1, 1, -1, 0.57737, 0.57737, -0.57737),
-//		VerticeData(-1, 1, -1, -0.57737, 0.57737, -0.57737) };
-
 DSLight::DSLight(const Ogre::Light * parent,Ogre::IdType id,
 		Ogre::ObjectMemoryManager *objectMemoryManager,
 		Ogre::SceneManager *manager, Ogre::uint8 renderQueueId) :

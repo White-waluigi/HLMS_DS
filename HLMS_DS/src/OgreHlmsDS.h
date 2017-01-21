@@ -85,6 +85,8 @@ public:
     std::vector<TexturePtr> *	mGBuffer;
     std::vector<int> *			mGBufferInd;
 
+
+    //Determine the current pass ID
     HLMSDSWorkspaceListener * mWSListener;
 
 
@@ -142,6 +144,8 @@ public:
 
     ConstBufferPool::BufferPool const *mLastBoundPool;
 
+
+    //Debug Variable in the Passbuffre
     enum DebugMode{
     	DM_OFF,
 		DM_DEPTH,
@@ -173,6 +177,7 @@ public:
 		FBM_NUM
     };
     FullBrightMode fullBrightMode;
+
 
     int Debugz=0;
     int Debugw=0;

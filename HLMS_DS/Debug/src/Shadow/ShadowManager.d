@@ -62,11 +62,7 @@ src/Shadow/ShadowManager.o: ../src/Shadow/ShadowManager.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMatrix3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector4.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h \
- ../src/Shadow/../Datablocks/Data/DSTextureParam.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector2.h \
- ../src/Shadow/../Datablocks/Data/../DSDatablock.h \
- ../src/Shadow/../Datablocks/Data/../../OgreHlmsDSPrerequisites.h \
- ../src/Shadow/../Datablocks/Data/../Data/DSPropertyParam.h \
+ ../src/Shadow/../Datablocks/Data/../../DBParser/Template/MTMultiData.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimation.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrappers.h \
@@ -272,16 +268,21 @@ src/Shadow/ShadowManager.o: ../src/Shadow/ShadowManager.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreWindowEventUtilities.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetup.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetupFocused.h \
+ ../src/Shadow/../Datablocks/Data/DSTextureParam.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector2.h \
+ ../src/Shadow/../Datablocks/Data/../DSDatablock.h \
+ ../src/Shadow/../Datablocks/Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Shadow/../Datablocks/Data/../Data/DSPropertyParam.h \
  ../src/Shadow/../Datablocks/Data/../Data/DSPropertyParamType.h \
  ../src/Shadow/../Datablocks/Data/../Data/DSPieceParam.h \
  ../src/Shadow/../Datablocks/Data/../Data/DSPieceParamType.h \
- ../src/Shadow/../Datablocks/Data/../AutoParams/DSAutoTime.h \
- ../src/Shadow/../Datablocks/Data/../AutoParams/../Data/DSAutoParam.h \
- ../src/Shadow/../Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- ../src/Shadow/../Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h \
  ../src/Shadow/../Datablocks/Data/../AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h \
+ ../src/Shadow/../Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h \
+ ../src/Shadow/../Datablocks/Data/../AutoParams/../Data/DSAutoParam.h \
+ ../src/Shadow/../Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Shadow/../Datablocks/Data/../AutoParams/../../DBParser/Template/MTMultiData.h \
  ../src/Shadow/../Datablocks/Data/../Data/DSShadowParam.h \
  ../src/Shadow/../Datablocks/Data/../Data/DSShadowTexture.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsSamplerblock.h \
@@ -454,15 +455,7 @@ src/Shadow/ShadowManager.o: ../src/Shadow/ShadowManager.cpp \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h:
 
-../src/Shadow/../Datablocks/Data/DSTextureParam.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector2.h:
-
-../src/Shadow/../Datablocks/Data/../DSDatablock.h:
-
-../src/Shadow/../Datablocks/Data/../../OgreHlmsDSPrerequisites.h:
-
-../src/Shadow/../Datablocks/Data/../Data/DSPropertyParam.h:
+../src/Shadow/../Datablocks/Data/../../DBParser/Template/MTMultiData.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h:
 
@@ -874,25 +867,35 @@ src/Shadow/ShadowManager.o: ../src/Shadow/ShadowManager.cpp \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetupFocused.h:
 
+../src/Shadow/../Datablocks/Data/DSTextureParam.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector2.h:
+
+../src/Shadow/../Datablocks/Data/../DSDatablock.h:
+
+../src/Shadow/../Datablocks/Data/../../OgreHlmsDSPrerequisites.h:
+
+../src/Shadow/../Datablocks/Data/../Data/DSPropertyParam.h:
+
 ../src/Shadow/../Datablocks/Data/../Data/DSPropertyParamType.h:
 
 ../src/Shadow/../Datablocks/Data/../Data/DSPieceParam.h:
 
 ../src/Shadow/../Datablocks/Data/../Data/DSPieceParamType.h:
 
-../src/Shadow/../Datablocks/Data/../AutoParams/DSAutoTime.h:
-
-../src/Shadow/../Datablocks/Data/../AutoParams/../Data/DSAutoParam.h:
-
-../src/Shadow/../Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
-
-../src/Shadow/../Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h:
-
 ../src/Shadow/../Datablocks/Data/../AutoParams/DSAutoParamParser.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h:
+
+../src/Shadow/../Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h:
+
+../src/Shadow/../Datablocks/Data/../AutoParams/../Data/DSAutoParam.h:
+
+../src/Shadow/../Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
+
+../src/Shadow/../Datablocks/Data/../AutoParams/../../DBParser/Template/MTMultiData.h:
 
 ../src/Shadow/../Datablocks/Data/../Data/DSShadowParam.h:
 

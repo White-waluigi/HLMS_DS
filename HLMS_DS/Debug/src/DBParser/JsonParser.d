@@ -282,19 +282,20 @@ src/DBParser/JsonParser.o: ../src/DBParser/JsonParser.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreString.h \
  ../src/DBParser/../Datablocks/Data/DSPieceParam.h \
  ../src/DBParser/../Datablocks/Data/DSPieceParamType.h \
- ../src/DBParser/../Datablocks/AutoParams/DSAutoTime.h \
- ../src/DBParser/../Datablocks/AutoParams/../Data/DSAutoParam.h \
- ../src/DBParser/../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- ../src/DBParser/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
  ../src/DBParser/../Datablocks/AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
+ ../src/DBParser/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
+ ../src/DBParser/../Datablocks/AutoParams/../Data/DSAutoParam.h \
+ ../src/DBParser/../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/DBParser/../Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h \
  ../src/DBParser/../Datablocks/Data/DSShadowParam.h \
  ../src/DBParser/../Datablocks/Data/DSShadowTexture.h \
  ../src/DBParser/Template/JSONMaterialCreator.h \
  ../src/DBParser/Template/../JsonParser.h \
  ../src/DBParser/Template/../../Helper/DSShaderGenerator.h \
  ../src/DBParser/Template/../../Datablocks/Data/DSBlocks/MappingBlocks/DSMappingBlock.h \
- ../src/DBParser/Template/../../Datablocks/Data/DSBlocks/MappingBlocks/../../../../DBParser/Template/MTMultiData.h
+ ../src/DBParser/Template/../../Datablocks/Data/DSBlocks/MappingBlocks/../../../../DBParser/Template/MTMultiData.h \
+ ../src/DBParser/Template/../../Datablocks/AutoParams/DSAutoParamParser.h
 
 ../src/DBParser/JsonParser.h:
 
@@ -864,17 +865,17 @@ src/DBParser/JsonParser.o: ../src/DBParser/JsonParser.cpp \
 
 ../src/DBParser/../Datablocks/Data/DSPieceParamType.h:
 
-../src/DBParser/../Datablocks/AutoParams/DSAutoTime.h:
+../src/DBParser/../Datablocks/AutoParams/DSAutoParamParser.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
+
+../src/DBParser/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
 
 ../src/DBParser/../Datablocks/AutoParams/../Data/DSAutoParam.h:
 
 ../src/DBParser/../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
 
-../src/DBParser/../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
-
-../src/DBParser/../Datablocks/AutoParams/DSAutoParamParser.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
+../src/DBParser/../Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h:
 
 ../src/DBParser/../Datablocks/Data/DSShadowParam.h:
 
@@ -889,3 +890,5 @@ src/DBParser/JsonParser.o: ../src/DBParser/JsonParser.cpp \
 ../src/DBParser/Template/../../Datablocks/Data/DSBlocks/MappingBlocks/DSMappingBlock.h:
 
 ../src/DBParser/Template/../../Datablocks/Data/DSBlocks/MappingBlocks/../../../../DBParser/Template/MTMultiData.h:
+
+../src/DBParser/Template/../../Datablocks/AutoParams/DSAutoParamParser.h:

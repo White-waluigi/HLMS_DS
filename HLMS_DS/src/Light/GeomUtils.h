@@ -14,7 +14,7 @@ same license as the rest of the engine.
 
 #ifndef _GEOMUTILS_H
 #define _GEOMUTILS_H
-
+//For generating the lightmeshes
 #include "OgreString.h"
 #include "OgreVertexIndexData.h"
  struct VerticeData

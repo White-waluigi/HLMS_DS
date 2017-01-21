@@ -24,8 +24,10 @@ public:
 
 	int timeLenght=1000;
 	bool pulse=false;
+	bool softpulse=false;
 
 	virtual void initialize(const HlmsParamVec &params);
+	virtual void initialize(MT_MultiData *data);
 
 	DSAutoParamTime();
 	virtual ~DSAutoParamTime();

@@ -15,7 +15,6 @@
 #include "OgreHeaderPrefix.h"
 #include "Data/DSPropertyParam.h"
 #include "Data/DSPieceParam.h"
-#include "AutoParams/DSAutoTime.h"
 #include "AutoParams/DSAutoParamParser.h"
 #include "Data/DSShadowParam.h"
 #include "Data/DSShadowTexture.h"

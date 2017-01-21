@@ -38,9 +38,7 @@ void JsonParser::loadMaterial(const rapidjson::Value& json,
     std::cout <<"#####################################JSON: "<<name<<"#####################################\n";
    // printValue(json,1);
 
-	String samplername="DoomSB";
-	rapidjson::Value val;
-	val.SetString("DoomSB");
+
 	int inte=0;
 
 	QueueItem *test=new QueueItem();

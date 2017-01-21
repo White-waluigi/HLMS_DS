@@ -269,13 +269,13 @@ src/Datablocks/Data/DSTextureParamType.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreString.h \
  ../src/Datablocks/Data/../Data/DSPieceParam.h \
  ../src/Datablocks/Data/../Data/DSPieceParamType.h \
- ../src/Datablocks/Data/../AutoParams/DSAutoTime.h \
- ../src/Datablocks/Data/../AutoParams/../Data/DSAutoParam.h \
- ../src/Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- ../src/Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h \
  ../src/Datablocks/Data/../AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h \
+ ../src/Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/Data/../AutoParams/../Data/DSAutoParam.h \
+ ../src/Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/Data/../AutoParams/../../DBParser/Template/MTMultiData.h \
  ../src/Datablocks/Data/../Data/DSShadowParam.h \
  ../src/Datablocks/Data/../Data/DSShadowTexture.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsSamplerblock.h
@@ -818,19 +818,19 @@ src/Datablocks/Data/DSTextureParamType.o: \
 
 ../src/Datablocks/Data/../Data/DSPieceParamType.h:
 
-../src/Datablocks/Data/../AutoParams/DSAutoTime.h:
-
-../src/Datablocks/Data/../AutoParams/../Data/DSAutoParam.h:
-
-../src/Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
-
-../src/Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h:
-
 ../src/Datablocks/Data/../AutoParams/DSAutoParamParser.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h:
+
+../src/Datablocks/Data/../AutoParams/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/Data/../AutoParams/../Data/DSAutoParam.h:
+
+../src/Datablocks/Data/../AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/Data/../AutoParams/../../DBParser/Template/MTMultiData.h:
 
 ../src/Datablocks/Data/../Data/DSShadowParam.h:
 

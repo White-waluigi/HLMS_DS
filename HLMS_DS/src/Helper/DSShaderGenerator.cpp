@@ -26,7 +26,9 @@ DSShaderGenerator::ShaderCode DSShaderGenerator::generateTextureHelperCode(Ogre:
 }
 
 DSShaderGenerator::ShaderCode DSShaderGenerator::generateVarHelperCode(Ogre::String varname, Ogre::String datatype) {
-	//nothing necessary really
+	assert(varname.compare("")!=0);
+	assert(datatype.compare("")!=0);
+
 	return DSShaderGenerator::ShaderCode::getDefault(datatype+" "+varname+"="+ "material.vec4_"+varname+";");
 }
 
@@ -48,7 +50,6 @@ DSShaderGenerator::~DSShaderGenerator() {
 }
 
 DSShaderGenerator::ShaderCode DSShaderGenerator::ShaderCode::merge(DSShaderGenerator::ShaderCode s1,DSShaderGenerator::ShaderCode s2) {
-
 
 		ShaderCode retVal;
 	  for (std::map<Ogre::String,Ogre::String>::iterator it=s1.code.begin(); it!=s1.code.end(); ++it){

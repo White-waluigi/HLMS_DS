@@ -54,6 +54,7 @@ public:
 	MT_MultiData(Ogre::String key,Ogre::String str);
 	MT_MultiData(Ogre::String key,float f);
 	MT_MultiData(Ogre::String key,MT_MultiData * mt);
+	MT_MultiData(Ogre::String key,Ogre::String strvec,float def);
 
 	int size();
 	int size(String s);
@@ -72,6 +73,10 @@ public:
 	void as(Ogre::String str);
 	void af(float f);
 	void ao(MT_MultiData *mt);
+	void ao(Ogre::String key,Ogre::String str);
+	void ao(Ogre::String key,float flt);
+
+
 	bool getBool(Ogre::String);
 	void s();
 

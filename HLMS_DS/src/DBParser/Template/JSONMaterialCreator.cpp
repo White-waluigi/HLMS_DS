@@ -21,6 +21,9 @@ namespace Ogre {
 JSONMaterialCreator::JSONMaterialCreator() {
 	// TODO Auto-generated constructor stub
 	this->helper=DSShaderGenerator::ShaderCode::getDefault("");
+	this->APparser=new DSAutoParamParser();
+	this->db=NULL;
+
 }
 
 JSONMaterialCreator::~JSONMaterialCreator() {
@@ -109,6 +112,8 @@ void JSONMaterialCreator::initializeParams(MT_MultiData* mts) {
 		if(type.compare("variable")==0){initializeVariable(mt);}
 		if(type.compare("texture")==0){initializeTexture(mt);}
 
+		if(type.compare("autoparam")==0){initializeAutoparam(mt);}
+
 		if(type.compare("piece")==0){initializePiece(mt);}
 		if(type.compare("property")==0){initializeProperty(mt);}
 
@@ -195,7 +200,6 @@ void JSONMaterialCreator::initializeVariable(MT_MultiData* mt) {
 	}
 //******************************************************************************************************************
 
-
 	DSMaterialParam* param=new DSMaterialParam();
 
 	initVarData(param,mt->getObject("varData").o,dtype,mt->key);
@@ -276,6 +280,8 @@ void JSONMaterialCreator::initVarData(DSMaterialParam* param, MT_MultiData* mt,O
 
 
 		}
+	}else if(type.compare("autoparam")){
+		APparser->getAutoParam(mt->getObject("params").o);
 	}
 	assert(rvmd!=NULL);
 	data=new float[size];
@@ -345,6 +351,24 @@ void JSONMaterialCreator::quickSet(Ogre::String allocator, int i) {
 	test->setKey(Ogre::String(allocator));
 	test->setValue(i);
 	db->propertyParams->push_back(test);
+}
+
+void JSONMaterialCreator::initializeAutoparam(MT_MultiData* mt) {
+//******************************************************************************************************************
+	DSMaterialParam* param= APparser->getAutoParam(mt->getObject("params").o);
+	if(param==NULL){
+		return;
+	}
+	param->setParamName(mt->key);
+	param->setPostFix(mt->key);
+	//param.type = &*it;
+
+	db->materialParams->push_back(param);
+
+	if(mt->getBool("helper")){
+		helper=DSShaderGenerator::ShaderCode::merge(helper,DSShaderGenerator::generateVarHelperCode(param->postFix,param->getTypeString(0)));
+	}
+
 }
 
 void JSONMaterialCreator::quickSet(Ogre::String allocator) {

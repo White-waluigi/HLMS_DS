@@ -48,4 +48,23 @@ DSMaterialParam *DSAutoParamParser::getAutoParam(Ogre::String string) {
 	return retval;
 }
 
+DSMaterialParam* DSAutoParamParser::getAutoParam(MT_MultiData* md) {
+	Ogre::String type;
+	if(md->has("type")){
+		type=md->getData("type").s;
+	}else{
+		return 0;
+	}
+
+	DSMaterialParam * retval=NULL;
+
+
+	if(type.compare(DSAutoParamTime::getParamName())==0){
+		retval=new  DSAutoParamTime();
+		retval->initialize(md);
+	}
+
+	return retval;
+}
 } /* namespace Ogre */
+

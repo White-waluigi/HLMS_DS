@@ -15,7 +15,7 @@
 #include "OgreConstBufferPool.h"
 #include "OgreHeaderPrefix.h"
 #include "OgreMatrix4.h"
-
+#include "../../DBParser/Template/MTMultiData.h"
 namespace Ogre {
 
 
@@ -82,6 +82,7 @@ public:
 
 	//must be overriden
 	virtual void initialize(const HlmsParamVec &params);
+	virtual void initialize(MT_MultiData * data);
 	virtual ~DSMaterialParam();
 	float* getData() const;
 	void setData(float* data);

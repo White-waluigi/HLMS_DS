@@ -61,9 +61,7 @@ src/Datablocks/Data/DSMaterialParam.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMatrix3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector4.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h \
- ../src/Datablocks/Data/../../Datablocks/DSDatablock.h \
- ../src/Datablocks/Data/../../Datablocks/../OgreHlmsDSPrerequisites.h \
- ../src/Datablocks/Data/../../Datablocks/Data/DSPropertyParam.h \
+ ../src/Datablocks/Data/../../Datablocks/Data/../../DBParser/Template/MTMultiData.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimation.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrappers.h \
@@ -269,16 +267,19 @@ src/Datablocks/Data/DSMaterialParam.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreWindowEventUtilities.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetup.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetupFocused.h \
+ ../src/Datablocks/Data/../../Datablocks/DSDatablock.h \
+ ../src/Datablocks/Data/../../Datablocks/../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/Data/../../Datablocks/Data/DSPropertyParam.h \
  ../src/Datablocks/Data/../../Datablocks/Data/DSPropertyParamType.h \
  ../src/Datablocks/Data/../../Datablocks/Data/DSPieceParam.h \
  ../src/Datablocks/Data/../../Datablocks/Data/DSPieceParamType.h \
- ../src/Datablocks/Data/../../Datablocks/AutoParams/DSAutoTime.h \
- ../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/DSAutoParam.h \
- ../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- ../src/Datablocks/Data/../../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
  ../src/Datablocks/Data/../../Datablocks/AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h \
+ ../src/Datablocks/Data/../../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/DSAutoParam.h \
+ ../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/Data/../../Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h \
  ../src/Datablocks/Data/../../Datablocks/Data/DSShadowParam.h \
  ../src/Datablocks/Data/../../Datablocks/Data/DSShadowTexture.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringConverter.h
@@ -405,11 +406,7 @@ src/Datablocks/Data/DSMaterialParam.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h:
 
-../src/Datablocks/Data/../../Datablocks/DSDatablock.h:
-
-../src/Datablocks/Data/../../Datablocks/../OgreHlmsDSPrerequisites.h:
-
-../src/Datablocks/Data/../../Datablocks/Data/DSPropertyParam.h:
+../src/Datablocks/Data/../../Datablocks/Data/../../DBParser/Template/MTMultiData.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h:
 
@@ -821,25 +818,31 @@ src/Datablocks/Data/DSMaterialParam.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetupFocused.h:
 
+../src/Datablocks/Data/../../Datablocks/DSDatablock.h:
+
+../src/Datablocks/Data/../../Datablocks/../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/Data/../../Datablocks/Data/DSPropertyParam.h:
+
 ../src/Datablocks/Data/../../Datablocks/Data/DSPropertyParamType.h:
 
 ../src/Datablocks/Data/../../Datablocks/Data/DSPieceParam.h:
 
 ../src/Datablocks/Data/../../Datablocks/Data/DSPieceParamType.h:
 
-../src/Datablocks/Data/../../Datablocks/AutoParams/DSAutoTime.h:
-
-../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/DSAutoParam.h:
-
-../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
-
-../src/Datablocks/Data/../../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
-
 ../src/Datablocks/Data/../../Datablocks/AutoParams/DSAutoParamParser.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h:
+
+../src/Datablocks/Data/../../Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/DSAutoParam.h:
+
+../src/Datablocks/Data/../../Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/Data/../../Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h:
 
 ../src/Datablocks/Data/../../Datablocks/Data/DSShadowParam.h:
 

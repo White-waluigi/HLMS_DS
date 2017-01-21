@@ -61,14 +61,28 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMatrix3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector4.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStableHeaders.h \
+ ../src/Datablocks/../Datablocks/Data/../../DBParser/Template/MTMultiData.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimation.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrappers.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrapper.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorRange.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationTrack.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleSpline.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMatrix4.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRotationalSpline.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePose.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareVertexBuffer.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationState.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreController.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAny.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreDataStream.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveManager.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSingleton.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAxisAlignedBox.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMatrix4.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBitwise.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCamera.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFrustum.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboard.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboardChain.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMovableObject.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSphere.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimable.h \
@@ -78,24 +92,12 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderable.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreGpuProgram.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreGpuProgramParams.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrappers.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrapper.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorRange.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSerializer.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAny.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMaterial.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreUserObjectBindings.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLodStrategy.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMesh.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVertexBoneAssignment.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimation.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationTrack.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleSpline.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRotationalSpline.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePose.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareVertexBuffer.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationState.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreController.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Math/Array/OgreArrayConfig.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreConfig.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h \
@@ -129,31 +131,16 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Math/Array/SSE2/Single/OgreArrayAabb.inl \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVisibilityFlags.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMovableObject.inl \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVertexIndexData.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareIndexBuffer.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFileSystem.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveFactory.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFactoryObj.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLog.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleRenderable.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderOperation.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSingleton.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringConverter.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreWireBoundingBox.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreZip.h \
- ../src/Datablocks/DSMaterialDatablock.h ../src/Datablocks/DSDatablock.h \
- ../src/Datablocks/../OgreHlmsDSPrerequisites.h \
- ../src/Datablocks/Data/DSPropertyParam.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveManager.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboard.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboardChain.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResourceGroupManager.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboardSet.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRadixSort.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderQueue.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreOldBone.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreOldNode.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCamera.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFrustum.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVertexIndexData.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareIndexBuffer.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreConfigFile.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreControllerManager.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreTextureUnitState.h \
@@ -175,6 +162,7 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHighLevelGpuProgram.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHighLevelGpuProgramManager.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreInstanceBatch.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderOperation.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Math/Array/OgreObjectMemoryManager.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Math/Array/OgreObjectData.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Math/Array/OgreArrayMemoryManager.h \
@@ -202,6 +190,7 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlaneBoundedVolume.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLight.inl \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLogManager.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLog.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreManualObject.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMaterialManager.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMaterialSerializer.h \
@@ -225,6 +214,7 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderObjectListener.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderSystem.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderSystemCapabilities.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringConverter.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreConfigOptionMap.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResourceTransition.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderTargetListener.h \
@@ -261,6 +251,7 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Compositor/Pass/OgreCompositorPassDef.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Threading/OgreThreads.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSharedPtr.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleRenderable.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSkeleton.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreOldSkeletonInstance.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreOldSkeletonManager.h \
@@ -276,16 +267,26 @@ src/Datablocks/DSMaterialDatablock.o: \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreWindowEventUtilities.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetup.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetupFocused.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStableHeaders.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBitwise.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFileSystem.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveFactory.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFactoryObj.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreWireBoundingBox.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreZip.h \
+ ../src/Datablocks/DSMaterialDatablock.h ../src/Datablocks/DSDatablock.h \
+ ../src/Datablocks/../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/Data/DSPropertyParam.h \
  ../src/Datablocks/Data/DSPropertyParamType.h \
  ../src/Datablocks/Data/DSPieceParam.h \
  ../src/Datablocks/Data/DSPieceParamType.h \
- ../src/Datablocks/AutoParams/DSAutoTime.h \
- ../src/Datablocks/AutoParams/../Data/DSAutoParam.h \
- ../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
- ../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
  ../src/Datablocks/AutoParams/DSAutoParamParser.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h \
+ ../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/AutoParams/../Data/DSAutoParam.h \
+ ../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h \
+ ../src/Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h \
  ../src/Datablocks/Data/DSShadowParam.h \
  ../src/Datablocks/Data/DSShadowTexture.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
@@ -459,21 +460,49 @@ src/Datablocks/DSMaterialDatablock.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h:
 
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStableHeaders.h:
+../src/Datablocks/../Datablocks/Data/../../DBParser/Template/MTMultiData.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimation.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrappers.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrapper.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorRange.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationTrack.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleSpline.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMatrix4.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRotationalSpline.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePose.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareVertexBuffer.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationState.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreController.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAny.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreDataStream.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveManager.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSingleton.h:
+
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAxisAlignedBox.h:
 
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMatrix4.h:
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboard.h:
 
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBitwise.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCamera.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFrustum.h:
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboardChain.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMovableObject.h:
 
@@ -493,15 +522,7 @@ src/Datablocks/DSMaterialDatablock.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreGpuProgramParams.h:
 
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrappers.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorWrapper.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIteratorRange.h:
-
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSerializer.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAny.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMaterial.h:
 
@@ -512,22 +533,6 @@ src/Datablocks/DSMaterialDatablock.o: \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMesh.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVertexBoneAssignment.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimation.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationTrack.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleSpline.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRotationalSpline.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePose.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareVertexBuffer.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAnimationState.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreController.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/Math/Array/OgreArrayConfig.h:
 
@@ -595,46 +600,6 @@ src/Datablocks/DSMaterialDatablock.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMovableObject.inl:
 
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVertexIndexData.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareIndexBuffer.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFileSystem.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveFactory.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFactoryObj.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLog.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleRenderable.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderOperation.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSingleton.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringConverter.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreWireBoundingBox.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreZip.h:
-
-../src/Datablocks/DSMaterialDatablock.h:
-
-../src/Datablocks/DSDatablock.h:
-
-../src/Datablocks/../OgreHlmsDSPrerequisites.h:
-
-../src/Datablocks/Data/DSPropertyParam.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/Ogre.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveManager.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboard.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboardChain.h:
-
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResourceGroupManager.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBillboardSet.h:
@@ -646,6 +611,14 @@ src/Datablocks/DSMaterialDatablock.o: \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreOldBone.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreOldNode.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCamera.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFrustum.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVertexIndexData.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHardwareIndexBuffer.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreConfigFile.h:
 
@@ -688,6 +661,8 @@ src/Datablocks/DSMaterialDatablock.o: \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHighLevelGpuProgramManager.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreInstanceBatch.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderOperation.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/Math/Array/OgreObjectMemoryManager.h:
 
@@ -743,6 +718,8 @@ src/Datablocks/DSMaterialDatablock.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLogManager.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLog.h:
+
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreManualObject.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMaterialManager.h:
@@ -788,6 +765,8 @@ src/Datablocks/DSMaterialDatablock.o: \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderSystem.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderSystemCapabilities.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringConverter.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreConfigOptionMap.h:
 
@@ -861,6 +840,8 @@ src/Datablocks/DSMaterialDatablock.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSharedPtr.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSimpleRenderable.h:
+
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSkeleton.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreOldSkeletonInstance.h:
@@ -891,25 +872,47 @@ src/Datablocks/DSMaterialDatablock.o: \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreShadowCameraSetupFocused.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStableHeaders.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBitwise.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFileSystem.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchiveFactory.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFactoryObj.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreWireBoundingBox.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/OgreZip.h:
+
+../src/Datablocks/DSMaterialDatablock.h:
+
+../src/Datablocks/DSDatablock.h:
+
+../src/Datablocks/../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/Data/DSPropertyParam.h:
+
 ../src/Datablocks/Data/DSPropertyParamType.h:
 
 ../src/Datablocks/Data/DSPieceParam.h:
 
 ../src/Datablocks/Data/DSPieceParamType.h:
 
-../src/Datablocks/AutoParams/DSAutoTime.h:
-
-../src/Datablocks/AutoParams/../Data/DSAutoParam.h:
-
-../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
-
-../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
-
 ../src/Datablocks/AutoParams/DSAutoParamParser.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreException.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h:
+
+../src/Datablocks/AutoParams/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/AutoParams/../Data/DSAutoParam.h:
+
+../src/Datablocks/AutoParams/../Data/../../OgreHlmsDSPrerequisites.h:
+
+../src/Datablocks/AutoParams/../../DBParser/Template/MTMultiData.h:
 
 ../src/Datablocks/Data/DSShadowParam.h:
 

@@ -217,6 +217,29 @@ MT_MultiData::MT_MultiData(Ogre::String key, MT_MultiData* mt) {
 	this->obj[mt->key]=(mt);
 	s();
 }
+MT_MultiData::MT_MultiData(Ogre::String key, Ogre::String strvec, float def) {
+	//Format:
+	//"type=time,time=2000,pulse=on"
+	this->key=key;
+	String string = strvec;
+	string.erase(remove(string.begin(), string.end(), '\''), string.end());
+
+
+	vector<String>::type 				split1;
+	vector<vector<String>::type>::type 	split2;
+
+	split1=StringUtil::split(string,",");
+	for(size_t i=0; i<split1.size();i++){
+		Ogre::String s=split1.at(i);
+		split2.push_back(StringUtil::split(s,"="));
+	}
+	for(size_t i=0; i<split2.size();i++){
+		this->ao(split2.at(i).at(0),split2.at(i).at(1));
+
+	}
+
+
+}
 void MT_MultiData::as(Ogre::String str) {
 	this->str.push_back(str);
 	s();
@@ -242,6 +265,14 @@ void MT_MultiData::s() {
 		this->type=sFloat;
 	}
 }
-} /* namespace Ogre */
+void MT_MultiData::ao(Ogre::String key, Ogre::String str) {
+	ao(new MT_MultiData(key,str));
+}
 
+void MT_MultiData::ao(Ogre::String key, float flt) {
+	ao(new MT_MultiData(key,flt));
+}
+
+
+} /* namespace Ogre */
 

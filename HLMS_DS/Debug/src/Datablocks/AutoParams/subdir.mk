@@ -5,18 +5,15 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../src/Datablocks/AutoParams/DSAutoParamParser.cpp \
-../src/Datablocks/AutoParams/DSAutoParamTime.cpp \
-../src/Datablocks/AutoParams/DSAutoTime.cpp 
+../src/Datablocks/AutoParams/DSAutoParamTime.cpp 
 
 OBJS += \
 ./src/Datablocks/AutoParams/DSAutoParamParser.o \
-./src/Datablocks/AutoParams/DSAutoParamTime.o \
-./src/Datablocks/AutoParams/DSAutoTime.o 
+./src/Datablocks/AutoParams/DSAutoParamTime.o 
 
 CPP_DEPS += \
 ./src/Datablocks/AutoParams/DSAutoParamParser.d \
-./src/Datablocks/AutoParams/DSAutoParamTime.d \
-./src/Datablocks/AutoParams/DSAutoTime.d 
+./src/Datablocks/AutoParams/DSAutoParamTime.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

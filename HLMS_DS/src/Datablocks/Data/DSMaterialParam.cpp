@@ -128,7 +128,8 @@ Ogre::DSMaterialParam::DSMaterialParam(Ogre::DSMaterialParamType* type) {
 
 void Ogre::DSMaterialParam::initialize(const HlmsParamVec& params) {
 }
-
+void Ogre::DSMaterialParam::initialize(MT_MultiData * data) {
+}
 Ogre::String Ogre::DSMaterialParam::getParamString(int index) {
 
 	Ogre::String datatype;
