@@ -202,9 +202,7 @@ void main()
     
 
 		
-	
-        gl_Position = vertex*vec4(1,1,1,1);
-        
+	    
 
 
 

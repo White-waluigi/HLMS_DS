@@ -125,6 +125,8 @@ PbsMaterialsGameState::PbsMaterialsGameState(
 }
 //-----------------------------------------------------------------------------------
 void PbsMaterialsGameState::createScene01(void) {
+	//for the trees
+	srand ( time(NULL) );
 	Ogre::SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
 	Ogre::HlmsManager *hlmsManager =
 			mGraphicsSystem->getRoot()->getHlmsManager();
@@ -132,7 +134,6 @@ void PbsMaterialsGameState::createScene01(void) {
 			hlmsManager->getTextureManager();
 
 	Ogre::SceneNode *rootNode = sceneManager->getRootSceneNode();
-
 	mGraphicsSystem->getCamera()->setPosition(-19.5,2,-15);
 	mGraphicsSystem->getCamera()->setDirection(1,0,0);
 	mGraphicsSystem->getCamera()->setFarClipDistance(10000);

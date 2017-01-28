@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 //	Json Material
 
@@ -99,6 +99,7 @@ layout(binding = 1) uniform MaterialBuffer
 	
 		 vec4 vec4_diffuse;
 	 vec4 vec4_specular;
+	 vec4 vec4_wave;
 
 
 
@@ -172,6 +173,17 @@ layout(binding = 0) uniform PassBuffer
 uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[0], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
+
 
 //Uniforms that change per Item/Entity
 layout(binding = 2) uniform InstanceBuffer
@@ -237,6 +249,14 @@ void main() {
 
 
 
+vec4 normal_map =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+vec4 wave=material.vec4_wave;
+
+
 	diffuse=vec4(0);
 	normal=vec4(0);
 	specular=vec4(0);
@@ -247,17 +267,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -267,6 +282,21 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
+	
+	
+		vec3 geomNormal = normalize( inPs.normal );
+		vec3 vTangent = normalize( inPs.tangent );
+
+		//Get the TBN matrix
+    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
+		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
+	
+		normal.xyz= getTSNormal( vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
+		f2u(material.texloc_0 ) ) );
+		normal.xyz = normalize( (TBN * normal.xyz) );
+		
+		
 			
 
 	
@@ -306,16 +336,19 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
+	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
+uv.y=uv.y+sin((uv.x)*5.0*(2*PI)+wave.x*3.0)/500.0;
+uv.x=uv.x+sin((uv.y)*5.0*(2*PI)+wave.y*3.0)/100.0;
+normal.xyz= getTSNormal( vec3( 
+uv.xy,  
+f2u(material.texloc_0 ) ) );
+
+normal.xyz = normalize( (TBN * normal.xyz) );
+
 
  	
 
 
-
-
-
-vec4 diffuse_map =  texture( textureMaps[0], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
-f2u( material.texloc_0 ) ) ); 
 
 
 	

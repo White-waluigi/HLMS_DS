@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 
 //Gbuffer Material
@@ -52,6 +52,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
     return mix(
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
+}
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
 }
 
 
@@ -280,20 +291,20 @@ void main() {
 	normal.w=1.0;
 
 	
-	
+
 		vec3 geomNormal = normalize( inPs.normal );
 		vec3 vTangent = normalize( inPs.tangent );
 
 		//Get the TBN matrix
     	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
 		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-	
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
 		f2u(material.texloc_0 ) ) );
-		normal.xyz = normalize( (TBN * normal.xyz) );
-		
-		
+			//normal.xyz = normalize( (TBN * normal.xyz) );
+	}
 			
 
 	

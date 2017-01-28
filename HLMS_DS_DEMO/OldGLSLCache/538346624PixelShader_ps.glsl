@@ -1,5 +1,7 @@
 //Datablock:	
+#define PI 3.14159625
 
+//	Json Material
 
 
 //Gbuffer Material
@@ -53,6 +55,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
 }
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
+}
 
 
 
@@ -95,7 +108,9 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_specular;
+		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
+	 vec4 vec4_wave;
 
 
 
@@ -106,14 +121,6 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
 
 	
 
@@ -174,8 +181,19 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
+
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[0], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
 
 
 //Uniforms that change per Item/Entity
@@ -205,6 +223,8 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -240,6 +260,13 @@ void main() {
 
 
 
+vec4 normal_map =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+vec4 wave=material.vec4_wave;
+
 
 	diffuse=vec4(0);
 	normal=vec4(0);
@@ -251,17 +278,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -271,16 +293,27 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
+	
+
+		vec3 geomNormal = normalize( inPs.normal );
+		vec3 vTangent = normalize( inPs.tangent );
+
+		//Get the TBN matrix
+    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
+		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
+		normal.xyz= getTSNormal( vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
+		f2u(material.texloc_0 ) ) );
+			//normal.xyz = normalize( (TBN * normal.xyz) );
+	}
 			
 
 	
 			
 			specular=material.vec4_specular;	
 					
-	
-		specular.rgb*=  texture( textureMaps[1], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,
-		f2u(material.texloc_1 ) ) ).rgb;
 	
 
 	
@@ -314,7 +347,15 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	
+	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
+uv.y=uv.y+sin((uv.x)*1.0*(2*PI)+wave.x*3.0)/500.0;
+uv.x=uv.x+sin((uv.y)*1.0*(2*PI)+wave.y*3.0)/100.0;
+normal.xyz= getTSNormal( vec3( 
+uv.xy,  
+f2u(material.texloc_0 ) ) );
+
+normal.xyz = normalize( (TBN * normal.xyz) );
+
 
  	
 
@@ -326,9 +367,39 @@ void main() {
 
 
 
-	
 		
-												
+		
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
+		
+		
+		
 		
 			
 		

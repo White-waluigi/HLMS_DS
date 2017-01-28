@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 
 //Light Material 
@@ -165,29 +165,7 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-//uniform samplerBuffer worldMatBuf;
 
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 		
 			uniform sampler2D texShadowMap[4];
@@ -371,6 +349,12 @@ void main() {
 	//Light Position is Direction for Directional Lights
 	total_light_contrib = max(0.0,dot(-light_position.xyz, normal)) * light_diffuse.rgb*diffuse;
 
+	vec3 viewDir = -normalize(viewPos);
+	vec3 h = normalize(viewDir + -light_position.xyz);
+	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
+	total_light_contrib += specular * final_specular;
+
+
 		
 	
 	
@@ -420,7 +404,7 @@ void main() {
 			
 			 
 			//ShadowVal=vec4(1==0,1==1,1==2,0);
-			
+
 		}
 
 		
@@ -429,7 +413,7 @@ void main() {
 			
 			 
 			//ShadowVal=vec4(2==0,2==1,2==2,0);
-			
+
 		}
 
 		
@@ -440,7 +424,7 @@ void main() {
 		IDoffset=inc;
 			
 		
-				
+		
 
 
 		uint i=uint(fL);

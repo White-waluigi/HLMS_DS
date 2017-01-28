@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 //	Json Material
 
@@ -54,6 +54,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
     return mix(
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
+}
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
 }
 
 
@@ -210,8 +221,6 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
-		
-			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -244,6 +253,12 @@ void main() {
 
 	vec2 texCoord=vec2(screenPos.x,screenPos.y);
 
+
+
+
+vec4 normal_map =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
 
 
 
@@ -326,16 +341,11 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
+	
 
  	
 
 
-
-
-
-vec4 normal_map =  texture( textureMaps[0], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
-f2u( material.texloc_0 ) ) ); 
 
 
 	//diffuse=perlin;

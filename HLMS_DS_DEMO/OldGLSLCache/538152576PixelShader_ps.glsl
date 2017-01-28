@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 
 //Gbuffer Material
@@ -53,6 +53,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
 }
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
+}
 
 
 
@@ -95,10 +106,7 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_glow;
-
+	
 
 
 
@@ -186,28 +194,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -256,6 +242,7 @@ void main() {
 
 
 
+
 	diffuse=vec4(0);
 	normal=vec4(0);
 	specular=vec4(0);
@@ -289,15 +276,15 @@ void main() {
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
-	
-		glow.rgb=material.vec4_glow.rgb;	
-			
+		
+		glow.rgb=vec3(0);	
+		
 	
 
 	
@@ -318,7 +305,8 @@ void main() {
 
 	
 	
-		
+
+	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
@@ -326,9 +314,9 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
+	
 
  	
-
 
 
 
@@ -346,7 +334,7 @@ void main() {
 		
 			float cutoff=0.5;
 			
-				cutoff=1.0-(1.0/(10*1.0));
+				cutoff=1.0-(1.0/(3*1.0));
 			
 			if(opacity < cutoff) discard;
 		

@@ -65,7 +65,7 @@ out block
 				
 					
 		
-			vec4 posL[7];		
+			vec4 posL[8];		
 
 } outVs;
 
@@ -112,7 +112,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[7];
+				ShadowData shadowD[8];
 	
 } pass;
 
@@ -202,9 +202,7 @@ void main()
     
 
 		
-	
-        gl_Position = vertex*vec4(1,1,1,1);
-        
+	    
 
 
 

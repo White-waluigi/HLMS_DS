@@ -1,6 +1,6 @@
 //Datablock:	@insertpiece(db_name)
 @piece(PI)3.14159625@end
-
+#define PI 3.14159625
 @property(IS_JSON)
 //	Json Material
 @end

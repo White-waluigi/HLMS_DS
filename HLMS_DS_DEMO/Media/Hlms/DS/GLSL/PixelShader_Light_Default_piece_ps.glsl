@@ -85,6 +85,12 @@
 	// Calculate diffuse colour
 	//Light Position is Direction for Directional Lights
 	total_light_contrib = max(0.0,dot(-light_position.xyz, normal)) * light_diffuse.rgb*diffuse;
+
+	vec3 viewDir = -normalize(viewPos);
+	vec3 h = normalize(viewDir + -light_position.xyz);
+	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
+	total_light_contrib += specular * final_specular;
+
 @end
 
 

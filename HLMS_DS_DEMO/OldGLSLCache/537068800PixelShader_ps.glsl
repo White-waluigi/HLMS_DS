@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 
 //Gbuffer Material
@@ -186,28 +186,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -231,10 +209,10 @@ in vec4 vcolor;
 
 
 out vec4 diffuse;
-out vec4 normal;
-out vec4 pos;
-out vec4 specular;
-out vec4 glow;
+//out vec4 normal;
+//out vec4 pos;
+//out vec4 specular;
+//out vec4 glow;
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -245,13 +223,17 @@ uint f2u(vec4 f){
 void main() {
 	
 	
-
+	vec4 normal=vec4(1,0.5,0,0);
+	vec4 specular=vec4(1,0,1,0);
+	vec4 pos=vec4(1,0.5,0,0);
+	vec4 glow=vec4(1,0,1,0);
 
 	float opacity=1.0;
 
 	vec2 screenPos=vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny));
 
 	vec2 texCoord=vec2(screenPos.x,screenPos.y);
+
 
 
 
@@ -322,7 +304,8 @@ void main() {
 
 	
 	
-		
+
+	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
@@ -331,11 +314,8 @@ void main() {
 
 
 	
-	if(floatBitsToUint(pass.debug.x)==9u){
- 		glow=material.idColor;	
- 	}
- 	
 
+ 	
 
 
 
@@ -355,6 +335,10 @@ void main() {
 	
 	diffuse.a=0.9;
 
+	
+	if(floatBitsToUint(pass.debug.x)==9u){
+ 		glow=material.idColor;	
+ 	}
  }
  
  

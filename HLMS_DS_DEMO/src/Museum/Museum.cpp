@@ -46,7 +46,8 @@ void Museum::initExhibits() {
 	stone.materialParams.push_back("glow$1 1 1 1.0");
 	stone.materialParams.push_back("glow_map$file=stone_g.png");
 
-	stone.materialParams.push_back("normal_map$file=ghost_n.jpg,scale-uv=3.0 3.0 3.0");
+	stone.materialParams.push_back(
+			"normal_map$file=ghost_n.jpg,scale-uv=3.0 3.0 3.0");
 
 	stone.materialParams.push_back("diffuse$0.9 0.2 0.1 1.0");
 	stone.materialParams.push_back("specular$0.1 0.1 0.1  32.0");
@@ -99,10 +100,10 @@ void Museum::initExhibits() {
 	camera.materialParams.push_back("diffuse_map$file=camerad.png");
 
 	//camera.materialParams.push_back("custom_post_material$'glow *= tan(pass.time.x);'");
-	camera.materialParams.push_back("custom_post_material$'glow *= tan(material.autoparam0.x)*2.0;'");
-	camera.materialParams.push_back("autoparam0$'type=time,time=2000,pulse=on'");
-
-
+	camera.materialParams.push_back(
+			"custom_post_material$'glow *= tan(material.autoparam0.x)*2.0;'");
+	camera.materialParams.push_back(
+			"autoparam0$'type=time,time=2000,pulse=on'");
 
 	camera.position = Ogre::Vector3(2.61811, 15.3257, -3.78816);
 	camera.direction = Ogre::Vector3(1.5, -1, -1);
@@ -121,7 +122,8 @@ void Museum::initExhibits() {
 	UFO.materialParams.push_back("opacity$1.0");
 
 	//UFO.materialParams.push_back("custom_post_material$'opacity *= (pass.time.x*2.0)-0.5;'");
-	UFO.materialParams.push_back("custom_post_material$'opacity = ((material.autoparam0.x*2.0)-0.5);'");
+	UFO.materialParams.push_back(
+			"custom_post_material$'opacity = ((material.autoparam0.x*2.0)-0.5);'");
 
 	UFO.materialParams.push_back("autoparam0$'type=time,time=5000,pulse=on'");
 
@@ -132,7 +134,8 @@ void Museum::initExhibits() {
 	UFO.materialParams1.push_back("opacity$1.0");
 
 	//UFO.materialParams1.push_back("custom_post_material$'opacity *= (pass.time.x*2.0)-0.5;'");
-	UFO.materialParams1.push_back("custom_post_material$'opacity = ((material.autoparam0.x*2.0)-0.5);'");
+	UFO.materialParams1.push_back(
+			"custom_post_material$'opacity = ((material.autoparam0.x*2.0)-0.5);'");
 
 	UFO.materialParams1.push_back("autoparam0$'type=time,time=5000,pulse=on'");
 	UFO.materialParams1.push_back("diffuse_map$file=hull.png");
@@ -163,8 +166,6 @@ void Museum::initExhibits() {
 
 	TV.materialParams1.push_back("specular$0.5 0.5 0.5  32.0");
 
-
-
 	TV.label = "animtex";
 	TV.model = "TV.mesh";
 	TV.pedastol = 1;
@@ -175,7 +176,8 @@ void Museum::initExhibits() {
 	hallImage.materialParams.push_back("glow$ 0.0 0.0 0.0 1.0");
 
 	hallImage.materialParams.push_back("diffuse_map$file=sinbad.png");
-	hallImage.materialParams.push_back("normal_map$file=painting_n.png,scale-uv=2.0 2.0 2.0");
+	hallImage.materialParams.push_back(
+			"normal_map$file=painting_n.png,scale-uv=2.0 2.0 2.0");
 	hallImage.materialParams.push_back("specular$0.03 0.03 0.03  32.0");
 
 	hallImage.materialParams1.push_back("diffuse_map$file=frame.png");
@@ -193,31 +195,31 @@ void Museum::initExhibits() {
 	BDImage.materialParams.push_back("glow_map$file=blooddragon_g.jpg");
 	BDImage.materialParams.push_back("specular$0.13 0.13 0.13  32.0");
 
-
 	BDImage.materialParams1.push_back("diffuse_map$file=frame.png");
 	BDImage.model = "Image.mesh";
 	BDImage.pedastol = 0;
-	BDImage.position = Ogre::Vector3(9.17253,6.25655, -30.28128);
-	BDImage.scale = Ogre::Vector3(3.0,3.0,1.0);
+	BDImage.position = Ogre::Vector3(9.17253, 6.25655, -30.28128);
+	BDImage.scale = Ogre::Vector3(3.0, 3.0, 1.0);
 
 	exhibits.push_back(BDImage);
 	//************************************************************
 	exhibit Skydome;
-	Skydome.compareFunc="lequal";
+	Skydome.compareFunc = "lequal";
 	Skydome.materialParams.push_back("diffuse$0.0 0.0 0.0 0.0");
 	Skydome.materialParams.push_back("glow$ 1.1 1.1 1.1 1.0");
-	Skydome.materialParams.push_back("glow_map$'file=skysphere.jpg,scale-uv=2 2 2'");
+	Skydome.materialParams.push_back(
+			"glow_map$'file=skysphere.jpg,scale-uv=2 2 2'");
 	Skydome.materialParams.push_back("specular$0.0 0.0 0.0  32.0");
 	Skydome.materialParams.push_back("cdepth$2");
 	Skydome.materialParams.push_back("noCamTransf$1");
-	Skydome.infiniteAABB=true;
-
+	Skydome.infiniteAABB = true;
 
 	Skydome.model = "Sphere1000.mesh";
 	Skydome.pedastol = 0;
-	Skydome.position = Ogre::Vector3(0,-5, 0);
-	Skydome.scale = Ogre::Vector3(-40,40,40);
-	Skydome.shadow=false;
+	Skydome.position = Ogre::Vector3(0, -5, 0);
+	Skydome.scale = Ogre::Vector3(-40, 40, 40);
+	Skydome.shadow = false;
+	Skydome.skyanimate=true;
 	exhibits.push_back(Skydome);
 	//************************************************************
 
@@ -231,51 +233,55 @@ void Museum::initExhibits() {
 
 //	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
 	goldstatue.materialParams.push_back("specular$1 1 1 600.0");
-	goldstatue.label="reflect";
-	goldstatue.positionoffset=Ogre::Vector3(0,0.9,0);
-	goldstatue.scale=Ogre::Vector3(0.04,0.04,0.04);
-	goldstatue.rqID=(0x00000001);
-	goldstatue.pedastol=1;
+	goldstatue.label = "reflect";
+	goldstatue.positionoffset = Ogre::Vector3(0, 0.9, 0);
+	goldstatue.scale = Ogre::Vector3(0.04, 0.04, 0.04);
+	goldstatue.rqID = (0x00000001);
+	goldstatue.pedastol = 1;
 	exhibits.push_back(goldstatue);
 
 	//************************************************************
 
-
 	exhibit jollyroger;
 
 	jollyroger.model = "terrain.mesh";
-	jollyroger.materialParams.push_back("diffuse_map$file=terr_rock-dirt.jpg,scale-uv=15 15 15");
-	jollyroger.materialParams.push_back("specular$0.5 0.5 0.5  32.0");
-	jollyroger.materialParams.push_back("specular-map$file=tile_diffuse.tga,scale-uv=0.3 0.3 0.3");
+	jollyroger.materialParams.push_back("name$terrain");
 
-	//jollyroger.materialParams.push_back("reflection$0.3");
-//	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
-	jollyroger.label="reflect";
-	jollyroger.scale=Ogre::Vector3(1,1,1);
-//	jollyroger.rqID=(0x00000001);
-	jollyroger.pedastol=0;
-	jollyroger.position=Ogre::Vector3(0,0,0);
+//	jollyroger.materialParams.push_back("diffuse_map$file=terr_rock-dirt.jpg,scale-uv=15 15 15");
+//	//jollyroger.materialParams.push_back("specular$0.005 0.005 0.005  32.0");
+//	jollyroger.materialParams.push_back("specular-map$file=tile_diffuse.tga,scale-uv=0.3 0.3 0.3");
+//
+//	//jollyroger.materialParams.push_back("reflection$0.3");
+////	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
+//	jollyroger.label="reflect";
+//	jollyroger.scale=Ogre::Vector3(1,1,1);
+////	jollyroger.rqID=(0x00000001);
+//	jollyroger.pedastol=0;
+	jollyroger.position = Ogre::Vector3(0, 0.1, 0);
+	jollyroger.pedastol = 0;
+	jollyroger.label = "";
 	exhibits.push_back(jollyroger);
 
 	//************************************************************
 	exhibit roof;
 
-	roof.materialParams.push_back("diffuse_map$file=tiles.jpg,scale-uv=10 10 10");
-	roof.materialParams1.push_back("diffuse_map$file=KAMEN320x240-bump.jpg,scale-uv=10 10 10");
+	roof.materialParams.push_back(
+			"diffuse_map$file=tiles.jpg,scale-uv=10 10 10");
+	roof.materialParams1.push_back(
+			"diffuse_map$file=KAMEN320x240-bump.jpg,scale-uv=10 10 10");
 	roof.materialParams2.push_back("opacity$0.5");
 	roof.materialParams2.push_back("diffuse$0.3 0.3 0.8 0.5");
 
 	roof.model = "roof.mesh";
 
-	roof.label="reflect";
-	roof.pedastol=0;
-	roof.positionAutoOffset=false;
+	roof.label = "reflect";
+	roof.pedastol = 0;
+	roof.positionAutoOffset = false;
 	exhibits.push_back(roof);
 
 	//************************************************************
 
-
-	for(int i=0;i<500;i++){
+	for (int i = 0; i < 500; i++) {
 		exhibit tree;
 
 		tree.model = "tree.mesh";
@@ -283,14 +289,15 @@ void Museum::initExhibits() {
 		tree.materialParams1.push_back("diffuse_map$file=leafes.png");
 		tree.materialParams1.push_back("opacity-diffuse$1");
 		tree.materialParams1.push_back("opacity-sharp$1");
+		tree.materialParams1.push_back("opacity-cutoff$3");
 		//jollyroger.materialParams.push_back("reflection$0.3");
-	//	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
+		//	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
 		//jollyroger.materialParams.push_back("diffuse$1 1 1");
-	//	jollyroger.rqID=(0x00000001);
-		tree.position=Ogre::Vector3((randf()*250)+150,-1,(randf()*300)-200);
+		//	jollyroger.rqID=(0x00000001);
+		tree.position = Ogre::Vector3((randf() * 250) - 75-(randf()*2-1)*100, -1,
+				(randf() * 100) -150-(randf()*2-1)*100);
 
-
-		tree.pedastol=0;
+		tree.pedastol = 0;
 		exhibits.push_back(tree);
 	}
 	//************************************************************
@@ -302,8 +309,7 @@ void Museum::initExhibits() {
 
 	firewood.materialParams.push_back("diffuse_map$file=bark.jpg");
 
-	firewood.position=Ogre::Vector3(56.63,-1,-105.136);
-
+	firewood.position = Ogre::Vector3(56.63, -1, -105.136);
 
 	exhibits.push_back(firewood);
 	//************************************************************
@@ -336,10 +342,19 @@ void Museum::initExhibits() {
 	water.model = "Cube_d.mesh";
 
 	water.materialParams.push_back("name$water");
-	water.position=Ogre::Vector3(0,-20,350);
-	water.scale=Ogre::Vector3(2000,0.1,300);
+	water.position = Ogre::Vector3(0, -20, 420);
+	water.scale = Ogre::Vector3(2000, 0.1, 300);
 
 	exhibits.push_back(water);
+	//***********************************************************
+	exhibit lighthouse;
+
+	lighthouse.model = "lighthouse.mesh";
+
+	lighthouse.materialParams.push_back("diffuse_map$file=lighthouse.png");
+	lighthouse.position = Ogre::Vector3(900, 100, 500);
+
+	exhibits.push_back(lighthouse);
 	//************************************************************
 //
 //	exhibit forward;
@@ -362,19 +377,21 @@ void Museum::initExhibits() {
 //
 //
 //	exhibit blendtest1;
-
-	//blendtest1.blendType="replace";
-	//blendtest1.compareFunc="apass";
-
+//
+//	blendtest1.blendType="replace";
+//	blendtest1.compareFunc="gequal";
+//
 //	blendtest1.model = "Vase.mesh";
 //	blendtest1.materialParams.push_back("diffuse$1 0 0 1");
+//	blendtest1.materialParams.push_back("cdepth$3");
+//
 //	blendtest1.label="reflect";
 //	blendtest1.scale=Ogre::Vector3(1,1,1);
 //	blendtest1.rqID=(0x000000F0);
 //	blendtest1.pedastol=1;
 //	blendtest1.position=Ogre::Vector3(1,2,30);
 //	exhibits.push_back(blendtest1);
-//
+
 //	//************************************************************
 //	exhibit blendtest2;
 //
@@ -418,8 +435,6 @@ void Museum::setupMuseum() {
 		//pv.push_back(std::make_pair("diffuse_map","file=checker.png"));
 		//pv.push_back(std::make_pair("opacity_map","'file=text.png,filter:none'"));
 
-
-
 		//pv.push_back(std::make_pair("custom_post_material","'opacity *= (material.autoparam0*2.0)-0.5;'"));
 		//pv.push_back(std::make_pair("autoparam0","'type:time,time:5000,pulse:on'"));
 
@@ -430,20 +445,25 @@ void Museum::setupMuseum() {
 
 		pv.push_back(std::make_pair("specular", "1.0 1.0 1.0 50.0"));
 		pv.push_back(std::make_pair("diffuse_map", "file=MRAMOR6X6.jpg"));
-		pv.push_back(std::make_pair("specular_map", "file=tile_diffuse.tga,scale-uv=0.3 0.3 0.3"));
+		pv.push_back(
+				std::make_pair("specular_map",
+						"file=tile_diffuse.tga,scale-uv=0.3 0.3 0.3"));
 		std::sort(pv.begin(), pv.end());
 		museumDatablock =
 				static_cast<Ogre::DSDatablock*>(hlmsDS->createDatablock(
 						"building", "building", *mb, *test, pv));
 
-
-		pv=Ogre::HlmsParamVec();
-		pv.push_back(std::make_pair("specular","0.3 0.3 0.3 40"));
-		pv.push_back(std::make_pair("diffuse_map", "file=strugotine.jpg,scale-uv=10 10 10"));
-		pv.push_back(std::make_pair("specular_map", "file=strugotine.jpg,scale-uv=10 10 10"));
-		pv.push_back(std::make_pair("normal_map","file=ghost_n.jpg,scale-uv=30.0 30.0 30.0"));
-
-
+		pv = Ogre::HlmsParamVec();
+		pv.push_back(std::make_pair("specular", "0.3 0.3 0.3 40"));
+		pv.push_back(
+				std::make_pair("diffuse_map",
+						"file=strugotine.jpg,scale-uv=10 10 10"));
+		pv.push_back(
+				std::make_pair("specular_map",
+						"file=strugotine.jpg,scale-uv=10 10 10"));
+		pv.push_back(
+				std::make_pair("normal_map",
+						"file=ghost_n.jpg,scale-uv=30.0 30.0 30.0"));
 
 		std::sort(pv.begin(), pv.end());
 
@@ -515,10 +535,8 @@ void Museum::setupExhibits() {
 			"pedastaldb", "pedastaldb", *mb, *test, pv));
 	pv = Ogre::HlmsParamVec();
 
-
-	pv.push_back(std::make_pair("reflection_map","file=spheremap.png"));
-	pv.push_back(std::make_pair("reflection","0.9"));
-
+	pv.push_back(std::make_pair("reflection_map", "file=spheremap.png"));
+	pv.push_back(std::make_pair("reflection", "0.9"));
 
 	pv.push_back(std::make_pair("diffuse", "0.11 0.11 0.1 1"));
 	pv.push_back(std::make_pair("specular", "1.0 1.0 1.0 60.0"));
@@ -529,7 +547,8 @@ void Museum::setupExhibits() {
 
 	for (int i = 0; i < exhibits.size(); i++) {
 
-		if (exhibits.at(i).positionAutoOffset&&exhibits.at(i).position==Ogre::Vector3::ZERO) {
+		if (exhibits.at(i).positionAutoOffset
+				&& exhibits.at(i).position == Ogre::Vector3::ZERO) {
 			exhibits.at(i).position = Ogre::Vector3((exhibitoffset + 1) * 5, 0,
 					-25);
 			exhibitoffset++;
@@ -541,20 +560,29 @@ void Museum::setupExhibits() {
 		exhibits.at(i).item = sceneManager->createItem(exhibits.at(i).model,
 				Ogre::ResourceGroupManager::AUTODETECT_RESOURCE_GROUP_NAME,
 				Ogre::SCENE_DYNAMIC);
-		if(exhibits.at(i).infiniteAABB){
-			exhibits.at(i).item->setLocalAabb(Ogre::Aabb( Ogre::Aabb::BOX_INFINITE ));
+		if (exhibits.at(i).infiniteAABB) {
+			exhibits.at(i).item->setLocalAabb(
+					Ogre::Aabb(Ogre::Aabb::BOX_INFINITE));
 		}
-		if(exhibits.at(i).materialParams.size()!=0){
-		exhibits.at(i).datablock =getDatablock(exhibits.at(i).materialParams,exhibits.at(i).model,exhibits.at(i));
-		exhibits.at(i).item->setDatablock(exhibits.at(i).datablock);
+		if (exhibits.at(i).materialParams.size() != 0) {
+			exhibits.at(i).datablock = getDatablock(
+					exhibits.at(i).materialParams, exhibits.at(i).model,
+					exhibits.at(i));
+			exhibits.at(i).item->setDatablock(exhibits.at(i).datablock);
 		}
-		if(exhibits.at(i).materialParams1.size()!=0){
-			exhibits.at(i).datablock1 =getDatablock(exhibits.at(i).materialParams1,exhibits.at(i).model,exhibits.at(i) );
-			exhibits.at(i).item->getSubItem(1)->setDatablock(exhibits.at(i).datablock1);
+		if (exhibits.at(i).materialParams1.size() != 0) {
+			exhibits.at(i).datablock1 = getDatablock(
+					exhibits.at(i).materialParams1, exhibits.at(i).model,
+					exhibits.at(i));
+			exhibits.at(i).item->getSubItem(1)->setDatablock(
+					exhibits.at(i).datablock1);
 		}
-		if(exhibits.at(i).materialParams2.size()!=0){
-			exhibits.at(i).datablock2 =getDatablock(exhibits.at(i).materialParams2,exhibits.at(i).model,exhibits.at(i) );
-			exhibits.at(i).item->getSubItem(2)->setDatablock(exhibits.at(i).datablock2);
+		if (exhibits.at(i).materialParams2.size() != 0) {
+			exhibits.at(i).datablock2 = getDatablock(
+					exhibits.at(i).materialParams2, exhibits.at(i).model,
+					exhibits.at(i));
+			exhibits.at(i).item->getSubItem(2)->setDatablock(
+					exhibits.at(i).datablock2);
 		}
 
 		//exhibits.at(i).item->setDatablock(exhibits.at(i).datablock);
@@ -575,7 +603,8 @@ void Museum::setupExhibits() {
 			setupLabels(exhibits.at(i).position, exhibits.at(i).label);
 		}
 		exhibits.at(i).position += pedaloffset;
-		exhibits.at(i).sn->setPosition(exhibits.at(i).position+exhibits.at(i).positionoffset);
+		exhibits.at(i).sn->setPosition(
+				exhibits.at(i).position + exhibits.at(i).positionoffset);
 		exhibits.at(i).sn->setScale(exhibits.at(i).scale);
 		exhibits.at(i).sn->setDirection(exhibits.at(i).direction);
 
@@ -651,46 +680,47 @@ Ogre::Vector3 Museum::setupPedestal(Ogre::Vector3 pos) {
 }
 
 Museum::daystruct Museum::updateLights(float t) {
-	timer+=t*0.1;
+	timer += t * 0.1;
 
 	daystruct retVal;
 	for (int i = 0; i < lights.size(); i++) {
-		if(lights.at(i).animate){
-			float sunphase=fmod((timer)/2.0,M_PI *2);
-			float monthpase=fmod
-					((timer)/20.0,M_PI *2*10);
+		if (lights.at(i).animate) {
+			float sunphase = fmod((timer) / 2.0, M_PI * 2);
+			float monthpase = fmod((timer) / 20.0, M_PI * 2 * 10);
 
-			bool ismoon=false;
-			float dayphase=sunphase/M_PI;
+			bool ismoon = false;
+			float dayphase = sunphase / M_PI;
 
-			if(sunphase>M_PI   ){
+			if (sunphase > M_PI) {
 
-				sunphase=(sunphase)-M_PI;
-				ismoon=true;
+				sunphase = (sunphase) - M_PI;
+				ismoon = true;
 
 			}
 
 			PbsMaterialsGameState::wColor morning;
-			morning.color=Ogre::Vector3(2.0,1.3,0.5);
-			morning.from=1.6;
-			morning.to=0.3;
+			morning.color = Ogre::Vector3(2.0, 1.3, 0.5);
+			morning.color = Ogre::Vector3(2.0, 1.3, 0.5);
+			morning.from = 0;
+			morning.to = 0.3;
 
 			PbsMaterialsGameState::wColor sun;
-			sun.color=Ogre::Vector3(1.6,1.6,1.4);
-			sun.from=0.1;
-			sun.to=0.9;
+			sun.color = Ogre::Vector3(1.6, 1.6, 1.4);
+			sun.color = Ogre::Vector3(1.6, 1.6, 1.4);
+			sun.from = 0.1;
+			sun.to = 0.9;
 
 			PbsMaterialsGameState::wColor evening;
-			evening.color=Ogre::Vector3(2.0,1.0,0.1);
-			evening.from=0.8;
-			evening.to=1.3;
-
+			evening.color = Ogre::Vector3(2.0, 1.0, 0.1);
+			evening.color = Ogre::Vector3(2.0, 1.0, 0.1);
+			evening.from = 0.8;
+			evening.to = 1;
 
 			PbsMaterialsGameState::wColor night;
-			night.color=Ogre::Vector3(0.03,0.03,0.1);
-			night.from=1.0;
-			night.to=0.0;
-
+			night.color = Ogre::Vector3(0.03, 0.03, 0.1);
+			night.scolor = Ogre::Vector3(1.03, 1.03, 1.1);
+			night.from = 0.9;
+			night.to = 0.1;
 
 //
 //			PbsMaterialsGameState::wColor morning;
@@ -726,24 +756,32 @@ Museum::daystruct Museum::updateLights(float t) {
 			array.push_back(&evening);
 			array.push_back(&night);
 
+			Ogre::Vector3 col = PbsMaterialsGameState::between(array, 4,
+					dayphase);
 
-			Ogre::Vector3 col= PbsMaterialsGameState::between(array,4,dayphase);
+			retVal.dayphase = dayphase;
+			retVal.eveningweight = evening.weight;
+			retVal.morningweight = morning.weight;
+			retVal.nightweight = night.weight;
+			retVal.dayweight = sun.weight;
 
-			retVal.dayphase=dayphase;
-			retVal.eveningweight=evening.weight;
-			retVal.morningweight=morning.weight;
-			retVal.nightweight=night.weight;
-			retVal.dayweight=sun.weight;
+			Ogre::ColourValue c = Ogre::ColourValue(col.x, col.y, col.z);
 
-
-			Ogre::ColourValue c=Ogre::ColourValue(col.x,col.y,col.z) ;
-			//std::cout << c<<"\t\t\t\tphase: " <<dayphase<<"\tsun phase: "<<sunphase<<"\tsun weight "<<sun.weight<<"\n";
-			//std::cout <<sunphase<<"cos: " <<cos(sunphase)<<" moon :"<<ismoon<<"\n";
-			Ogre::Vector3 x=Ogre::Vector3(cos(sunphase),sin(sunphase)*-1.0,-cos(monthpase+0.5));
+			Ogre::Vector3 x = Ogre::Vector3(cos(sunphase), sin(sunphase) * -1.0,
+					-cos(monthpase + 0.5));
 //			Ogre::ColourValue c=Ogre::ColourValue(abs(3.0-sin(timer/2.0)*3.0),1.0,1.0);
-
+			for(int i=0;i<exhibits.size();i++){
+				if(exhibits[i].skyanimate){
+					exhibits[i].datablock->setParam("glow",Ogre::Vector4(c.r,c.g,c.b,1));
+				}
+			}
 			lights.at(i).light->setDirection(x);
 			lights.at(i).light->setDiffuseColour(c);
+			if(!ismoon){
+				lights.at(i).light->setSpecularColour(c);
+			}else{
+				lights.at(i).light->setSpecularColour(Ogre::ColourValue(1,1,1,1));
+			}
 		}
 	}
 	return retVal;
@@ -755,7 +793,8 @@ void Museum::updateExhibits(float t) {
 	for (int i = 0; i < exhibits.size(); i++) {
 
 		//exhibits.at(i).direction=(exhibits.at(i).direction+Ogre::Vector3(0,0.000001,0)).normalise();
-		Ogre::Vector3 curpos = exhibits.at(i).position+exhibits.at(i).positionoffset;
+		Ogre::Vector3 curpos = exhibits.at(i).position
+				+ exhibits.at(i).positionoffset;
 		Ogre::Vector3 curdir = exhibits.at(i).direction;
 		float yaw = 0;
 
@@ -789,20 +828,18 @@ void Museum::updateExhibits(float t) {
 
 		}
 		Ogre::Quaternion quat;
-		exhibits.at(i).sn->yaw(Ogre::Degree(yaw*t));
+		exhibits.at(i).sn->yaw(Ogre::Degree(yaw * t));
 		exhibits.at(i).sn->setPosition(curpos);
 		//exhibits.at(i).sn->setDirection(exhibits.at(i).direction);
 
 	}
 }
 void Museum::setupLights() {
-	sceneManager->setAmbientLight(
-			Ogre::ColourValue(0.005f, 0.005f, 0.02f),
-			Ogre::ColourValue(0.01f, 0.022f, 0.02f),
+	sceneManager->setAmbientLight(Ogre::ColourValue(0.005f, 0.005f, 0.02f),
+			Ogre::ColourValue(0.005f, 0.012f, 0.01f),
 			Ogre::Vector3(1, 1, 1) + Ogre::Vector3::UNIT_Y * 0.2f);
-	sceneManager->setAmbientLight(
-			Ogre::ColourValue(0.15f, 0.15f, 0.2f),
-			Ogre::ColourValue(0.1f, 0.22f, 0.2f),
+	sceneManager->setAmbientLight(Ogre::ColourValue(0.02f, 0.015f, 0.05f),
+			Ogre::ColourValue(0.01f, 0.22f, 0.2f),
 			Ogre::Vector3(1, 1, 1) + Ogre::Vector3::UNIT_Y * 0.2f);
 	for (int i = 0; i < lights.size(); i++) {
 
@@ -824,22 +861,25 @@ void Museum::setupLights() {
 }
 void Museum::initLights() {
 
-		Mlight Sun;
-		Sun.light=sceneManager->createLight();
+	Mlight Sun;
+	Sun.light = sceneManager->createLight();
 
-		Sun.light->setDiffuseColour(1.5f, 1.3f, 1.2f); //Warm
-		Sun.light->setSpecularColour(0.8f, 1.4f, 0.2f);
-		Sun.light->setPowerScale(2.0);
-		Sun.light->setType(Ogre::Light::LT_DIRECTIONAL);
-		Sun.position=Ogre::Vector3(5, 5.0f, -5);
-		//exhibitL1.light->setDirection(Ogre::Vector3(1, -1, -1).normalisedCopy());
-		Sun.light->setAttenuationBasedOnRadius(10.0f, 0.01f);
-		Sun.light->setSpotlightInnerAngle(Ogre::Radian(0));
+	Sun.light->setDiffuseColour(1.5f, 1.3f, 1.2f); //Warm
+	Sun.light->setSpecularColour(0.8f, 0.8f, 0.8f);
+	Sun.light->setPowerScale(2.0);
+	Sun.light->setType(Ogre::Light::LT_DIRECTIONAL);
+	Sun.light->setShadowFarDistance(2000);
+	Sun.light->setShadowFarClipDistance(2000);
 
-		Sun.light->setCastShadows(true);
-		Sun.animate=true;
-		Sun.direction = Ogre::Vector3(0.3,-0.2 ,-1).normalisedCopy();
-		lights.push_back(Sun);
+	Sun.position = Ogre::Vector3(5, 5.0f, -5);
+	//exhibitL1.light->setDirection(Ogre::Vector3(1, -1, -1).normalisedCopy());
+	Sun.light->setAttenuationBasedOnRadius(10.0f, 0.01f);
+	Sun.light->setSpotlightInnerAngle(Ogre::Radian(0));
+
+	Sun.light->setCastShadows(true);
+	Sun.animate = true;
+	Sun.direction = Ogre::Vector3(0.3, -0.2, -1).normalisedCopy();
+	lights.push_back(Sun);
 
 	Mlight exhibitL1;
 
@@ -860,19 +900,16 @@ void Museum::initLights() {
 	//******************************
 	Mlight exhibitL2;
 
-
-
 	exhibitL2.light = sceneManager->createLight();
 
 	exhibitL2.light->setDiffuseColour(1.0f, 1.0f, 1.0f); //Warm
 	exhibitL2.light->setSpecularColour(1.0f, 1.0f, 1.0f);
 	exhibitL2.light->setPowerScale(3.0);
 	exhibitL2.light->setType(Ogre::Light::LT_SPOTLIGHT);
-	exhibitL2.position = Ogre::Vector3(0,10.0f, -5);
+	exhibitL2.position = Ogre::Vector3(0, 10.0f, -5);
 	//exhibitL1.light->setDirection(Ogre::Vector3(1, -1, -1).normalisedCopy());
 	exhibitL2.light->setAttenuationBasedOnRadius(20.0f, 0.01f);
 	exhibitL1.light->setSpotlightInnerAngle(Ogre::Degree(0));
-
 
 	exhibitL2.light->setCastShadows(true);
 	exhibitL2.direction = Ogre::Vector3(2.0, -0.2, -1).normalisedCopy();
@@ -905,18 +942,28 @@ void Museum::initLights() {
 	Mlight firelight;
 	firelight.light = sceneManager->createLight();
 	firelight.light->setDiffuseColour(20.7f, 7.8f, 2.8f); //Warm
+
 	//firelight.light->setSpecularColour(20.9f, 7.8f, 2.6f); //Warm
 	firelight.light->setType(Ogre::Light::LT_POINT);
-	firelight.light->setAttenuation(80, 0.1, 0.001,0.05);
-	firelight.position = Ogre::Vector3(56.63,2,-105.136);
+	firelight.light->setAttenuation(80, 0.1, 0.001, 0.05);
+	firelight.position = Ogre::Vector3(56.63, 2, -105.136);
 	firelight.light->setCastShadows(false);
 
 	lights.push_back(firelight);
-
-
-	//hallL.light=sceneManager->createLight();
-	//lights.push_back(hallL);
 	//******************************
+	Mlight lhouselight;
+	lhouselight.light = sceneManager->createLight();
+	lhouselight.light->setDiffuseColour(1.07f, 0.68f, 0.28f); //Warm
+	lhouselight.light->setSpecularColour(1.07f, 0.68f, 0.28f); //Warm
+
+	lhouselight.light->setType(Ogre::Light::LT_POINT);
+	lhouselight.light->setAttenuation(80, 0.1, 0.000001, 0.00005);
+	lhouselight.position = Ogre::Vector3(900, 220, 500);
+	lhouselight.light->setCastShadows(true);
+
+	lights.push_back(lhouselight);
+	//******************************
+
 	Mlight cameraL;
 
 	cameraL.light = sceneManager->createLight();
@@ -947,22 +994,27 @@ void Museum::initLights() {
 
 }
 
-Ogre::DSDatablock* Museum::getDatablock(std::vector<Ogre::String> params,Ogre::String name,exhibit exhibit) {
+Ogre::DSDatablock* Museum::getDatablock(std::vector<Ogre::String> params,
+		Ogre::String name, exhibit exhibit) {
 	Ogre::HlmsParamVec pv = Ogre::HlmsParamVec();
+	Ogre::DSDatablock * dbl = NULL;
+	dbl = checkDouble(params);
+	if (dbl) {
+		return dbl;
+	}
 
 	for (int ii = 0; ii < params.size(); ii++) {
 		Ogre::String str = params.at(ii);
 		Ogre::StringVector strv = Ogre::StringUtil::split(str, "$");
 
-		if(strv.at(0).compare("name")==0){
+		if (strv.at(0).compare("name") == 0) {
 
-			Ogre::DSDatablock* wat= static_cast<Ogre::DSDatablock*>(
-								hlmsDS->getDatablock(Ogre::IdString(strv.at(1)))
-							);
+			Ogre::DSDatablock* wat =
+					static_cast<Ogre::DSDatablock*>(hlmsDS->getDatablock(
+							Ogre::IdString(strv.at(1))));
 
-			return static_cast<Ogre::DSDatablock*>(
-					hlmsDS->getDatablock(Ogre::IdString(strv.at(1)))
-				);
+			return static_cast<Ogre::DSDatablock*>(hlmsDS->getDatablock(
+					Ogre::IdString(strv.at(1))));
 		}
 
 		pv.push_back(std::make_pair(strv.at(0), strv.at(1)));
@@ -974,30 +1026,62 @@ Ogre::DSDatablock* Museum::getDatablock(std::vector<Ogre::String> params,Ogre::S
 	Ogre::HlmsMacroblock * mb = new Ogre::HlmsMacroblock();
 	mb->mCullMode = cm;
 
+	Ogre::String SBTs[] = { "add", "modulate", "replace" };
 
-	Ogre::String SBTs[]={"add","modulate","replace"};
-
-	for(int i=0;i<3;i++){
-		if(SBTs[i].compare(exhibit.blendType)==0){
-			bb.setBlendType((Ogre::SceneBlendType)i);
+	for (int i = 0; i < 3; i++) {
+		if (SBTs[i].compare(exhibit.blendType) == 0) {
+			bb.setBlendType((Ogre::SceneBlendType) i);
 		}
 	}
 
-	Ogre::String CMPFs[]={"afail","apass","less","lequal","equal","nequal","gequal","greater"};
-	for(int i=0;i<8;i++){
-		if(CMPFs[i].compare(exhibit.compareFunc)==0){
-			mb->mDepthFunc =((Ogre::CompareFunction)i);
+	Ogre::String CMPFs[] = { "afail", "apass", "less", "lequal", "equal",
+			"nequal", "gequal", "greater" };
+	for (int i = 0; i < 8; i++) {
+		if (CMPFs[i].compare(exhibit.compareFunc) == 0) {
+			mb->mDepthFunc = ((Ogre::CompareFunction) i);
 		}
 	}
 
-	Ogre::String material = Ogre::StringConverter::toString(rand()) +Ogre::StringConverter::toString(rand())+ "exhibit_"+name;
-	return static_cast<Ogre::DSDatablock*>(hlmsDS->createDatablock(
-					material, material, *mb, bb, pv));
+	Ogre::String material = Ogre::StringConverter::toString(rand())
+			+ Ogre::StringConverter::toString(rand()) + "exhibit_" + name;
+	Ogre::DSDatablock * retVal =
+			static_cast<Ogre::DSDatablock*>(hlmsDS->createDatablock(material,
+					material, *mb, bb, pv));
+	registerDouble(retVal, params);
+
+	return retVal;
 }
 
 float Museum::randf(int threshold) {
-	return (-2.0*(rand()/(double)(RAND_MAX + 1)))-1.0;
+	return (-2.0 * (rand() / (double) (RAND_MAX + 1))) - 1.0;
 
+}
+
+Ogre::DSDatablock* Museum::checkDouble(std::vector<Ogre::String> vec) {
+
+	for (int i = 0; i < this->doubleCheck.size(); i++) {
+		if (doubleCheck[i].str.size()!=vec.size()) {
+			continue;
+		}
+		bool ContnueouterMainLoop=false;
+		for (int ii = 0; ii < this->doubleCheck[i].str.size(); ii++) {
+			if(doubleCheck[i].str[ii].compare(vec[ii])!=0){
+				ContnueouterMainLoop=true;
+			}
+		}
+		if(ContnueouterMainLoop){
+			continue;
+		}
+		return doubleCheck[i].db;
+	}
+
+	return NULL;
+}
+
+void Museum::registerDouble(Ogre::DSDatablock* dbl,
+		std::vector<Ogre::String> str) {
+
+	doubleCheck.push_back(Double(str,dbl));
 }
 
 Museum::~Museum() {
@@ -1005,3 +1089,4 @@ Museum::~Museum() {
 }
 
 } /* namespace Demo */
+

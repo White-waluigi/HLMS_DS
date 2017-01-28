@@ -46,7 +46,6 @@ in vec3 tangent;
 
     
 
-in vec2 uv0; 
 in uint drawId;
 
 
@@ -64,9 +63,9 @@ out block
 		vec4 glPosition;
 		float depth;
 				
-			
-		vec2 uv0;		
-				
+					
+		
+			vec4 posL[4];		
 
 } outVs;
 
@@ -110,6 +109,10 @@ layout(binding = 0) uniform PassBuffer
 	vec4 test;
 	
 
+	
+		
+			vec4 pssmSplitPoints[3];
+				ShadowData shadowD[4];
 	
 } pass;
 
@@ -175,8 +178,7 @@ void main()
 
 
 
-	
-		outVs.uv0 = uv0;    
+	    
     
     outVs.vertex=vertex.xyz;
 		
@@ -200,7 +202,9 @@ void main()
     
 
 		
-	    
+	
+        gl_Position = vertex*vec4(1,1,1,1);
+        
 
 
 

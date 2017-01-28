@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 
 //Gbuffer Material
@@ -52,6 +52,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
     return mix(
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
+}
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
 }
 
 
@@ -116,14 +127,6 @@ layout(binding = 1) uniform MaterialBuffer
 	mat4 texmat_1;
 
 	
-	
-	vec4 texloc_2;
-	
-
-	
-	mat4 texmat_2;
-
-	
 
 /**/
 
@@ -184,17 +187,6 @@ layout(binding = 0) uniform PassBuffer
 
 uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
-
-vec3 getTSNormal( vec3 uv )
-{
-	vec3 tsNormal;
-	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[1], uv ).xy;
-
-	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
-
-	return tsNormal;
-}
 
 
 //Uniforms that change per Item/Entity
@@ -290,21 +282,6 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
-	
-	
-		vec3 geomNormal = normalize( inPs.normal );
-		vec3 vTangent = normalize( inPs.tangent );
-
-		//Get the TBN matrix
-    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
-		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-	
-		normal.xyz= getTSNormal( vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,  
-		f2u(material.texloc_1 ) ) );
-		normal.xyz = normalize( (TBN * normal.xyz) );
-		
-		
 			
 
 	
@@ -312,9 +289,9 @@ void main() {
 			specular=material.vec4_specular;	
 					
 	
-		specular.rgb*=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy,
-		f2u(material.texloc_2 ) ) ).rgb;
+		specular.rgb*=  texture( textureMaps[1], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,
+		f2u(material.texloc_1 ) ) ).rgb;
 	
 
 	

@@ -1,8 +1,10 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 
 //Light Material 
+	
+//AMBIENT
 		
 
 
@@ -55,6 +57,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
 }
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
+}
 
 
 
@@ -73,18 +86,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_position;
-	 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_attentuation;
-	 vec4 vec4_spotdirection;
-	 vec4 vec4_spotparams;
+		 vec4 vec4_diffuse;
 	 vec4 vec4_lightparams;
-	 vec4 vec4_shadowParams;
-	 vec4 vec4_shadowQualityParams;
-	 vec4 vec4_shadowRes[1];
-	 vec4 vec4_shadowDr[1];
-	 mat4 vec4_shadowMat[1];
 
 
 
@@ -140,7 +143,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[5];
+				ShadowData shadowD[7];
 	
 } pass;
 
@@ -162,32 +165,10 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-//uniform samplerBuffer worldMatBuf;
 
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 		
-			uniform sampler2D texShadowMap[5];
+			uniform sampler2D texShadowMap[7];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -211,7 +192,7 @@ in block
 				
 					
 		
-			vec4 posL[5];		
+			vec4 posL[7];		
 
 } inPs;
 
@@ -259,7 +240,6 @@ void main() {
 
 	
 	
-	
 
 	vec2 screenPos=vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny));
 
@@ -279,30 +259,15 @@ void main() {
 
 
 
+		
+
 	
 		
 	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
-	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
-
 
 	float light_power				=material.vec4_lightparams.y;	
 	
-	vec4 light_position				=material.vec4_position;
-	
 	vec4 light_diffuse				=material.vec4_diffuse;
-	
-	vec4 light_specular				=material.vec4_specular;
-
-	vec4 light_attenuation			=material.vec4_attentuation;
-	
-	vec4 light_spotDirection			=pass.View*material.vec4_spotdirection;
-	
-	vec4 light_spotParams			=material.vec4_spotparams;
-	
-	vec4 ShadowVal=vec4(1);
-
-
-		
 
 	
 
@@ -360,50 +325,16 @@ void main() {
 
 
 
+	
+		
+
+	//final.rgb=(light_diffuse.rgb*diffuse)+glow;
+	
+
 		
 		
 	
 	
-	
-		
-	objToLightVec =(vec4(light_position.xyz,1)).xyz-viewPos;
-	float len_sq = dot(objToLightVec, objToLightVec);
-	float len = sqrt(len_sq);
-	vec3 objToLightDir = objToLightVec/len;
-		
-	// Calculate diffuse colour
-	total_light_contrib = max(0.0,dot(objToLightDir, normal)) * light_diffuse.rgb*diffuse;
-
-
-	vec4 rim=vec4(0);
-	
-
-	
-	// Calculate specular component
-	vec3 viewDir = -normalize(viewPos);
-	vec3 h = normalize(viewDir + objToLightDir);
-	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
-	total_light_contrib += specular * final_specular;
-
-    //LT_DIRECTIONAL = 0,
-    //LT_POINT = 1,
-    // LT_SPOTLIGHT = 2,
-
-	float attenuation = dot(light_attenuation.yzw, vec3(1.0, len, len_sq));
-	total_light_contrib /= attenuation;
-	
-	vec2 test =(vec4(light_position.xyz,1)).xy-viewPos.xy;
-	float len2_sq = dot(objToLightVec, objToLightVec);
-	float len2 = sqrt(len_sq);
-	vec2 objToLightDir2 = test/len2;
-	//final=vec4(0) ;
-	//if(len<15.0){
-	//	final=vec4( pow( (15.0-len)/15.0,2 ))*pass.flip;	
-	//}
-	
-
-
-
 		
 	
 	
@@ -411,41 +342,124 @@ void main() {
 	
 		
 		
+		
+
+	
 	
 		
 
 	if(floatBitsToUint(pass.debug.x)==0u){
-		if(floatBitsToUint(pass.debug.y)==7u){
-			ShadowVal=vec4(1);
+		final.rgb=(light_diffuse.rgb*diffuse)+glow;		
+
+		return;
+	}	
+	else if(floatBitsToUint(pass.debug.x)==1u){
+			if(light_type>=1u){
+	
+				final=vec4(depth);
+			}else {
+				final=vec4(0);
+			}	
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==2u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(normal.rgbb);
 		}
-		
-		final=vec4((total_light_contrib*light_power), 0.0)*ShadowVal;
-
-		//final=vec4(ShadowVal)/10.0;
-
-		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){
-		//if(light_type==0u){
-			//final=vec4(0);
-		//}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==3u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(diffuse.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==4u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(glow.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==5u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(specular.rgbb);
+		}
 		return;
 	}else if(floatBitsToUint(pass.debug.x)==6u){
-		final=vec4(0,0.0,0,0);
+		
+		final.rgb=(light_diffuse.rgb*diffuse);		
+
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==7u){
+		
+	uint numtex=7u;
+
+	float fL=screenPos.x*3.0;
+	float ffL=(screenPos.y*float(3));
+		
+	uint i=uint(fL);
+	uint ii=uint(ffL);
+		
+	uint curid=((i)+ii*3u);
+	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
 	
-		if(light_type==1u){
-			final=vec4(0.1,0.0,0,0);
-		}
-		if(light_type==2u){
-			final=vec4(0,0.1,0,0);
-		}
-		return;
-	}else {
-		final=vec4(0);
-		return;
+	final=texture(texShadowMap[curid], coords)+(diffuse.rgbb/100.0);
+	
+	if(curid>=numtex){
+		final.rgb=(light_diffuse.rgb*diffuse)+glow;
+
 	}
 
-		
 
+		return;
+		
+	}else if(floatBitsToUint(pass.debug.x)==8u){
+	 	if(light_type==4u){
+			if(texCoord.x>0.666666){
+				if(texCoord.y>0.5){
+					final.rgb=normal.rgb;
+				}else {
+					final.rgb=diffuse.rgb;
+				}
+				
+			}else if(texCoord.x>0.333333){
+				if(texCoord.y>0.5){
+					final.rgb=specular.rgb;
+				}
+				else {
+					final.rgb=(light_diffuse.rgb*diffuse)+glow;		
+				}
+				
+				
+			}else if(texCoord.x>0.133333){
+				if(texCoord.y>0.5){
+					final=vec4(1,0,0,0);
+				}
+				else {
+					final=vec4(0,0,1,0);
+				}		
+				}else {
+		
+					if(texCoord.y>0.5){
+						final.rgb=glow.rgb;
+					}
+					else {
+					final=vec4(depth);
+					}
+
+				}
+			
+			
+			}else {
+				final=vec4(0);
+			}
+	} else if (floatBitsToUint(pass.debug.x)==9u){
 	
+			final.rgb=glow.rgb;
+					
+ 	}
+	
+
 		
 
 	

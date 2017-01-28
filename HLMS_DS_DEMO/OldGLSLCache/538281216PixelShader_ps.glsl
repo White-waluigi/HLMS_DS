@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 //	Json Material
 
@@ -98,6 +98,7 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
 	 vec4 vec4_wave;
 
 
@@ -299,9 +300,9 @@ vec4 wave=material.vec4_wave;
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	
@@ -335,8 +336,11 @@ vec4 wave=material.vec4_wave;
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	normal.xyz= getTSNormal( vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_0*vec4(1+wave.x/10.0,1+wave.y/10.0,0,1)).xy,  
+	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
+uv.y=uv.y+sin((uv.x)*5.0*(2*PI)+wave.x*3.0)/500.0;
+uv.x=uv.x+sin((uv.y)*5.0*(2*PI)+wave.y*3.0)/100.0;
+normal.xyz= getTSNormal( vec3( 
+uv.xy,  
 f2u(material.texloc_0 ) ) );
 
 normal.xyz = normalize( (TBN * normal.xyz) );

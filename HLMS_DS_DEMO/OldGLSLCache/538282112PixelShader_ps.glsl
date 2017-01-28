@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 //	Json Material
 
@@ -97,7 +97,9 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_wave;
+		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
+	 vec4 vec4_wave;
 
 
 
@@ -108,14 +110,6 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
 
 	
 
@@ -176,14 +170,14 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 vec3 getTSNormal( vec3 uv )
 {
 	vec3 tsNormal;
 	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[1], uv ).xy;
+	tsNormal.xy = texture( textureMaps[0], uv ).xy;
 
 	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
 
@@ -255,9 +249,9 @@ void main() {
 
 
 
-vec4 normal_map =  texture( textureMaps[1], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy, 
-f2u( material.texloc_1 ) ) ); 
+vec4 normal_map =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
 
 
 vec4 wave=material.vec4_wave;
@@ -273,17 +267,12 @@ vec4 wave=material.vec4_wave;
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -303,17 +292,17 @@ vec4 wave=material.vec4_wave;
 		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
 	
 		normal.xyz= getTSNormal( vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,  
-		f2u(material.texloc_1 ) ) );
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
+		f2u(material.texloc_0 ) ) );
 		normal.xyz = normalize( (TBN * normal.xyz) );
 		
 		
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	
@@ -347,10 +336,14 @@ vec4 wave=material.vec4_wave;
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	vec2 uv=(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy;
-diffuse=  texture( textureMaps[0], vec3( 
-vec2(sin(uv.x/10.0),cos(uv.y*10.0)),
-f2u(material.texloc_0) ) );
+	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
+uv.y=uv.y+sin((uv.x)*5.0*(2*PI)+wave.x*3.0)/500.0;
+uv.x=uv.x+sin((uv.y)*5.0*(2*PI)+wave.y*3.0)/100.0;
+normal.xyz= getTSNormal( vec3( 
+uv.xy,  
+f2u(material.texloc_0 ) ) );
+
+normal.xyz = normalize( (TBN * normal.xyz) );
 
 
  	

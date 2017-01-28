@@ -1,5 +1,7 @@
 //Datablock:	
+#define PI 3.14159625
 
+//	Json Material
 
 
 //Gbuffer Material
@@ -53,6 +55,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
 }
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
+}
 
 
 
@@ -95,7 +108,10 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-	
+		 vec4 vec4_diffuse;
+	 vec4 vec4_specular;
+	 vec4 vec4_wave;
+
 
 
 
@@ -105,6 +121,46 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
+
+	
+	
+	vec4 texloc_1;
+	
+
+	
+	mat4 texmat_1;
+
+	
+	
+	vec4 texloc_2;
+	
+
+	
+	mat4 texmat_2;
+
+	
+	
+	vec4 texloc_3;
+	
+
+	
+	mat4 texmat_3;
+
+	
+	
+	vec4 texloc_4;
+	
+
+	
+	mat4 texmat_4;
+
+	
+	
+	vec4 texloc_5;
+	
+
+	
+	mat4 texmat_5;
 
 	
 
@@ -165,8 +221,19 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[4];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
+
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[2], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
 
 
 //Uniforms that change per Item/Entity
@@ -231,6 +298,33 @@ void main() {
 
 
 
+vec4 blendmap =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+vec4 dirt =  texture( textureMaps[1], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy, 
+f2u( material.texloc_1 ) ) ); 
+
+
+vec4 grass =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy, 
+f2u( material.texloc_2 ) ) ); 
+
+
+vec4 stone =  texture( textureMaps[3], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_4).xy, 
+f2u( material.texloc_4 ) ) ); 
+
+
+vec4 tiles =  texture( textureMaps[3], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_5).xy, 
+f2u( material.texloc_5 ) ) ); 
+
+
+vec4 wave=material.vec4_wave;
+
 
 	diffuse=vec4(0);
 	normal=vec4(0);
@@ -242,17 +336,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -262,12 +351,27 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
+	
+
+		vec3 geomNormal = normalize( inPs.normal );
+		vec3 vTangent = normalize( inPs.tangent );
+
+		//Get the TBN matrix
+    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
+		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
+		normal.xyz= getTSNormal( vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_3).xy,  
+		f2u(material.texloc_3 ) ) );
+			//normal.xyz = normalize( (TBN * normal.xyz) );
+	}
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	
@@ -283,8 +387,6 @@ void main() {
 							
 			
 				
-			opacity=diffuse.a;
-		
 
 	
 		
@@ -303,7 +405,8 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	
+	diffuse=blend(grass,dirt,tiles,stone,blendmap);
+
 
  	
 
@@ -315,17 +418,39 @@ void main() {
 
 
 
-	
 		
-							
+		
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
 			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
 		
 		
-			float cutoff=0.5;
-			
-			if(opacity < cutoff) discard;
 		
-							
 		
 			
 		

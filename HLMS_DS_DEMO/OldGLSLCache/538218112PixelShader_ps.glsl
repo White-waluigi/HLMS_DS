@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 //	Json Material
 
@@ -98,11 +98,6 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
-	 vec4 vec4_glow;
-	 vec4 vec4_leaf;
-	 vec4 vec4_specular;
-	 vec4 vec4_testvar55;
-	 vec4 vec4_wave;
 
 
 
@@ -113,22 +108,6 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
-
-	
-	
-	vec4 texloc_2;
-	
-
-	
-	mat4 texmat_2;
 
 	
 
@@ -189,8 +168,19 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[3];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
+
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[0], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
 
 
 //Uniforms that change per Item/Entity
@@ -207,28 +197,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -277,6 +245,12 @@ void main() {
 
 
 
+vec4 normal_map =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+
 	diffuse=vec4(0);
 	normal=vec4(0);
 	specular=vec4(0);
@@ -302,18 +276,33 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
+	
+	
+		vec3 geomNormal = normalize( inPs.normal );
+		vec3 vTangent = normalize( inPs.tangent );
+
+		//Get the TBN matrix
+    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
+		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
+	
+		normal.xyz= getTSNormal( vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
+		f2u(material.texloc_0 ) ) );
+		normal.xyz = normalize( (TBN * normal.xyz) );
+		
+		
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
-	
-		glow.rgb=material.vec4_glow.rgb;	
-			
+		
+		glow.rgb=vec3(0);	
+		
 	
 
 	
@@ -332,7 +321,8 @@ void main() {
 
 	
 	
-		
+
+	
 		
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
@@ -340,37 +330,14 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
+	
 
  	
-// glow *= tan(material.wave.x)*2.0;
 
 
 
 
-
-vec4 leaf=material.vec4_leaf;
-
- leaf =  texture( textureMaps[0], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
-f2u( material.texloc_0 ) ) ); 
-
-
-vec4 perlin =  texture( textureMaps[1], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy, 
-f2u( material.texloc_1 ) ) ); 
-
-
-vec4 testmap =  texture( textureMaps[2], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy, 
-f2u( material.texloc_2 ) ) ); 
-
-
-vec4 testvar55=material.vec4_testvar55;
-
-vec4 wave=material.vec4_wave;
-
-	diffuse=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);
-//opacity*=sqrt(1-pow(leaf.r,2.0));
+	//diffuse=perlin;
 
 
 

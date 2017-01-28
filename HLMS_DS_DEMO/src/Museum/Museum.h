@@ -46,12 +46,15 @@ class Museum {
 		Ogre::SceneNode* sn;
 
 		Ogre::Vector3 position=Ogre::Vector3::ZERO;
+		std::vector<Ogre::Vector3>* positions=0;
 		bool positionAutoOffset=true;
 		Ogre::Vector3 positionoffset=Ogre::Vector3::ZERO;
 		Ogre::Vector3 direction=Ogre::Vector3(0,0,-1);
 
 		Ogre::String blendType;
 		Ogre::String compareFunc;
+
+		bool skyanimate=false;
 	};
 	struct label{
 		Ogre::String description;
@@ -96,6 +99,22 @@ class Museum {
 	Ogre::CullingMode cm=Ogre::CULL_CLOCKWISE;
 
 	float timer=0;
+
+
+	class Double{
+	public:
+		Double(	std::vector<Ogre::String> str,	Ogre::DSDatablock * db){
+			this->str=str;
+			this->db=db;
+		}
+
+		std::vector<Ogre::String> str;
+		Ogre::DSDatablock * db;
+	};
+	std::vector<Double> doubleCheck;
+
+	 Ogre::DSDatablock * checkDouble(std::vector<Ogre::String>);
+	void registerDouble( Ogre::DSDatablock * dbl,std::vector<Ogre::String>);
 
 public:
 

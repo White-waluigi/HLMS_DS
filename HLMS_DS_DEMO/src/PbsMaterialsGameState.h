@@ -82,6 +82,7 @@ namespace Demo
         struct wColor
 		{
         	Ogre::Vector3 color;
+        	Ogre::Vector3 scolor;
 
         	float from;
         	float to;

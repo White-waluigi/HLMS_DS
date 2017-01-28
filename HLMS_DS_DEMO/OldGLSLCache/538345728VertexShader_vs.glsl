@@ -46,6 +46,7 @@ in vec3 tangent;
 
     
 
+in vec2 uv0; 
 in uint drawId;
 
 
@@ -63,7 +64,8 @@ out block
 		vec4 glPosition;
 		float depth;
 				
-					
+			
+		vec2 uv0;		
 		
 			vec4 posL[7];		
 
@@ -178,7 +180,8 @@ void main()
 
 
 
-	    
+	
+		outVs.uv0 = uv0;    
     
     outVs.vertex=vertex.xyz;
 		
@@ -202,9 +205,7 @@ void main()
     
 
 		
-	
-        gl_Position = vertex*vec4(1,1,1,1);
-        
+	    
 
 
 
