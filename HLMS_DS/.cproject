@@ -37,7 +37,7 @@
 									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_d/include/OGRE/Overlay"/>
 								</option>
 								<option id="gnu.cpp.compiler.option.other.pic.367435279" name="Position Independent Code (-fPIC)" superClass="gnu.cpp.compiler.option.other.pic" useByScannerDiscovery="false" value="true" valueType="boolean"/>
-								<option id="gnu.cpp.compiler.option.preprocessor.def.1082779005" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+								<option id="gnu.cpp.compiler.option.preprocessor.def.1082779005" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.630039902" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
@@ -45,6 +45,7 @@
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.debug.842157615" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.debug">
 								<option defaultValue="gnu.c.optimization.level.none" id="gnu.c.compiler.so.debug.option.optimization.level.321629436" name="Optimization Level" superClass="gnu.c.compiler.so.debug.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
 								<option id="gnu.c.compiler.so.debug.option.debugging.level.1036249383" name="Debug Level" superClass="gnu.c.compiler.so.debug.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.max" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.dialect.std.1573724444" superClass="gnu.c.compiler.option.dialect.std" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.863478974" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.so.debug.308905843" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.so.debug">
@@ -109,6 +110,14 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.so.release.1530826012" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.so.release">
 								<option id="gnu.cpp.compiler.so.release.option.optimization.level.202636954" name="Optimization Level" superClass="gnu.cpp.compiler.so.release.option.optimization.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.cpp.compiler.so.release.option.debugging.level.2048658548" name="Debug Level" superClass="gnu.cpp.compiler.so.release.option.debugging.level" useByScannerDiscovery="false" value="gnu.cpp.compiler.debugging.level.none" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.include.paths.966681820" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
+									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_r/include/OGRE"/>
+									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_r/include/OGRE/Hlms/Pbs"/>
+									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_r/include/OGRE/Vao"/>
+									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_r/include/OGRE/Hlms"/>
+									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_r/include/OGRE/Overlay"/>
+								</option>
+								<option id="gnu.cpp.compiler.option.other.pic.1400886167" superClass="gnu.cpp.compiler.option.other.pic" useByScannerDiscovery="false" value="true" valueType="boolean"/>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.50479858" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.so.release.1780951148" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.so.release">
@@ -121,6 +130,21 @@
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.so.release.475014375" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.so.release">
 								<option defaultValue="true" id="gnu.cpp.link.so.release.option.shared.1644682165" name="Shared (-shared)" superClass="gnu.cpp.link.so.release.option.shared" valueType="boolean"/>
+								<option id="gnu.cpp.link.option.other.1274515776" superClass="gnu.cpp.link.option.other" useByScannerDiscovery="false" valueType="stringList">
+									<listOptionValue builtIn="false" value="-rpath &quot;.&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.userobjs.409918794" superClass="gnu.cpp.link.option.userobjs" useByScannerDiscovery="false" valueType="userObjs">
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/libOgreHlmsPbs.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/libOgreHlmsPbsMobile.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/libOgreHlmsUnlit.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/libOgreHlmsUnlitMobile.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/libOgreMain.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/libOgreMeshLodGenerator.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/libOgreOverlay.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/Plugin_ParticleFX.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/RenderSystem_GL3Plus.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/RenderSystem_NULL.so.2.1.0"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.252200586" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
 									<additionalInput kind="additionalinput" paths="$(LIBS)"/>
@@ -155,6 +179,13 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/HLMS_DS"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/HLMS_DS"/>
+		</configuration>
+	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

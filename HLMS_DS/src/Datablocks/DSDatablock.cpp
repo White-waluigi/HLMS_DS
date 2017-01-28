@@ -517,8 +517,31 @@ void DSDatablock::setParam(Ogre::String allocator, Ogre::String allocator1) {
 }
 void DSDatablock::setParam(Ogre::String allocator, Ogre::Vector4 retv) {
 	char * str = new char[100];
+	int numvec=0;
 
-	sprintf(str, "%f %f %f", retv.x, retv.y, retv.z);
+	for (std::vector<DSMaterialParam *>::iterator it = materialParams->begin();
+			it != materialParams->end(); ++it) {
+		DSMaterialParam* param = (*it);
+
+		if (param->getParamName().compare(allocator)==0) {
+			numvec=param->getNumVec();
+		}
+
+	}
+	if(numvec==0){
+		return;
+	}
+	if(numvec==1)
+		sprintf(str, "%f", retv.x);
+
+	if(numvec==2)
+		sprintf(str, "%f %f", retv.x, retv.y);
+
+	if(numvec==3)
+		sprintf(str, "%f %f %f", retv.x, retv.y, retv.z);
+
+	if(numvec==4)
+		sprintf(str, "%f %f %f %f", retv.x, retv.y, retv.z, retv.w);
 
 	setParam(allocator, str);
 }

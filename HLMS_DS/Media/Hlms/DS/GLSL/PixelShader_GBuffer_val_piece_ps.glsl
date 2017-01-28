@@ -85,20 +85,25 @@
 	normal.w=1.0;
 
 	@property( tex_normal_map)
-	
+
 		vec3 geomNormal = normalize( inPs.normal );
 		vec3 vTangent = normalize( inPs.tangent );
 
 		//Get the TBN matrix
     	vec3 vBinormal   = normalize( cross( geomNormal, vTangent )@insertpiece( tbnApplyReflection ) );
 		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-	
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv@value(uvi_normal_map).xy,0,1)*material.texmat_@value(texd_normal_map)).xy,  
 		f2u(material.texloc_@value(texd_normal_map) ) ) );
-		normal.xyz = normalize( (TBN * normal.xyz) );
-		
-		
+			//normal.xyz = normalize( (TBN * normal.xyz) );
+		if(screenPos.x<0.5){
+			normal.xyz=vec3(0.5,0.5,1);
+		}
+
+	}
+	
 	@end
 		
 @end

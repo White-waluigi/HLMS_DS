@@ -123,28 +123,7 @@ DSLight* DSLightManager::createNewDLight(const Ogre::Light* light,
 
 	item->parentSN->attachObject(item);
 
-//	if (light != NULL) {
-//		item->parentSN->setPosition(
-//				light->getParentNode()->_getDerivedPositionUpdated());
-//		//					sn->setScale(light->getAttenuationRange(),
-//		item->parentSN->setOrientation(
-//				light->getParentNode()->_getDerivedOrientationUpdated());
-//	}
-	//are lights affected by scale?
-	//item->parentSN->setScale(light->getParentNode()->_getDerivedScale());
 
-	//							light->getAttenuationRange(),
-	//							light->getAttenuationRange());
-
-//	item->parentSN->setScale(1, 1, 1);
-//
-//	if (light != NULL) {
-//
-//		Quaternion quat = Vector3::UNIT_Y.getRotationTo(light->getDerivedDirectionUpdated());
-//
-//		item->parentSN->setOrientation(quat);
-//		item->parentSN->_getFullTransformUpdated();
-//	}
 	return item;
 
 }

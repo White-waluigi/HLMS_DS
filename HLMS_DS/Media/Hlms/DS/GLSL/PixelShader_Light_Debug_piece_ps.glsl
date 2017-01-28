@@ -1,7 +1,8 @@
 @piece(DebugAmbient)
+
 	if(floatBitsToUint(pass.debug.x)==0u){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;		
-			
+
 		return;
 	}	
 	else if(floatBitsToUint(pass.debug.x)==1u){
@@ -101,12 +102,11 @@
 		diffuse=vec3(1);
 	}else if(floatBitsToUint(pass.debug.y)==2u){
 
-		normal=vec3(0);
 
 	}else if(floatBitsToUint(pass.debug.y)==3u){
 		glow=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==4u){
-		depth=(0);
+		diffuse=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==5u){
 		specular=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==6u){
@@ -129,8 +129,9 @@
 		if(floatBitsToUint(pass.debug.y)==7u){
 			ShadowVal=vec4(1);
 		}
-		
+
 		final=vec4((total_light_contrib*light_power), 0.0)*ShadowVal;
+		
 
 		//final=vec4(ShadowVal)/10.0;
 

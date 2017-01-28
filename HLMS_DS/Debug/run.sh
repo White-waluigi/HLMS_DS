@@ -1,3 +1,4 @@
+cp /home/marvin/workspace/HLMS_DS/Release/libHLMS_DS.so /home/marvin/workspace/HLMS_DS_DEMO/libHLMS_DS.so 
 cp /home/marvin/workspace/HLMS_DS/Debug/libHLMS_DS.so /home/marvin/workspace/HLMS_DS_DEMO/libHLMS_DS.so 
 cd /home/marvin/workspace/HLMS_DS_DEMO/
 rsync -ra /home/marvin/workspace/HLMS_DS/Media/Hlms/ /home/marvin/workspace/HLMS_DS_DEMO/Media/Hlms/

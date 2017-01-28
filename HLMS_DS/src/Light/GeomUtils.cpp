@@ -378,7 +378,7 @@ float GeomUtils::getRadius(float a, float b, float c,float range) {
 
 	    		// difference of 10-15 levels deemed unnoticeable
 	    		// lol, bullshit, its waaaaaaaaaaaaaay too low
-	            float threshold_level = 0.1;
+	            float threshold_level = 0.001;
 	            float threshold = 1.0f/(threshold_level/256.0f);
 
 	            //// Use quadratic formula to determine outer radius
