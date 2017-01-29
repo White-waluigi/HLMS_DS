@@ -143,7 +143,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[4];
+				ShadowData shadowD[6];
 	
 } pass;
 
@@ -168,7 +168,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[4];
+			uniform sampler2D texShadowMap[6];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -192,7 +192,7 @@ in block
 				
 					
 		
-			vec4 posL[4];		
+			vec4 posL[6];		
 
 } inPs;
 
@@ -391,7 +391,7 @@ void main() {
 		return;
 	}else if(floatBitsToUint(pass.debug.x)==7u){
 		
-	uint numtex=4u;
+	uint numtex=6u;
 
 	float fL=screenPos.x*3.0;
 	float ffL=(screenPos.y*float(3));

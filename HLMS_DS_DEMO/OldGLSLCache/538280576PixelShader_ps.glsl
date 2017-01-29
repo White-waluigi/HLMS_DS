@@ -300,7 +300,8 @@ f2u( material.texloc_0 ) ) );
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
 		f2u(material.texloc_0 ) ) );
-			//normal.xyz = normalize( (TBN * normal.xyz) );
+		
+		normal.xyz = normalize( (TBN * normal.xyz) );
 	}
 			
 
@@ -348,7 +349,7 @@ f2u( material.texloc_0 ) ) );
 
 
 
-	//diffuse=perlin;
+	opacity=1-(pow(screenPos.x-0.5,2)+pow(screenPos.y-0.5,2))*5.0;
 
 
 

@@ -1,16 +1,16 @@
 //Datablock:	
 #define PI 3.14159625
 
-
-//Light Material 
-		
+//	Json Material
 
 
-	
+//Gbuffer Material
+
 
 
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
+#extension GL_EXT_texture_array : enable
 
 
 vec4 cubic(float v){
@@ -70,11 +70,35 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 
 
 
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+
+
+
+vec4 rainbow(float phase)
+{
+	float p=mod(phase,1.0);
+	float c=p*3.0;
+	float level = c;
+
+	float x=mod(c,1.0);
+	float y=1-mod(c,1.0);
+
+	float r,g,b;
+	if(level<1){
+		r=y;
+		g=x;
+		b=0;
+	}else if(level<2){
+		r=0;
+		g=y;
+		b=x;
+	}else if(level<3){
+		r=x;
+		g=0;
+		b=y;
+	}
+
+	return vec4(r,g,b,0);
 }
-
-
 
 
 
@@ -84,22 +108,61 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_position;
-	 vec4 vec4_diffuse;
+		 vec4 vec4_diffuse;
 	 vec4 vec4_specular;
-	 vec4 vec4_attentuation;
-	 vec4 vec4_spotdirection;
-	 vec4 vec4_spotparams;
-	 vec4 vec4_lightparams;
-	 vec4 vec4_shadowParams;
-	 vec4 vec4_shadowQualityParams;
-	 vec4 vec4_shadowRes[1];
-	 vec4 vec4_shadowDr[1];
-	 mat4 vec4_shadowMat[1];
+	 vec4 vec4_wave;
 
 
 
 
+	
+	vec4 texloc_0;
+	
+
+	
+	mat4 texmat_0;
+
+	
+	
+	vec4 texloc_1;
+	
+
+	
+	mat4 texmat_1;
+
+	
+	
+	vec4 texloc_2;
+	
+
+	
+	mat4 texmat_2;
+
+	
+	
+	vec4 texloc_3;
+	
+
+	
+	mat4 texmat_3;
+
+	
+	
+	vec4 texloc_4;
+	
+
+	
+	mat4 texmat_4;
+
+	
+	
+	vec4 texloc_5;
+	
+
+	
+	mat4 texmat_5;
+
+	
 
 /**/
 
@@ -149,14 +212,28 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[5];
-	
 } pass;
 
 
 
+
+
+
+
+
+uniform sampler2DArray textureMaps[4];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+
+
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[2], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
 
 
 //Uniforms that change per Item/Entity
@@ -174,17 +251,6 @@ layout(binding = 2) uniform InstanceBuffer
 } instance;
 
 
-
-		
-			uniform sampler2D texShadowMap[5];
-		
-		uniform sampler2D GBuffer0;
-		uniform sampler2D GBuffer1;
-		uniform sampler2D GBuffer2;
-		uniform sampler2D GBuffer3;
-		uniform sampler2D GBuffer4;
-	
-
 in block
 {
 
@@ -198,11 +264,19 @@ in block
 		vec4 glPosition;
 		float depth;
 				
-					
-		
-			vec4 posL[5];		
+			
+		vec2 uv0;		
+				
 
 } inPs;
+in vec4 vcolor;
+
+
+out vec4 diffuse;
+out vec4 normal;
+out vec4 pos;
+out vec4 specular;
+out vec4 glow;
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -210,462 +284,186 @@ uint f2u(float f){
 uint f2u(vec4 f){
 	return floatBitsToUint(f)[0];
 }
-
-in vec4 vcolor;
-out vec4 final;
-
-
-
-vec4 rainbow(float phase)
-{
-	float p=mod(phase,1.0);
-	float c=p*3.0;
-	float level = c;
-
-	float x=mod(c,1.0);
-	float y=1-mod(c,1.0);
-
-	float r,g,b;
-	if(level<1){
-		r=y;
-		g=x;
-		b=0;
-	}else if(level<2){
-		r=0;
-		g=y;
-		b=x;
-	}else if(level<3){
-		r=x;
-		g=0;
-		b=y;
-	}
-
-	return vec4(r,g,b,0);
-}
-
-
 void main() {
+	
+	
 
-	
-	
-	
+
+	float opacity=1.0;
 
 	vec2 screenPos=vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny));
 
 	vec2 texCoord=vec2(screenPos.x,screenPos.y);
-	
 
+
+
+
+vec4 blendmap =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
+f2u( material.texloc_0 ) ) ); 
+
+
+vec4 dirt =  texture( textureMaps[1], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy, 
+f2u( material.texloc_1 ) ) ); 
+
+
+vec4 grass =  texture( textureMaps[0], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy, 
+f2u( material.texloc_2 ) ) ); 
+
+
+vec4 stone =  texture( textureMaps[3], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_4).xy, 
+f2u( material.texloc_4 ) ) ); 
+
+
+vec4 tiles =  texture( textureMaps[3], vec3( 
+(vec4(inPs.uv0.xy,0,1)*material.texmat_5).xy, 
+f2u( material.texloc_5 ) ) ); 
+
+
+vec4 wave=material.vec4_wave;
+
+
+	diffuse=vec4(0);
+	normal=vec4(0);
+	specular=vec4(0);
+	glow=vec4(0.1);
+	
+	
+	
 		
-	vec3 diffuse=texture2D(GBuffer0 ,texCoord).rgb;
-	float depth=texture2D(GBuffer1 ,texCoord).a;
-	vec3 normal=texture2D(GBuffer1 ,texCoord).rgb;
-	vec3 specular=texture2D(GBuffer3 ,texCoord).rgb;
-	float rough=texture2D(GBuffer3 ,texCoord).w;
 	
-	float Sdepth=texture2D(GBuffer2 ,texCoord).x;
 	
-	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
-
-
-
 	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
-	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
+			
+
+	
+
+	
 
 
-	float light_power				=material.vec4_lightparams.y;	
-	
-	vec4 light_position				=material.vec4_position;
-	
-	vec4 light_diffuse				=material.vec4_diffuse;
-	
-	vec4 light_specular				=material.vec4_specular;
+	normal.xyz=normalize(inPs.normal);
+	normal.w=1.0;
 
-	vec4 light_attenuation			=material.vec4_attentuation;
 	
-	vec4 light_spotDirection			=pass.View*material.vec4_spotdirection;
-	
-	vec4 light_spotParams			=material.vec4_spotparams;
-	
-	vec4 ShadowVal=vec4(1);
 
+		vec3 geomNormal = normalize( inPs.normal );
+		vec3 vTangent = normalize( inPs.tangent );
 
+		//Get the TBN matrix
+    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
+		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
 		
-
-	
-
-
-	
-	if(floatBitsToUint(pass.debug.y)==1u){
-		diffuse=vec3(1);
-	}else if(floatBitsToUint(pass.debug.y)==2u){
-
-		normal=vec3(0);
-
-	}else if(floatBitsToUint(pass.debug.y)==3u){
-		glow=vec3(0);
-	}else if(floatBitsToUint(pass.debug.y)==4u){
-		depth=(0);
-	}else if(floatBitsToUint(pass.debug.y)==5u){
-		specular=vec3(0);
-	}else if(floatBitsToUint(pass.debug.y)==6u){
-		vec3 swap=diffuse;
-		diffuse=specular;
-		specular=swap;
-	}else if(floatBitsToUint(pass.debug.y)==8u){
-		light_diffuse=vec4(0);
-	}else if(floatBitsToUint(pass.debug.y)==9u){
-		if(light_type!=0u&&light_type!=4u){
-			final=vec4(0,0,0,0);
-			return;
-		}
-
+	if(floatBitsToUint(pass.debug.y)!=2u){
+		normal.xyz= getTSNormal( vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_3).xy,  
+		f2u(material.texloc_3 ) ) );
+		
+		normal.xyz = normalize( (TBN * normal.xyz) );
 	}
-
-
-
-	
-	
-	
-	//vec2 projPos=(vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny) )-0.5)/0.5;
-	
-	vec2 projPos=(vec2(texCoord.x,texCoord.y) - 0.5) / 0.5;
-	
-	vec3 ray = vec3(projPos.x,projPos.y, 1)*pass.farCorners.xyz;
-	vec3 viewPos = normalize(ray)*(depth*pass.farClip);
- 
- 	vec3 worldPos = (pass.InvView* vec4(viewPos, 1)).xyz;
- 
- 
-   	float f=pass.farClip;
-	float n = pass.nearClip;
-   	
-	vec3 objToLightVec ;
-	vec3 total_light_contrib;
-
-
-
-
-
-
-		
-		
-	
-	
-		
-	
-	
-		
-
-	
-	objToLightVec =(vec4(light_position.xyz,1)).xyz-viewPos;
-	float len_sq = dot(objToLightVec, objToLightVec);
-	float len = sqrt(len_sq);
-	vec3 objToLightDir = objToLightVec/len;
-		
-	// Calculate diffuse colour
-	total_light_contrib = max(0.0,dot(objToLightDir, normal)) * light_diffuse.rgb*diffuse;
-
-
-	vec4 rim=vec4(0);
-	
-
-	
-	// Calculate specular component
-	vec3 viewDir = -normalize(viewPos);
-	vec3 h = normalize(viewDir + objToLightDir);
-	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
-	total_light_contrib += specular * final_specular;
-
-    //LT_DIRECTIONAL = 0,
-    //LT_POINT = 1,
-    // LT_SPOTLIGHT = 2,
-
-	float attenuation = dot(light_attenuation.yzw, vec3(1.0, len, len_sq));
-	total_light_contrib /= attenuation;
-	
-	vec2 test =(vec4(light_position.xyz,1)).xy-viewPos.xy;
-	float len2_sq = dot(objToLightVec, objToLightVec);
-	float len2 = sqrt(len_sq);
-	vec2 objToLightDir2 = test/len2;
-	//final=vec4(0) ;
-	//if(len<15.0){
-	//	final=vec4( pow( (15.0-len)/15.0,2 ))*pass.flip;	
-	//}
-	
-
-
-
-	float spotlightAngle = clamp(dot(         ( vec4(light_spotDirection.xyz,0) ).xyz        , -objToLightDir), 0.0, 1.0);
-	float spotFalloff = clamp((spotlightAngle - light_spotParams.x) / (light_spotParams.y - light_spotParams.x), 0.0, 1.0);
-	total_light_contrib *= (1-spotFalloff);
 			
 
 	
-
-	
-	
 			
-			
-/***************************************************************Shadow**************************************************************************************************/
-		if(depth<1.0){
-	
-		ShadowVal=vec4(0);
-		
-		
-		
-		float fL=screenPos.x*3.0;
-		float ffL=(screenPos.y*3.0);
-		uint IDoffset=0;
-		float PPoffset=0.00001;
-		
-
-
-		
-		
-		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x);
-				
-		
-
-
-		uint i=uint(fL);
-		uint ii=uint(ffL);
-		
-		uint curid=((i*3u)+ii)%9u;
-
-		vec4 shadowRes=	material.vec4_shadowRes[IDoffset];
-		mat4 shadowMat= material.vec4_shadowMat[IDoffset];
-		vec4 shadowDr= material.vec4_shadowDr[IDoffset];
-		
-	vec4 shadowProjPos = 	shadowMat * vec4(worldPos,1);
-	float shadowDistance=(((shadowProjPos).z-PPoffset)/shadowDr.y);
-	//float shadowDistance=(shadowProjPos).z;
-	
-	//vec4 shadowProjPos =  pass.ShadowCamMat[curid] * (vec4(inPs.worldPos));
-	//vec4 shadowProjPos =inPs.worldPos; 	
-    shadowProjPos /= shadowProjPos.w;
-    vec2 shadowSampleTexCoord = vec2(shadowProjPos.x,shadowProjPos.y);
-		
-		
-	//shadowSampleTexCoord=inPs.posL[shadowID].xy/inPs.posL[shadowID].w;
+			specular=material.vec4_specular;	
+					
 	
 
-	//vec2 texCoord=vec2(screenPos.x,1-screenPos.y);
-	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.5))*vec2(3.0,2.0);
-	//glow=texture2D(texShadowMap[curid], texCoord);
 	
-	//glow=texelFetch(worldMatBuf,(int(gl_FragCoord.x)));
+		
+		glow.rgb=vec3(0);	
+		
+	
 
-	
 	
 
 
-
-
-		int samplerate=int(f2u(material.vec4_shadowQualityParams.x));
-		float samplesize=((material.vec4_shadowQualityParams.y));
-
-
-		vec2 samplingoffset=vec2(0,0);
-
-		samplerate=1;
-		samplesize=0.2;
-
-		float varx=shadowRes.z;
-		float vary=shadowRes.w;
-
-		vec2 fra=fract(shadowSampleTexCoord*shadowRes.xy+0.5);
-
-		fra=fract( shadowSampleTexCoord * shadowRes.xy + 0.50196 /*<- For some reason 0.00196 fixes inaccurate shadows*/);
-		vec4 ls= vec4(0);
-
-
-		for(int i=-samplerate;i<=samplerate;i++){
-			for(int ii=-samplerate;ii<=samplerate;ii++){
-				
-				samplingoffset=vec2(i,ii);
-
-
-
-			}
-		}
-		ShadowVal/=pow(samplerate*2+1,2);
-		samplingoffset=vec2(0);
 		
-
-
-		vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
-
-		vec2 centroidUV = (Soffset+(shadowRes.zw*0.5));
-		vec4 sampl=textureGather(texShadowMap[shadowID], Soffset);
-
-		for(int i=0;i<4;i++){
-
+							
 			
-			
-			
-			vec2 offset=vec2(0); 
-			if(i==1){
-				offset.y=vary;
-
-				
-			}
-			if(i==2){
-				offset.x=varx;
-			
-			}
-			if(i==3){
-				offset.x=varx;
-				offset.y=vary;
-			}
-			//float samp=texture(texShadowMap[shadowID], centroidUV+offset).x;
-			float samp=sampl[i];
-			float shadowDepth=samp;
-		
-			if( (shadowDistance)<(shadowDepth)){
-				ls[i]=1.0;
-			}
-			
-
-		}
-		float a = mix(ls[3], ls[0], fra.y);
-        float b = mix(ls[2], ls[1], fra.y);
-        float c = mix(a, b, fra.x);
-
-        float ssr=(((samplerate*2.0)+1.0)*((samplerate*2.0)+1.0));
-
-
-		float samp=texture(texShadowMap[shadowID], shadowSampleTexCoord+shadowRes.zw*samplingoffset)[0];
-		float shadowDepth=samp;
-
-
-
-        if(floatBitsToUint(pass.debug.z)%4u==0u){
-        	ShadowVal+=vec4((c));
-        }else if(floatBitsToUint(pass.debug.z)%4u==1u){
-        	ShadowVal+=vec4(( (ls[0]+ls[1]+ls[2]+ls[3]) / 4.0));
-        }else{
-        	float samp=texture(texShadowMap[shadowID], centroidUV).x;
-        	float shadowDepth=samp;
-			if( (shadowDistance)<(shadowDepth)){
-				ShadowVal+=vec4(1.0);
-			}
-        }
-
-
-
-		/*
 				
 
-    vec2 texcoord=shadowSampleTexCoord;
-        float fx = fract(shadowSampleTexCoord.x);
-    float fy = fract(shadowSampleTexCoord.y);
-    texcoord.x -= fx;
-    texcoord.y -= fy;
-
-    vec4 xcubic = cubic(fx);
-    vec4 ycubic = cubic(fy);
-
-    vec4 c = vec4(texcoord.x - 0.5, texcoord.x + 1.5, texcoord.y -
-0.5, texcoord.y + 1.5);
-    vec4 s = vec4(xcubic.x + xcubic.y, xcubic.z + xcubic.w, ycubic.x +
-ycubic.y, ycubic.z + ycubic.w);
-    vec4 offset = c + vec4(xcubic.y, xcubic.w, ycubic.y, ycubic.w) /
-s;
-
-    vec4 sample0 = texture2D(GBuffer0, vec2(offset.x, offset.z) *
-shadowRes.xy);
-    vec4 sample1 = texture2D(GBuffer0, vec2(offset.y, offset.z) *
-shadowRes.xy);
-    vec4 sample2 = texture2D(GBuffer0, vec2(offset.x, offset.w) *
-shadowRes.xy);
-    vec4 sample3 = texture2D(GBuffer0, vec2(offset.y, offset.w) *
-shadowRes.xy);
-
-    float sx = s.x / (s.x + s.y);
-    float sy = s.z / (s.z + s.w);
-
-    final=fract( mix(
-        mix(sample3, sample2, sx),
-        mix(sample1, sample0, sx), sy) );
-        return;
- 
-		*/
-		int samplex=2;
-		int sampley=2;
+	
 		
+		float reflection=0.5;	
+		
+	
+
+	
+	
+
+	
+		
+	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
+	//Ogre Shadows want different depth than DS lighting
+	//Linear depth
+	pos.x= (inPs.glPosition.z ) ;
+
+
+	diffuse=blend(grass,dirt,tiles,stone,blendmap);
+
+
+ 	
+
+
+
+
+	
+
+
+
 
 		
-
-		if(floatBitsToUint(pass.debug.z)%4u==2u){
-
-			float samp=texture(texShadowMap[shadowID], shadowSampleTexCoord)[0];
-			float shadowDepth=samp;
-        	ShadowVal=vec4(0);
-
-			if( (shadowDistance)<(shadowDepth)){
-	        	ShadowVal+=vec4(1);
+		
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
 			}
-		}
-
-		if(ShadowVal.x>1.1){
-			final=vec4(0.4,0.3,0.7,0);
-			return;
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
 		}
 		
-		//ShadowVal=vec4( pow(ShadowVal.x,2.0) );
 		
-
 		
-		}
-
-
-
+		
+			
 		
 	
-		
-		
 	
-		
-
-	if(floatBitsToUint(pass.debug.x)==0u){
-		if(floatBitsToUint(pass.debug.y)==7u){
-			ShadowVal=vec4(1);
-		}
-
-		final=vec4((total_light_contrib*light_power), 0.0)*ShadowVal;
-		
-
-		//final=vec4(ShadowVal)/10.0;
-
-		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){
-		//if(light_type==0u){
-			//final=vec4(0);
-		//}
-		return;
-	}else if(floatBitsToUint(pass.debug.x)==6u){
-		final=vec4(0,0.0,0,0);
-	
-		if(light_type==1u){
-			final=vec4(0.1,0.0,0,0);
-		}
-		if(light_type==2u){
-			final=vec4(0,0.1,0,0);
-		}
-		return;
-	}else {
-		final=vec4(0);
-		return;
-	}
-
-		
+	diffuse.a=0.9;
 
 	
-		
-
-	
+	if(floatBitsToUint(pass.debug.x)==9u){
+ 		glow=material.idColor;	
+ 	}
  }
  
-
+ 
 

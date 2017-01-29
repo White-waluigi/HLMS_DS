@@ -294,20 +294,22 @@ vec4 wave=material.vec4_wave;
 	normal.w=1.0;
 
 	
-	
+
 		vec3 geomNormal = normalize( inPs.normal );
 		vec3 vTangent = normalize( inPs.tangent );
 
 		//Get the TBN matrix
     	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
 		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-	
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
 		f2u(material.texloc_0 ) ) );
-		normal.xyz = normalize( (TBN * normal.xyz) );
 		
-		
+			normal.xyz = normalize( (TBN * normal.xyz) );
+			normal.xyz = TBN*vec3(1,0,0);
+	}
 			
 
 	
@@ -348,8 +350,8 @@ vec4 wave=material.vec4_wave;
 
 
 	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
-uv.y=uv.y+sin((uv.x)*5.0*(2*PI)+wave.x*3.0)/500.0;
-uv.x=uv.x+sin((uv.y)*5.0*(2*PI)+wave.y*3.0)/100.0;
+uv.y=uv.y+sin((uv.x)*1.0*(2*PI)+wave.x*3.0)/500.0;
+uv.x=uv.x+sin((uv.y)*1.0*(2*PI)+wave.y*3.0)/100.0;
 normal.xyz= getTSNormal( vec3( 
 uv.xy,  
 f2u(material.texloc_0 ) ) );

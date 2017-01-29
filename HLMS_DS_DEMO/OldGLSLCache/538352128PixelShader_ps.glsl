@@ -306,8 +306,9 @@ vec4 wave=material.vec4_wave;
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
 		f2u(material.texloc_0 ) ) );
-		normal.xyz=vec3(0.5,0.5,1);
+		
 			normal.xyz = normalize( (TBN * normal.xyz) );
+			normal.xyz = TBN*vec3(1,0,0);
 	}
 			
 

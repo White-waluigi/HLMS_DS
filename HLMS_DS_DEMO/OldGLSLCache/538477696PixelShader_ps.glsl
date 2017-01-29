@@ -315,7 +315,7 @@ void main() {
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,  
 		f2u(material.texloc_1 ) ) );
 		
-			normal.xyz = normalize( (TBN * normal.xyz) );
+		normal.xyz = normalize( (TBN * normal.xyz) );
 	}
 			
 

@@ -221,14 +221,14 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[3];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[4];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 vec3 getTSNormal( vec3 uv )
 {
 	vec3 tsNormal;
 	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[0], uv ).xy;
+	tsNormal.xy = texture( textureMaps[2], uv ).xy;
 
 	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
 
@@ -313,12 +313,12 @@ vec4 grass =  texture( textureMaps[0], vec3(
 f2u( material.texloc_2 ) ) ); 
 
 
-vec4 stone =  texture( textureMaps[2], vec3( 
+vec4 stone =  texture( textureMaps[3], vec3( 
 (vec4(inPs.uv0.xy,0,1)*material.texmat_4).xy, 
 f2u( material.texloc_4 ) ) ); 
 
 
-vec4 tiles =  texture( textureMaps[2], vec3( 
+vec4 tiles =  texture( textureMaps[3], vec3( 
 (vec4(inPs.uv0.xy,0,1)*material.texmat_5).xy, 
 f2u( material.texloc_5 ) ) ); 
 
@@ -365,7 +365,7 @@ vec4 wave=material.vec4_wave;
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_3).xy,  
 		f2u(material.texloc_3 ) ) );
 		
-			normal.xyz = normalize( (TBN * normal.xyz) );
+		normal.xyz = normalize( (TBN * normal.xyz) );
 	}
 			
 

@@ -288,7 +288,7 @@ f2u( material.texloc_0 ) ) );
 
 
 
-	//diffuse=perlin;
+	opacity=1-(pow(screenPos.x-0.5,2)+pow(screenPos.y-0.5,2))*5.0;
 
 
 

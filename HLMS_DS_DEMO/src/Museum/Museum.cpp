@@ -31,7 +31,7 @@ void Museum::initExhibits() {
 
 	statue.materialParams.push_back("diffuse$0.7 0.7 0.2");
 	statue.materialParams.push_back("opacity$0.6");
-	statue.label = "softtransp";
+	statue.label = "transp";
 
 	exhibits.push_back(statue);
 
@@ -65,7 +65,7 @@ void Museum::initExhibits() {
 
 	vase.materialParams.push_back("diffuse$0.9 0.7 0.4 1.0");
 	//vase.materialParams.push_back("glow$0.2 0 0.2");
-	vase.label = "texmat";
+	vase.label = "matrix";
 	exhibits.push_back(vase);
 
 	//************************************************************
@@ -83,7 +83,7 @@ void Museum::initExhibits() {
 	Cagevase.materialParams.push_back("specular$1 1 1  32.0");
 
 	//vase.materialParams.push_back("glow$0.2 0 0.2");
-	Cagevase.label = "sharptransp";
+	Cagevase.label = "transp";
 	exhibits.push_back(Cagevase);
 
 	//************************************************************
@@ -141,7 +141,7 @@ void Museum::initExhibits() {
 	UFO.materialParams1.push_back("diffuse_map$file=hull.png");
 	UFO.materialParams1.push_back("specular$1.0 1.0 1.0  32.0");
 
-	UFO.label = "custommat";
+	UFO.label = "autoparam";
 
 	UFO.model = "UFO.mesh";
 	UFO.pedastol = 1;
@@ -166,7 +166,7 @@ void Museum::initExhibits() {
 
 	TV.materialParams1.push_back("specular$0.5 0.5 0.5  32.0");
 
-	TV.label = "animtex";
+	TV.label = "animated";
 	TV.model = "TV.mesh";
 	TV.pedastol = 1;
 
@@ -233,7 +233,7 @@ void Museum::initExhibits() {
 
 //	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
 	goldstatue.materialParams.push_back("specular$1 1 1 600.0");
-	goldstatue.label = "reflect";
+	goldstatue.label = "reflection";
 	goldstatue.positionoffset = Ogre::Vector3(0, 0.9, 0);
 	goldstatue.scale = Ogre::Vector3(0.04, 0.04, 0.04);
 	goldstatue.rqID = (0x00000001);
@@ -274,7 +274,7 @@ void Museum::initExhibits() {
 
 	roof.model = "roof.mesh";
 
-	roof.label = "reflect";
+	roof.label = "reflection";
 	roof.pedastol = 0;
 	roof.positionAutoOffset = false;
 	exhibits.push_back(roof);
@@ -321,7 +321,7 @@ void Museum::initExhibits() {
 
 	jsonstatue.materialParams.push_back("name$glowTiles");
 
-	jsonstatue.label = "softtransp";
+	jsonstatue.label = "json";
 
 	exhibits.push_back(jsonstatue);
 
@@ -331,9 +331,8 @@ void Museum::initExhibits() {
 	jsonvase.model = "Vase.mesh";
 	jsonvase.pedastol = 1;
 
-	jsonvase.materialParams.push_back("name$sine");
+	jsonvase.materialParams.push_back("name$lens");
 
-	jsonvase.label = "softtransp";
 
 	exhibits.push_back(jsonvase);
 	//***********************************************************
@@ -352,7 +351,7 @@ void Museum::initExhibits() {
 	lighthouse.model = "lighthouse.mesh";
 
 	lighthouse.materialParams.push_back("diffuse_map$file=lighthouse.png");
-	lighthouse.position = Ogre::Vector3(900, 100, 500);
+	lighthouse.position = Ogre::Vector3(880, 110, 500);
 
 	exhibits.push_back(lighthouse);
 	//************************************************************
@@ -869,7 +868,6 @@ void Museum::initLights() {
 	Sun.light->setPowerScale(2.0);
 	Sun.light->setType(Ogre::Light::LT_DIRECTIONAL);
 	Sun.light->setShadowFarDistance(2000);
-	Sun.light->setShadowFarClipDistance(2000);
 
 	Sun.position = Ogre::Vector3(5, 5.0f, -5);
 	//exhibitL1.light->setDirection(Ogre::Vector3(1, -1, -1).normalisedCopy());

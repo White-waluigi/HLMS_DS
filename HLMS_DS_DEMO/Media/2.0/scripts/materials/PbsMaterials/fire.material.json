@@ -290,7 +290,7 @@
 				}
 			}
 		},
-		"sine": {
+		"lens": {
 			"meta": {
 				"type": "material",
 				"inheritDefault": false
@@ -340,7 +340,7 @@
 						"glsl": {
 							"_comment": "use Array for multiline shader",
 							"code": [
-								"//diffuse=perlin;"
+								"opacity=1-(pow(screenPos.x-0.5,2)+pow(screenPos.y-0.5,2))*5.0;"
 							]
 						},
 						"hlsl": {
@@ -412,7 +412,7 @@
 							0.3,
 							0.3,
 							0.3,
-							64
+							24
 						]
 					}
 				},

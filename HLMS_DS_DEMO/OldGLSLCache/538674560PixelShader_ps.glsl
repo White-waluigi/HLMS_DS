@@ -301,12 +301,11 @@ void main() {
 		diffuse=vec3(1);
 	}else if(floatBitsToUint(pass.debug.y)==2u){
 
-		normal=vec3(0);
 
 	}else if(floatBitsToUint(pass.debug.y)==3u){
 		glow=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==4u){
-		depth=(0);
+		diffuse=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==5u){
 		specular=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==6u){

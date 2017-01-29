@@ -154,7 +154,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[7];
+				ShadowData shadowD[8];
 	
 } pass;
 
@@ -179,7 +179,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[7];
+			uniform sampler2D texShadowMap[8];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -203,7 +203,7 @@ in block
 				
 					
 		
-			vec4 posL[7];		
+			vec4 posL[8];		
 
 } inPs;
 
@@ -304,12 +304,11 @@ void main() {
 		diffuse=vec3(1);
 	}else if(floatBitsToUint(pass.debug.y)==2u){
 
-		normal=vec3(0);
 
 	}else if(floatBitsToUint(pass.debug.y)==3u){
 		glow=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==4u){
-		depth=(0);
+		diffuse=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==5u){
 		specular=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==6u){

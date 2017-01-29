@@ -334,6 +334,8 @@ void main() {
 		
 			float cutoff=0.5;
 			
+				cutoff=1.0-(1.0/(3*1.0));
+			
 			if(opacity < cutoff) discard;
 		
 							

@@ -151,7 +151,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[6];
+				ShadowData shadowD[7];
 	
 } pass;
 
@@ -176,7 +176,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[6];
+			uniform sampler2D texShadowMap[7];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -200,7 +200,7 @@ in block
 				
 					
 		
-			vec4 posL[6];		
+			vec4 posL[7];		
 
 } inPs;
 

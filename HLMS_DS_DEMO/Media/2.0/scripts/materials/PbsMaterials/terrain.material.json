@@ -143,11 +143,12 @@
 					}
 				},
 				"normal_map": {
+					"maptype":"normal",
 					"helper": false,
 					"type": "texture",
 					"datatype": "vec4",
 					"texData": {
-						"file": "normal_p.jpg",
+						"file": "NMStripes.png",
 						"sampler": "Samplerblock_Wrap1",
 						"mappingblock": "terrainmb"
 					}
@@ -199,9 +200,6 @@
 							"_comment": "use Array for multiline shader",
 							"code": [
 								"diffuse=blend(grass,dirt,tiles,stone,blendmap);"
-							],
-							"_code": [
-								""
 							]
 						},
 						"hlsl": {

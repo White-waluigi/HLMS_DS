@@ -97,13 +97,9 @@
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv@value(uvi_normal_map).xy,0,1)*material.texmat_@value(texd_normal_map)).xy,  
 		f2u(material.texloc_@value(texd_normal_map) ) ) );
-			//normal.xyz = normalize( (TBN * normal.xyz) );
-		if(screenPos.x<0.5){
-			normal.xyz=vec3(0.5,0.5,1);
-		}
-
+		
+		normal.xyz = normalize( (TBN * normal.xyz) );
 	}
-	
 	@end
 		
 @end

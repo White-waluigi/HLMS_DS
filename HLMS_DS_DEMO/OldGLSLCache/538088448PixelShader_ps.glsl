@@ -352,21 +352,21 @@ vec4 wave=material.vec4_wave;
 	normal.w=1.0;
 
 	
-	
+
 		vec3 geomNormal = normalize( inPs.normal );
 		vec3 vTangent = normalize( inPs.tangent );
 
 		//Get the TBN matrix
     	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
 		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-	
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_3).xy,  
 		f2u(material.texloc_3 ) ) );
 		
-		if(floatBitsToUint(pass.debug.y)==2u){
-			normal.xyz = normalize( (TBN * normal.xyz) );
-	 	}
+		normal.xyz = normalize( (TBN * normal.xyz) );
+	}
 			
 
 	

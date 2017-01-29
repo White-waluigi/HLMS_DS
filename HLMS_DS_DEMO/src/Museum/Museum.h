@@ -21,7 +21,7 @@ class Museum {
 		int exID=0;
 
 		Ogre::String model;
-		int pedastol;
+		int pedastol=0;
 
 		bool floating=false;
 		float fphase=0.0;
