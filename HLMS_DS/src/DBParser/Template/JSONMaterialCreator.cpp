@@ -295,6 +295,23 @@ void JSONMaterialCreator::initVarData(DSMaterialParam* param, MT_MultiData* mt,O
 void JSONMaterialCreator::initTexData(DSTextureParam* param, MT_MultiData* mt,Ogre::String key,Ogre::String datatype) {
 	Ogre::String type=mt->getDataD("type","file").s;
 	Ogre::String file=mt->getDataD("file","error.png").s;
+	Ogre::String tmt=mt->getDataD("maptype",key.compare("normal_map")==0?"normal": "diffuse").s;
+
+	std::map<Ogre::String,Ogre::HlmsTextureManager::TextureMapType> tmtmap;
+
+
+	tmtmap["detail"]=HlmsTextureManager::TEXTURE_TYPE_DETAIL;
+    tmtmap[	"normal"]=HlmsTextureManager::TEXTURE_TYPE_DETAIL_NORMAL_MAP;
+	tmtmap[	"diffuse"]=HlmsTextureManager::TEXTURE_TYPE_DIFFUSE;
+	tmtmap[	"envmap"]=HlmsTextureManager::TEXTURE_TYPE_ENV_MAP;
+	tmtmap[	"monochrome"]=HlmsTextureManager::TEXTURE_TYPE_MONOCHROME;
+	tmtmap[	"noncolor"]=HlmsTextureManager::TEXTURE_TYPE_NON_COLOR_DATA;
+	tmtmap[	"normals"]=HlmsTextureManager::TEXTURE_TYPE_NORMALS;
+	if(tmtmap.find(tmt)==tmtmap.end()){
+		tmt="monochrome";
+	}
+
+	Ogre::HlmsTextureManager::TextureMapType tmt_b;
 	assert(mt->has("file"));
 
 	param->setName(file);
@@ -332,7 +349,7 @@ void JSONMaterialCreator::initTexData(DSTextureParam* param, MT_MultiData* mt,Og
 		if(datatype.compare("vec4")==0){
 			//TODO
 			param->setPostFix(key);
-			HlmsTextureManager::TextureLocation texloc=db->setTexture(file,DSDatablock::DS_TEXTURE_DIFFUSE);
+			HlmsTextureManager::TextureLocation texloc=db->setTexture(file,tmtmap[tmt]);
 			param->addTexture(&texloc);
 
 		}else{

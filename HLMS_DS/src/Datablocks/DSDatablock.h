@@ -129,6 +129,9 @@ public:
 	HlmsTextureManager::TextureLocation setTexture(const String &name,
 			DSTextureType textureType, DSTextureParam*paramtype = NULL);
 
+	HlmsTextureManager::TextureLocation setTexture(const String &name,
+			Ogre::HlmsTextureManager::TextureMapType textureType, DSTextureParam*paramtype = NULL);
+
 	DSDatablock(IdString name, HlmsDS *creator,
 			const HlmsMacroblock *macroblock, const HlmsBlendblock *blendblock,
 			const HlmsParamVec &params, bool derived = false);

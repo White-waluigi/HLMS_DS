@@ -130,6 +130,7 @@ void DSDatablock::calculateHash() {
 }
 HlmsTextureManager::TextureLocation DSDatablock::setTexture(const String &name,
 		DSTextureType textureType, DSTextureParam * paramptr) {
+
 	const HlmsTextureManager::TextureMapType texMapTypes[NUM_DS_TEXTURE_TYPES] =
 			{ HlmsTextureManager::TEXTURE_TYPE_DIFFUSE,
 					HlmsTextureManager::TEXTURE_TYPE_NORMALS,
@@ -138,15 +139,24 @@ HlmsTextureManager::TextureLocation DSDatablock::setTexture(const String &name,
 					//glow
 					HlmsTextureManager::TEXTURE_TYPE_DIFFUSE, };
 
+	return setTexture(name,texMapTypes[textureType],paramptr);
+
+	//assert( texLocation.texture->isTextureTypeArray() || textureType == PBSM_REFLECTION );
+	//HlmsTextureManager::TextureLocation texLocation;
+}
+HlmsTextureManager::TextureLocation DSDatablock::setTexture(const String &name,
+		HlmsTextureManager::TextureMapType textureType, DSTextureParam * paramptr) {
+
+
+
 	HlmsManager *hlmsManager = mCreator->getHlmsManager();
 	HlmsTextureManager *hlmsTextureManager = hlmsManager->getTextureManager();
 
 
 
-
 	HlmsTextureManager::TextureLocation texLocation =
 			hlmsTextureManager->createOrRetrieveTexture(name,
-					texMapTypes[textureType]);
+					textureType);
 
 	//assert( texLocation.texture->isTextureTypeArray() || textureType == PBSM_REFLECTION );
 	//HlmsTextureManager::TextureLocation texLocation;
