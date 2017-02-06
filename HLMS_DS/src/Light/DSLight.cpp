@@ -34,7 +34,7 @@ DSLight::DSLight(const Ogre::Light * parent,Ogre::IdType id,
 	float radius=	GeomUtils::getRadius(parent->getAttenuationConstant(),
 					parent->getAttenuationLinear(),
 					parent->getAttenuationQuadric(),
-					parent->getAttenuationRange());
+					parent->getPowerScale());
 
 	Aabb aabb= Aabb(
 			Vector3(Vector3(0,0,0)),
@@ -134,11 +134,13 @@ void DSLight::createBuffers(void) {
     else if(this->parent->getType()==1){
 
     	float radius=GeomUtils::getRadius(parent->getAttenuationConstant(),
-    			parent->getAttenuationLinear(), parent->getAttenuationQuadric(),parent->getAttenuationRange());
+    			parent->getAttenuationLinear(), parent->getAttenuationQuadric(),parent->getPowerScale());
+
     	GeomUtils::createSphere(vertices, indices,radius,20,20);
     }else if(this->parent->getType()==2){
+    	float height=GeomUtils::getRadius(parent->getAttenuationConstant(),
+    			parent->getAttenuationLinear(), parent->getAttenuationQuadric(),parent->getPowerScale());
 
-        Real height = parent->getAttenuationRange();
         Radian coneRadiusAngle = parent->getSpotlightOuterAngle() / 2;
         Real rad = Math::Tan(coneRadiusAngle) * height;
     	GeomUtils::createCone(vertices, indices,rad,height,40);
@@ -279,9 +281,10 @@ bool DSLight::isDead() {
 	if(ambient){
 		return false;
 	}
-	if(parent==0){
+	if(parent==NULL){
 		return true;
 	}
+
 	return false;
 }
 } /* namespace Ogre */

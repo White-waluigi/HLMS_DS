@@ -272,6 +272,17 @@ void MT_MultiData::ao(Ogre::String key, Ogre::String str) {
 void MT_MultiData::ao(Ogre::String key, float flt) {
 	ao(new MT_MultiData(key,flt));
 }
+bool MT_MultiData::isString() {
+	return type== sString;
+}
+
+bool MT_MultiData::isFloat() {
+	return type== sFloat;
+}
+
+bool MT_MultiData::isObject() {
+	return type== sObject;
+}
 
 
 } /* namespace Ogre */

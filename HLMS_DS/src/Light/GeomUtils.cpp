@@ -370,7 +370,7 @@ float GeomUtils::getRadius(float a, float b, float c,float range) {
 
 	    // Set Attenuation parameter to shader
 	    //setCustomParameter(3, Vector4(c, b, a, 0));
-	    float outerRadius =range;
+	    float outerRadius;
 	    /// There is attenuation? Set material accordingly
 
 
@@ -378,14 +378,14 @@ float GeomUtils::getRadius(float a, float b, float c,float range) {
 
 	    		// difference of 10-15 levels deemed unnoticeable
 	    		// lol, bullshit, its waaaaaaaaaaaaaay too low
-	            float threshold_level = 0.001;
+	            float threshold_level = 0.1;
 	            float threshold = 1.0f/(threshold_level/256.0f);
 
 	            //// Use quadratic formula to determine outer radius
 	            c = c-threshold;
 	            float d=sqrt(b*b-4*a*c);
 	            outerRadius = (-2*c)/(b+d);
-	            outerRadius *= 1.2;
+	            outerRadius *= 1.2*range;
 
 
 

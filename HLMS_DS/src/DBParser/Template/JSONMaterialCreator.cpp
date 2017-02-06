@@ -257,7 +257,6 @@ void JSONMaterialCreator::initializeProperty(MT_MultiData* mt) {
 	db->propertyParams->push_back(param);
 
 }
-
 void JSONMaterialCreator::initVarData(DSMaterialParam* param, MT_MultiData* mt,Ogre::String datatype,Ogre::String key) {
 	Ogre::String type=mt->getDataD("type","manual").s;
 
@@ -275,8 +274,26 @@ void JSONMaterialCreator::initVarData(DSMaterialParam* param, MT_MultiData* mt,O
 			param->paramName=key;
 			param->postFix=key;
 
+			if(mt->getObject("value").o->isString()){
+					Ogre::String dhex=mt->getDataD("value","#DEADBEEF").s;
 
-			rvmd= mt->getDataArray("value");
+					unsigned int vald[4]={0,0,0,0};
+
+
+					sscanf( dhex.c_str(), "#%2x%2x%2x%2x", &vald[0],&vald[1],&vald[2],&vald[3]);
+
+
+					rvmd=new MT_MultiData::retValMD[4];
+
+					for(int i=0;i<4;i++){
+						rvmd[i]=MT_MultiData::retValMD(vald[i]/255.0);
+					}
+
+
+
+			}else{
+				rvmd= mt->getDataArray("value");
+			}
 
 
 		}
@@ -300,7 +317,7 @@ void JSONMaterialCreator::initTexData(DSTextureParam* param, MT_MultiData* mt,Og
 	std::map<Ogre::String,Ogre::HlmsTextureManager::TextureMapType> tmtmap;
 
 
-	tmtmap["detail"]=HlmsTextureManager::TEXTURE_TYPE_DETAIL;
+	tmtmap[ "detail"]=HlmsTextureManager::TEXTURE_TYPE_DETAIL;
     tmtmap[	"normal"]=HlmsTextureManager::TEXTURE_TYPE_DETAIL_NORMAL_MAP;
 	tmtmap[	"diffuse"]=HlmsTextureManager::TEXTURE_TYPE_DIFFUSE;
 	tmtmap[	"envmap"]=HlmsTextureManager::TEXTURE_TYPE_ENV_MAP;

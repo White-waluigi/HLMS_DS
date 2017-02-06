@@ -24,7 +24,13 @@
 	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
 
-	float light_power				=material.vec4_lightparams.y;	
+	float light_power				=material.vec4_lightparams.y;
+	
+	float light_visible				=material.vec4_lightsettings.x;
+	
+	float light_static				=material.vec4_lightsettings.y;
+	
+	float light_shadows				=material.vec4_lightsettings.z;
 	
 	vec4 light_position				=material.vec4_position;
 	

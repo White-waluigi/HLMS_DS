@@ -23,6 +23,14 @@ layout(binding = 2) uniform InstanceBuffer
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		vec4 fc[4];
+		
 		float depth;
 		@property( hlms_qtangent )
 			flat float biNormalReflection;
@@ -34,6 +42,10 @@ layout(binding = 2) uniform InstanceBuffer
 		@property(hlms_num_shadow_maps)
 			vec4 posL[@value(hlms_num_shadow_maps)];@end
 		
+			
+			
+		@insertpiece(custom_VStoPS)
+
 @end
 
 

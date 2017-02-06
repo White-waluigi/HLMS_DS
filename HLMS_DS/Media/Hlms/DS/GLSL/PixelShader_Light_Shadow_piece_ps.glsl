@@ -119,7 +119,8 @@
 		}
 		ShadowVal/=pow(samplerate*2+1,2);
 		samplingoffset=vec2(0);
-		@insertpiece(SampleShadow)
+
+			@insertpiece(SampleShadow)
 
 		/*
 		@insertpiece(SampleShadowBC)
@@ -146,7 +147,9 @@
 			return;
 		}
 		
-		//ShadowVal=vec4( pow(ShadowVal.x,2.0) );
+		
+		//Makes Shadows softer
+		ShadowVal=vec4( pow(ShadowVal.x,5.0) );
 		
 
 		
@@ -159,11 +162,12 @@
 @piece(SampleShadow)
 
 
-		vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
+vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
 
 		vec2 centroidUV = (Soffset+(shadowRes.zw*0.5));
 		vec4 sampl=textureGather(texShadowMap[shadowID], Soffset);
-
+		
+		
 		for(int i=0;i<4;i++){
 
 			
@@ -172,12 +176,9 @@
 			vec2 offset=vec2(0); 
 			if(i==1){
 				offset.y=vary;
-
-				
 			}
 			if(i==2){
 				offset.x=varx;
-			
 			}
 			if(i==3){
 				offset.x=varx;
@@ -187,12 +188,13 @@
 			float samp=sampl[i];
 			float shadowDepth=samp;
 		
-			if( (shadowDistance)<(shadowDepth)){
+			if( (shadowDistance)<(shadowDepth)||sampl[i]>0.9999){
 				ls[i]=1.0;
 			}
 			
 
 		}
+		
 		float a = mix(ls[3], ls[0], fra.y);
         float b = mix(ls[2], ls[1], fra.y);
         float c = mix(a, b, fra.x);
@@ -230,7 +232,7 @@
 	uint curid=((i)+ii*3u);
 	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
 	
-	final=texture(texShadowMap[curid], coords)+(diffuse.rgbb/100.0);
+	final=texture(texShadowMap[curid], coords);
 	
 	if(curid>=numtex){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;

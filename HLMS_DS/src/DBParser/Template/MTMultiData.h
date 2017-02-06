@@ -88,6 +88,10 @@ public:
 	void checksize(int size);
 	void checksize(Ogre::String);
 
+	bool isString();
+	bool isFloat();
+	bool isObject();
+
 };
 
 } /* namespace Ogre */

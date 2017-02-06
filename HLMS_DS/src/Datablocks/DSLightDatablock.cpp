@@ -97,6 +97,12 @@ void DSLightDatablock::initializeParamTypes() {
 		vec4ParamTypes->push_back(*type);
 
 		type = new DSMaterialParamType();
+		type->paramName = "lightsettings";
+		type->postFix = "lightsettings";
+		type->numVec = 4;
+		vec4ParamTypes->push_back(*type);
+
+		type = new DSMaterialParamType();
 		type->paramName = "shadowParams";
 		type->postFix = "shadowParams";
 		type->numVec = 4;

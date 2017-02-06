@@ -47,7 +47,7 @@ bool DSLightManager::CheckForNewLights(SceneManager * sceneManager,
 		if (this->lightList.find(globalLightList.lights[i]->getId())
 				== this->lightList.end()) {
 
-			if (globalLightList.lights[i]->getType() != Light::LT_DIRECTIONAL) {
+			if ( globalLightList.lights[i]->isAttached()&&  globalLightList.lights[i]->getType() != Light::LT_DIRECTIONAL) {
 				DSLight* dlight = createNewDLight(globalLightList.lights[i],
 						sceneManager);
 				this->lightList.insert(
@@ -63,7 +63,7 @@ bool DSLightManager::CheckForNewLights(SceneManager * sceneManager,
 		if (this->lightList.find(globalLightList.lights[i]->getId())
 				== this->lightList.end()) {
 
-			if (globalLightList.lights[i]->getType() == Light::LT_DIRECTIONAL) {
+			if (globalLightList.lights[i]->isAttached()&&globalLightList.lights[i]->getType() == Light::LT_DIRECTIONAL) {
 				DSLight* dlight = createNewDLight(globalLightList.lights[i],
 						sceneManager);
 				this->lightList.insert(
@@ -331,6 +331,11 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 						StringValueUtils::getVectorStr(
 								Vector4(type.f, light->getPowerScale(),
 										LightID.f, smID.f))));
+		params.push_back(
+				std::pair<IdString, String>(IdString("lightsettings"),
+						StringValueUtils::getVectorStr(
+								Vector4(light->isVisible(),
+										light->isStatic(),light->getCastShadows(), 3.0f))));
 	} else {
 		type.i = 4;
 		params.push_back(
