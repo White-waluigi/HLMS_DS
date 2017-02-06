@@ -68,6 +68,22 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 			retval=mix(sb,retval,b.a);
 	return retval;
 }
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
 
 
 
@@ -238,6 +254,8 @@ vec4 rainbow(float phase)
 
 void main() {
 
+
+	
 	
 	
 
@@ -258,7 +276,8 @@ void main() {
 	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
 
 
-
+	
+	
 		
 
 	
@@ -402,7 +421,7 @@ void main() {
 	uint curid=((i)+ii*3u);
 	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
 	
-	final=texture(texShadowMap[curid], coords)+(diffuse.rgbb/100.0);
+	final=texture(texShadowMap[curid], coords);
 	
 	if(curid>=numtex){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;

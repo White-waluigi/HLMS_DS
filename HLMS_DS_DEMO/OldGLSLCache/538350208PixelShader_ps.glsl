@@ -66,6 +66,40 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 			retval=mix(sb,retval,b.a);
 	return retval;
 }
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x<f.x){
+		retval.x+=.5;
+	}
+	if(d.y<f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x>t.x){
+		retval.x+=.5;
+	}
+	if(d.y>t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
 
 
 
@@ -109,8 +143,6 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_wave;
 
 
 
@@ -222,13 +254,22 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
-		float depth;
 		
-			flat float biNormalReflection;
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		
+		float depth;
 				
 			
 		vec2 uv0;		
 				
+			
+			
+		
+
 
 } inPs;
 in vec4 vcolor;
@@ -264,8 +305,6 @@ vec4 normal_map =  texture( textureMaps[0], vec3(
 (vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
 f2u( material.texloc_0 ) ) ); 
 
-
-vec4 wave=material.vec4_wave;
 
 
 	diffuse=vec4(0);
@@ -312,9 +351,9 @@ vec4 wave=material.vec4_wave;
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -348,22 +387,29 @@ vec4 wave=material.vec4_wave;
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
-uv.y=uv.y+sin((uv.x)*1.0*(2*PI)+wave.x*3.0)/500.0;
-uv.x=uv.x+sin((uv.y)*1.0*(2*PI)+wave.y*3.0)/100.0;
-normal.xyz= getTSNormal( vec3( 
-uv.xy,  
-f2u(material.texloc_0 ) ) );
-
-normal.xyz = normalize( (TBN * normal.xyz) );
-
+	
 
  	
 
 
 
 
-	
+	diffuse=vec4(0);
+vec4 fc[2];
+fc[0]=inPs.sF;
+fc[1]=inPs.eF;
+vec2 sF = vec2(pass.screenx,pass.screeny) * (1 + inPs.sF.xy / inPs.sF.w)/2;
+vec2 eF = vec2(pass.screenx,pass.screeny) * (1 + inPs.eF.xy / inPs.eF.w)/2;
+//if(!inside(vec4(inPs.glPosition.xy,0,0),fc[0],fc[1]) ){
+//   discard;
+diffuse=inside(vec4(screenPos.xy,0,0),vec4(sF,0,0),vec4(eF,0,0));
+//}
+for(int i=0;i<2;i++){
+   float fg=1-min(length(inPs.glPosition.xyz-(fc[i].xyz)),1 );
+   //diffuse+=fg;
+}
+if(floatBitsToUint(pass.debug.w)%2==1){opacity=0.9;}
+
 
 
 

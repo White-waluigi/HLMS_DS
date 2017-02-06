@@ -321,15 +321,35 @@
 					"type": "variable",
 					"datatype": "vec4",
 					"varData": {
-						"value": [
-							0.2,
-							0.2,
-							0.5,
-							0
-						]
+						"value": "#4C3319"
 					}
 				},
-				"testmapshader": {
+				"lensshaderV" : {
+					"type": "piece",
+					"shadertype": "vertex",
+					"optional": false,
+					"_comment": "options: add, to add after previous piece, first puts it before existing piece, replace to replace previous piece, noReplace to not replace if previous Piece exists,  child materials have replace priority",
+					"method": "add",
+					"id": "custom_vertex_post",
+					"shader": {
+						"glsl": {
+							"_comment": "use Array for multiline shader",
+							"code": [
+								"vec4 fc[4];",
+								"outVs.fc[0]=vec4(0,0,0,1);",
+								"outVs.fc[1]=vec4(1,0,0,1);",
+								"outVs.fc[2]=vec4(1,1,0,1);",
+								"outVs.fc[3]=vec4(0,1,0,1);",
+								"for(int i=0;i<4;i++){",
+								"   outVs.fc[i].xyz =  vec4( (worldMat * outVs.fc[i]) ).xyz;",
+								"   outVs.fc[i].w=1.0;",
+								"   outVs.fc[i] = pass.Proj*(pass.View*outVs.fc[i]);",
+								"}"
+							]
+						}
+					}
+				},
+				"lensshaderP": {
 					"type": "piece",
 					"shadertype": "pixel",
 					"optional": false,
@@ -340,7 +360,14 @@
 						"glsl": {
 							"_comment": "use Array for multiline shader",
 							"code": [
-								"opacity=1-(pow(screenPos.x-0.5,2)+pow(screenPos.y-0.5,2))*5.0;"
+								"vec4 fc[4];",
+								"for(int i=0;i<4;i++){",
+								"    fc[i].xy = ((inPs.fc[i].xy)/inPs.fc[i].w);",
+								"}",
+								"vec3 sP = ((inPs.glPosition.xyz)/inPs.glPosition.w);",
+								"bool A0=insideTri(sP.xy,fc[0].xy,fc[1].xy,fc[2].xy);",
+								"bool A1=insideTri(sP.xy,fc[0].xy,fc[2].xy,fc[3].xy);",
+								"if(!(A0||A1)){discard;}"
 							]
 						},
 						"hlsl": {

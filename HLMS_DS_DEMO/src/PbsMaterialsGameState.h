@@ -27,6 +27,8 @@ namespace Demo
 
         bool                mAnimateObjects;
 
+
+        Ogre::Vector3 camPos;
         int cycleDM=0;
         int cycleFBM=0;
         int cycleX=0;

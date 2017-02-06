@@ -130,8 +130,12 @@
 			ShadowVal=vec4(1);
 		}
 
-		final=vec4((total_light_contrib*light_power), 0.0)*ShadowVal;
+		final=ominf(  vec4((total_light_contrib*light_power), 0.0))*ShadowVal;
 		
+
+
+
+			
 
 		//final=vec4(ShadowVal)/10.0;
 

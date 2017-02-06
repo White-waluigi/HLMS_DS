@@ -54,7 +54,7 @@ namespace Demo
         {
             Ogre::Vector3 camMovementDir( camMovementX, slideUpDown, camMovementZ );
             camMovementDir.normalise();
-            camMovementDir *= timeSinceLast * 10.0f * (1 + mSpeedMofifier * 30);
+            camMovementDir *= timeSinceLast * 3.0f * (1 + mSpeedMofifier * 30);
 
             if( mUseSceneNode )
             {

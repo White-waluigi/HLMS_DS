@@ -61,11 +61,22 @@ out block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		
 		float depth;
 				
 					
 		
-			vec4 posL[6];		
+			vec4 posL[5];		
+			
+			
+		
+
 
 } outVs;
 
@@ -112,7 +123,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[6];
+				ShadowData shadowD[5];
 	
 } pass;
 
@@ -148,7 +159,10 @@ void main()
     mat4 worldMat = UNPACK_MAT4( worldMatBuf, drawId<<1);
 	
     mat4 worldView = UNPACK_MAT4( worldMatBuf, (drawId<<1) + 1u );
-	
+    
+    
+    
+    outVs.worldMat=worldMat;
 	//vec4	worldPos = vec4( (worldView*vertex) );
 	
 	
@@ -199,9 +213,10 @@ void main()
 
         vcolor=vertex;
     
-    
+	
 
-		
+
+		 
 	
         gl_Position = vertex*vec4(1,1,1,1);
         

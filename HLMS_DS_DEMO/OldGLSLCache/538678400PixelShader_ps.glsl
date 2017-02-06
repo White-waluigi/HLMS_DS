@@ -91,6 +91,7 @@ layout(binding = 1) uniform MaterialBuffer
 	 vec4 vec4_spotdirection;
 	 vec4 vec4_spotparams;
 	 vec4 vec4_lightparams;
+	 vec4 vec4_lightsettings;
 	 vec4 vec4_shadowParams;
 	 vec4 vec4_shadowQualityParams;
 	 vec4 vec4_shadowRes[1];
@@ -246,6 +247,8 @@ vec4 rainbow(float phase)
 
 void main() {
 
+
+	
 	
 	
 	
@@ -267,14 +270,21 @@ void main() {
 	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
 
 
-
+	
+	
 	
 		
 	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
 	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
 
-	float light_power				=material.vec4_lightparams.y;	
+	float light_power				=material.vec4_lightparams.y;
+	
+	float light_visible				=material.vec4_lightsettings.x;
+	
+	float light_static				=material.vec4_lightsettings.y;
+	
+	float light_shadows				=material.vec4_lightsettings.z;
 	
 	vec4 light_position				=material.vec4_position;
 	
@@ -291,6 +301,10 @@ void main() {
 	vec4 ShadowVal=vec4(1);
 
 
+		if(light_visible<=0){
+			final=vec4(0);
+			return;
+		}
 		
 
 	
@@ -406,6 +420,7 @@ void main() {
 	
 	
 			
+		if(light_shadows>0){
 			
 /***************************************************************Shadow**************************************************************************************************/
 		if(depth<1.0){
@@ -620,6 +635,7 @@ shadowRes.xy);
 		}
 
 
+		}
 
 		
 	

@@ -326,15 +326,18 @@ void Museum::initExhibits() {
 	exhibits.push_back(jsonstatue);
 
 	//************************************************************
-	exhibit jsonvase;
+	exhibit mask;
 
-	jsonvase.model = "Vase.mesh";
-	jsonvase.pedastol = 1;
+	mask.model = "mask.mesh";
+	mask.pedastol = 1;
+	mask.scale=Ogre::Vector3(3,3,3);
+	mask.positionoffset=Ogre::Vector3(-1.2,0,1.5);
+	mask.materialParams2.push_back("name$lens");
+	mask.materialParams1.push_back("specular$1.0 1.0 1.0 150.0");
+	mask.materialParams.push_back("diffuse_map$file=frame.png");
 
-	jsonvase.materialParams.push_back("name$lens");
+	exhibits.push_back(mask);
 
-
-	exhibits.push_back(jsonvase);
 	//***********************************************************
 	exhibit water;
 
@@ -546,9 +549,12 @@ void Museum::setupExhibits() {
 
 	for (int i = 0; i < exhibits.size(); i++) {
 
+		if(exhibits[i].processed)
+			continue;
+
 		if (exhibits.at(i).positionAutoOffset
 				&& exhibits.at(i).position == Ogre::Vector3::ZERO) {
-			exhibits.at(i).position = Ogre::Vector3((exhibitoffset + 1) * 5, 0,
+			exhibits.at(i).position =  Ogre::Vector3((exhibitoffset + 1) * 5, 0,
 					-25);
 			exhibitoffset++;
 		}
@@ -609,6 +615,7 @@ void Museum::setupExhibits() {
 
 		exhibits.at(i).sn->attachObject(exhibits.at(i).item);
 
+		exhibits[i].processed=true;
 	}
 }
 
@@ -841,6 +848,8 @@ void Museum::setupLights() {
 			Ogre::ColourValue(0.01f, 0.22f, 0.2f),
 			Ogre::Vector3(1, 1, 1) + Ogre::Vector3::UNIT_Y * 0.2f);
 	for (int i = 0; i < lights.size(); i++) {
+		if(lights[i].processed)
+			continue;
 
 		Ogre::SceneNode *rootNode = sceneManager->getRootSceneNode();
 
@@ -855,7 +864,8 @@ void Museum::setupLights() {
 		lights.at(i).sn->setPosition(lights.at(i).position);
 
 		lights.at(i).light->setDirection(lights.at(i).direction);
-
+		lights.at(i).light->setVisible(lights.at(i).visible);
+		lights.at(i).processed=true;
 	}
 }
 void Museum::initLights() {
@@ -878,7 +888,27 @@ void Museum::initLights() {
 	Sun.animate = true;
 	Sun.direction = Ogre::Vector3(0.3, -0.2, -1).normalisedCopy();
 	lights.push_back(Sun);
+//************************************
+	Mlight mobileLight;
 
+	mobileLight.light = sceneManager->createLight();
+	mobileLight.light->setDiffuseColour(10.7f, 7.8f, 6.8f); //Warm
+	mobileLight.light->setSpecularColour(10.7f, 7.8f, 6.8f); //Warm
+	mobileLight.light->setPowerScale(20);
+
+	//firelight.light->setSpecularColour(20.9f, 7.8f, 2.6f); //Warm
+	mobileLight.light->setType(Ogre::Light::LT_SPOTLIGHT);
+	mobileLight.light->setAttenuationBasedOnRadius(60.0f, 0.01f);
+	mobileLight.position = Ogre::Vector3(16.63, 5, -105.136);
+	mobileLight.light->setCastShadows(true);
+	mobileLight.direction = Ogre::Vector3(0.0, -0.8, -1).normalisedCopy();
+	mobileLight.visible=true;
+
+	this->mobileLight=lights.size();
+
+	lights.push_back(mobileLight);
+
+	//******************************************
 	Mlight exhibitL1;
 
 	exhibitL1.light = sceneManager->createLight();
@@ -895,23 +925,7 @@ void Museum::initLights() {
 	exhibitL1.light->setCastShadows(true);
 	exhibitL1.direction = Ogre::Vector3(-2.0, -0.2, -1).normalisedCopy();
 	lights.push_back(exhibitL1);
-	//******************************
-	Mlight exhibitL2;
 
-	exhibitL2.light = sceneManager->createLight();
-
-	exhibitL2.light->setDiffuseColour(1.0f, 1.0f, 1.0f); //Warm
-	exhibitL2.light->setSpecularColour(1.0f, 1.0f, 1.0f);
-	exhibitL2.light->setPowerScale(3.0);
-	exhibitL2.light->setType(Ogre::Light::LT_SPOTLIGHT);
-	exhibitL2.position = Ogre::Vector3(0, 10.0f, -5);
-	//exhibitL1.light->setDirection(Ogre::Vector3(1, -1, -1).normalisedCopy());
-	exhibitL2.light->setAttenuationBasedOnRadius(20.0f, 0.01f);
-	exhibitL1.light->setSpotlightInnerAngle(Ogre::Degree(0));
-
-	exhibitL2.light->setCastShadows(true);
-	exhibitL2.direction = Ogre::Vector3(2.0, -0.2, -1).normalisedCopy();
-	lights.push_back(exhibitL2);
 
 	//******************************
 	Mlight MainExhibitL1;
@@ -933,7 +947,7 @@ void Museum::initLights() {
 	hallL.light->setType(Ogre::Light::LT_POINT);
 	hallL.light->setAttenuation(40, 1, 0.01, 0.1);
 	hallL.position = Ogre::Vector3(-10, 5.0f, -15);
-	hallL.light->setCastShadows(true);
+	hallL.light->setCastShadows(false);
 
 	lights.push_back(hallL);
 	//******************************
@@ -949,15 +963,34 @@ void Museum::initLights() {
 
 	lights.push_back(firelight);
 	//******************************
+	Mlight exhibitL2;
+
+	exhibitL2.light = sceneManager->createLight();
+
+	exhibitL2.light->setDiffuseColour(1.0f, 1.0f, 1.0f); //Warm
+	exhibitL2.light->setSpecularColour(1.0f, 1.0f, 1.0f);
+	exhibitL2.light->setPowerScale(3.0);
+	exhibitL2.light->setType(Ogre::Light::LT_SPOTLIGHT);
+	exhibitL2.position = Ogre::Vector3(0, 10.0f, -5);
+	//exhibitL1.light->setDirection(Ogre::Vector3(1, -1, -1).normalisedCopy());
+	exhibitL2.light->setAttenuationBasedOnRadius(20.0f, 0.01f);
+	exhibitL1.light->setSpotlightInnerAngle(Ogre::Degree(0));
+
+	exhibitL2.light->setCastShadows(true);
+	exhibitL2.direction = Ogre::Vector3(2.0, -0.2, -1).normalisedCopy();
+
+
+	lights.push_back(exhibitL2);
+	//******************************
 	Mlight lhouselight;
 	lhouselight.light = sceneManager->createLight();
 	lhouselight.light->setDiffuseColour(1.07f, 0.68f, 0.28f); //Warm
 	lhouselight.light->setSpecularColour(1.07f, 0.68f, 0.28f); //Warm
 
 	lhouselight.light->setType(Ogre::Light::LT_POINT);
-	lhouselight.light->setAttenuation(80, 0.1, 0.000001, 0.00005);
+	lhouselight.light->setAttenuation(80, 0.1, 0.01, 0.05);
 	lhouselight.position = Ogre::Vector3(900, 220, 500);
-	lhouselight.light->setCastShadows(true);
+	lhouselight.light->setCastShadows(false);
 
 	lights.push_back(lhouselight);
 	//******************************
@@ -989,6 +1022,11 @@ void Museum::initLights() {
 	cameraL.swing = &exhibits.at(exid);
 
 	lights.push_back(cameraL);
+
+	//******************************
+
+
+
 
 }
 

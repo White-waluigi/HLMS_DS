@@ -68,6 +68,22 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 			retval=mix(sb,retval,b.a);
 	return retval;
 }
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
 
 
 
@@ -143,7 +159,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[6];
+				ShadowData shadowD[4];
 	
 } pass;
 
@@ -168,7 +184,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[6];
+			uniform sampler2D texShadowMap[4];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -192,7 +208,7 @@ in block
 				
 					
 		
-			vec4 posL[6];		
+			vec4 posL[4];		
 
 } inPs;
 
@@ -238,6 +254,8 @@ vec4 rainbow(float phase)
 
 void main() {
 
+
+	
 	
 	
 
@@ -258,7 +276,8 @@ void main() {
 	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
 
 
-
+	
+	
 		
 
 	
@@ -277,12 +296,11 @@ void main() {
 		diffuse=vec3(1);
 	}else if(floatBitsToUint(pass.debug.y)==2u){
 
-		normal=vec3(0);
 
 	}else if(floatBitsToUint(pass.debug.y)==3u){
 		glow=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==4u){
-		depth=(0);
+		diffuse=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==5u){
 		specular=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==6u){
@@ -350,7 +368,6 @@ void main() {
 
 	if(floatBitsToUint(pass.debug.x)==0u){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;		
-		final=vec4(0);
 
 		return;
 	}	
@@ -393,7 +410,7 @@ void main() {
 		return;
 	}else if(floatBitsToUint(pass.debug.x)==7u){
 		
-	uint numtex=6u;
+	uint numtex=4u;
 
 	float fL=screenPos.x*3.0;
 	float ffL=(screenPos.y*float(3));
@@ -404,7 +421,7 @@ void main() {
 	uint curid=((i)+ii*3u);
 	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
 	
-	final=texture(texShadowMap[curid], coords)+(diffuse.rgbb/100.0);
+	final=texture(texShadowMap[curid], coords);
 	
 	if(curid>=numtex){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;

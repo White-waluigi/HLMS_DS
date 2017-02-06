@@ -68,6 +68,40 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 			retval=mix(sb,retval,b.a);
 	return retval;
 }
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x>f.x){
+		retval.x+=.5;
+	}
+	if(d.y>f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x<t.x){
+		retval.x+=.5;
+	}
+	if(d.y<t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
 
 
 
@@ -143,7 +177,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[6];
+				ShadowData shadowD[7];
 	
 } pass;
 
@@ -168,7 +202,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[6];
+			uniform sampler2D texShadowMap[7];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -188,11 +222,22 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		
 		float depth;
 				
 					
 		
-			vec4 posL[6];		
+			vec4 posL[7];		
+			
+			
+		
+
 
 } inPs;
 
@@ -238,6 +283,8 @@ vec4 rainbow(float phase)
 
 void main() {
 
+
+	
 	
 	
 
@@ -258,7 +305,8 @@ void main() {
 	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
 
 
-
+	
+	
 		
 
 	
@@ -391,7 +439,7 @@ void main() {
 		return;
 	}else if(floatBitsToUint(pass.debug.x)==7u){
 		
-	uint numtex=6u;
+	uint numtex=7u;
 
 	float fL=screenPos.x*3.0;
 	float ffL=(screenPos.y*float(3));
@@ -402,7 +450,7 @@ void main() {
 	uint curid=((i)+ii*3u);
 	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
 	
-	final=texture(texShadowMap[curid], coords)+(diffuse.rgbb/100.0);
+	final=texture(texShadowMap[curid], coords);
 	
 	if(curid>=numtex){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;

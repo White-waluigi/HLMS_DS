@@ -49,14 +49,21 @@ out vec4 final;
 
 void main() {
 
+
+	
 	@property(!LIGHTTYPE_Ambient)
 	@end
 
 	@insertpiece(GBufferparams)
 
-
+	
+	
 	@property(!LIGHTTYPE_Ambient)
 		@insertpiece(LightParams)
+		if(light_visible<=0){
+			final=vec4(0);
+			return;
+		}
 	@end
 	
 
@@ -97,7 +104,9 @@ void main() {
 	@property(LIGHTTYPE_Spot || LIGHTTYPE_Direc)
 	
 		@property(hlms_num_shadow_maps)	
+		if(light_shadows>0){
 			@insertpiece(Shadow)
+		}
 
 		@end
 

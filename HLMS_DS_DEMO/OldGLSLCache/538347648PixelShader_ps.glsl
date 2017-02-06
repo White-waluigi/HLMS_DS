@@ -66,6 +66,59 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 			retval=mix(sb,retval,b.a);
 	return retval;
 }
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x<f.x){
+		retval.x+=.5;
+	}
+	if(d.y<f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x>t.x){
+		retval.x+=.5;
+	}
+	if(d.y>t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
+bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
+	vec2 v0 = vec2(c.x - a.x, c.y - a.y);
+	vec2 v1 = vec2(b.x - a.x, b.y - a.y);
+	vec2 v2 = vec2(p.x - a.x, p.y - a.y);
+
+    float dot00 = (v0.x * v0.x) + (v0.y * v0.y);
+    float dot01 = (v0.x * v1.x) + (v0.y * v1.y);
+    float dot02 = (v0.x * v2.x) + (v0.y * v2.y);
+    float dot11 = (v1.x * v1.x) + (v1.y * v1.y);
+    float dot12 = (v1.x * v2.x) + (v1.y * v2.y);
+
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
+	
+}
 
 
 
@@ -109,8 +162,6 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_wave;
 
 
 
@@ -222,13 +273,23 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
-		float depth;
 		
-			flat float biNormalReflection;
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		vec4 fc[4];
+		
+		float depth;
 				
 			
 		vec2 uv0;		
 				
+			
+			
+		
+
 
 } inPs;
 in vec4 vcolor;
@@ -264,8 +325,6 @@ vec4 normal_map =  texture( textureMaps[0], vec3(
 (vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
 f2u( material.texloc_0 ) ) ); 
 
-
-vec4 wave=material.vec4_wave;
 
 
 	diffuse=vec4(0);
@@ -312,9 +371,9 @@ vec4 wave=material.vec4_wave;
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -348,22 +407,37 @@ vec4 wave=material.vec4_wave;
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
-uv.y=uv.y+sin((uv.x)*1.0*(2*PI)+wave.x*3.0)/500.0;
-uv.x=uv.x+sin((uv.y)*1.0*(2*PI)+wave.y*3.0)/100.0;
-normal.xyz= getTSNormal( vec3( 
-uv.xy,  
-f2u(material.texloc_0 ) ) );
-
-normal.xyz = normalize( (TBN * normal.xyz) );
-
+	
 
  	
 
 
 
 
-	
+	diffuse=vec4(0);
+vec4 fc[4];
+for(int i=0;i<4;i++){
+    fc[i].xy = ((inPs.fc[i].xy)/inPs.fc[i].w);
+}
+vec3 sP = ((inPs.glPosition.xyz)/inPs.glPosition.w);
+float op=float(floatBitsToUint(pass.debug.z));
+float oq=float(floatBitsToUint(pass.debug.w));
+//if(!inside(vec4(inPs.glPosition.xy,0,0),fc[0],fc[1]) ){
+//   discard;
+//diffuse=inside(vec4(screenPos.xy,0,0),vec4(sF,0,0),vec4(eF,0,0));
+//diffuse.xy=mod(fc[0].xy,1.0);
+if(screenPos.x<0.5){
+//   diffuse.xy=screenPos.xy;
+}
+//}
+for(int i=0;i<4;i++){
+   float fg=0.01-min(length(sP.xy-fc[i].xy),0.01 );
+   diffuse+=vec4(fg*100.0);
+}
+bool A0=insideTri(sP.xy,fc[0].xy,fc[1].xy,fc[2].xy);
+bool A1=insideTri(sP.xy,fc[0].xy,fc[2].xy,fc[3].xy);
+if(!(A0||A1)){discard;}
+
 
 
 

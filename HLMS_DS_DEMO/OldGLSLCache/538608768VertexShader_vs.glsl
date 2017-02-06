@@ -46,6 +46,7 @@ in vec3 tangent;
 
     
 
+in vec2 uv0; 
 in uint drawId;
 
 
@@ -61,11 +62,23 @@ out block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		vec4 fc[4];
+		
 		float depth;
 				
-					
+			
+		vec2 uv0;		
+				
+			
+			
 		
-			vec4 posL[8];		
+
 
 } outVs;
 
@@ -110,10 +123,6 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[8];
-	
 } pass;
 
 
@@ -148,7 +157,10 @@ void main()
     mat4 worldMat = UNPACK_MAT4( worldMatBuf, drawId<<1);
 	
     mat4 worldView = UNPACK_MAT4( worldMatBuf, (drawId<<1) + 1u );
-	
+    
+    
+    
+    outVs.worldMat=worldMat;
 	//vec4	worldPos = vec4( (worldView*vertex) );
 	
 	
@@ -178,7 +190,8 @@ void main()
 
 
 
-	    
+	
+		outVs.uv0 = uv0;    
     
     outVs.vertex=vertex.xyz;
 		
@@ -193,15 +206,19 @@ void main()
 		outVs.pos		=pass.View*worldPos;
 	    outVs.normal	= mat3(worldView) * normal;
 
-    gl_Position = pass.Proj *(outVs.pos);
-
-	outVs.glPosition =gl_Position;
+    outVs.glPosition = pass.Proj *(outVs.pos);
+	gl_Position=outVs.glPosition;
 
         vcolor=vertex;
-    
-    
+    mat4 iproj=pass.Proj;
+    iproj[1][0] = -iproj[1][0];
+    iproj[1][1] = -iproj[1][1];
+    iproj[1][2] = -iproj[1][2];
+    iproj[1][3] = -iproj[1][3];
+	
 
-		
+
+		 
 	    
 
 

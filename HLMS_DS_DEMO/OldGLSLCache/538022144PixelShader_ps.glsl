@@ -2,15 +2,13 @@
 #define PI 3.14159625
 
 
-//Light Material 
-		
+//Gbuffer Material
 
-
-	
 
 
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
+#extension GL_EXT_texture_array : enable
 
 
 vec4 cubic(float v){
@@ -70,11 +68,35 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 
 
 
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+
+
+
+vec4 rainbow(float phase)
+{
+	float p=mod(phase,1.0);
+	float c=p*3.0;
+	float level = c;
+
+	float x=mod(c,1.0);
+	float y=1-mod(c,1.0);
+
+	float r,g,b;
+	if(level<1){
+		r=y;
+		g=x;
+		b=0;
+	}else if(level<2){
+		r=0;
+		g=y;
+		b=x;
+	}else if(level<3){
+		r=x;
+		g=0;
+		b=y;
+	}
+
+	return vec4(r,g,b,0);
 }
-
-
 
 
 
@@ -84,22 +106,28 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_position;
-	 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_attentuation;
-	 vec4 vec4_spotdirection;
-	 vec4 vec4_spotparams;
-	 vec4 vec4_lightparams;
-	 vec4 vec4_shadowParams;
-	 vec4 vec4_shadowQualityParams;
-	 vec4 vec4_shadowRes[1];
-	 vec4 vec4_shadowDr[1];
-	 mat4 vec4_shadowMat[1];
+		 vec4 vec4_specular;
+	 vec4 vec4_reflection;
 
 
 
 
+	
+	vec4 texloc_0;
+	
+
+	
+	mat4 texmat_0;
+
+	
+	
+	vec4 texloc_1;
+	
+
+	
+	mat4 texmat_1;
+
+	
 
 /**/
 
@@ -149,13 +177,16 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[5];
-	
 } pass;
 
 
+
+
+
+
+
+
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -174,17 +205,6 @@ layout(binding = 2) uniform InstanceBuffer
 } instance;
 
 
-
-		
-			uniform sampler2D texShadowMap[5];
-		
-		uniform sampler2D GBuffer0;
-		uniform sampler2D GBuffer1;
-		uniform sampler2D GBuffer2;
-		uniform sampler2D GBuffer3;
-		uniform sampler2D GBuffer4;
-	
-
 in block
 {
 
@@ -198,11 +218,19 @@ in block
 		vec4 glPosition;
 		float depth;
 				
-					
-		
-			vec4 posL[5];		
+			
+		vec2 uv0;		
+				
 
 } inPs;
+in vec4 vcolor;
+
+
+out vec4 diffuse;
+out vec4 normal;
+out vec4 pos;
+out vec4 specular;
+out vec4 glow;
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -210,236 +238,128 @@ uint f2u(float f){
 uint f2u(vec4 f){
 	return floatBitsToUint(f)[0];
 }
-
-in vec4 vcolor;
-out vec4 final;
-
-
-
-vec4 rainbow(float phase)
-{
-	float p=mod(phase,1.0);
-	float c=p*3.0;
-	float level = c;
-
-	float x=mod(c,1.0);
-	float y=1-mod(c,1.0);
-
-	float r,g,b;
-	if(level<1){
-		r=y;
-		g=x;
-		b=0;
-	}else if(level<2){
-		r=0;
-		g=y;
-		b=x;
-	}else if(level<3){
-		r=x;
-		g=0;
-		b=y;
-	}
-
-	return vec4(r,g,b,0);
-}
-
-
 void main() {
+	
+	
 
-	
-	
-	
+
+	float opacity=1.0;
 
 	vec2 screenPos=vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny));
 
 	vec2 texCoord=vec2(screenPos.x,screenPos.y);
+
+
+
+
+
+	diffuse=vec4(0);
+	normal=vec4(0);
+	specular=vec4(0);
+	glow=vec4(0.1);
 	
-
-		
-	vec3 diffuse=texture2D(GBuffer0 ,texCoord).rgb;
-	float depth=texture2D(GBuffer1 ,texCoord).a;
-	vec3 normal=texture2D(GBuffer1 ,texCoord).rgb;
-	vec3 specular=texture2D(GBuffer3 ,texCoord).rgb;
-	float rough=texture2D(GBuffer3 ,texCoord).w;
 	
-	float Sdepth=texture2D(GBuffer2 ,texCoord).x;
-	
-	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
-
-
-
 	
 		
-	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
-	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
-
-
-	float light_power				=material.vec4_lightparams.y;	
 	
-	vec4 light_position				=material.vec4_position;
 	
-	vec4 light_diffuse				=material.vec4_diffuse;
-	
-	vec4 light_specular				=material.vec4_specular;
-
-	vec4 light_attenuation			=material.vec4_attentuation;
-	
-	vec4 light_spotDirection			=pass.View*material.vec4_spotdirection;
-	
-	vec4 light_spotParams			=material.vec4_spotparams;
-	
-	vec4 ShadowVal=vec4(1);
-
+		
+		
+		diffuse=  texture( textureMaps[0], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
+		f2u(material.texloc_0) ) );
+//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
+		
+		
+		
 
 		
 
 	
 
+	
+
+
+	normal.xyz=normalize(inPs.normal);
+	normal.w=1.0;
+
+			
 
 	
-	if(floatBitsToUint(pass.debug.y)==1u){
-		diffuse=vec3(1);
-	}else if(floatBitsToUint(pass.debug.y)==2u){
-
-		normal=vec3(0);
-
-	}else if(floatBitsToUint(pass.debug.y)==3u){
-		glow=vec3(0);
-	}else if(floatBitsToUint(pass.debug.y)==4u){
-		depth=(0);
-	}else if(floatBitsToUint(pass.debug.y)==5u){
-		specular=vec3(0);
-	}else if(floatBitsToUint(pass.debug.y)==6u){
-		vec3 swap=diffuse;
-		diffuse=specular;
-		specular=swap;
-	}else if(floatBitsToUint(pass.debug.y)==8u){
-		light_diffuse=vec4(0);
-	}else if(floatBitsToUint(pass.debug.y)==9u){
-		if(light_type!=0u&&light_type!=4u){
-			final=vec4(0,0,0,0);
-			return;
-		}
-
-	}
-
-
+			
+			specular=material.vec4_specular;	
+					
+	
 
 	
+		
+		glow.rgb=vec3(0);	
+		
 	
+
 	
-	//vec2 projPos=(vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny) )-0.5)/0.5;
-	
-	vec2 projPos=(vec2(texCoord.x,texCoord.y) - 0.5) / 0.5;
-	
-	vec3 ray = vec3(projPos.x,projPos.y, 1)*pass.farCorners.xyz;
-	vec3 viewPos = normalize(ray)*(depth*pass.farClip);
- 
- 	vec3 worldPos = (pass.InvView* vec4(viewPos, 1)).xyz;
- 
- 
-   	float f=pass.farClip;
-	float n = pass.nearClip;
-   	
-	vec3 objToLightVec ;
-	vec3 total_light_contrib;
-
-
-
-
 
 
 		
+							
+			
+				
+
+	
+	
+		float reflection=material.vec4_reflection.r;
 		
+			
 	
-	
-	
+		//Not sure about this
+		//vec3 rNormal=(vec4(normal.xyz,0)*pass.View).xyz;
+		vec3 rNormal=reflect(normalize(-inPs.pos.xyz),normal.xyz);
 		
-	objToLightVec =(vec4(light_position.xyz,1)).xyz-viewPos;
-	float len_sq = dot(objToLightVec, objToLightVec);
-	float len = sqrt(len_sq);
-	vec3 objToLightDir = objToLightVec/len;
-		
-	// Calculate diffuse colour
-	total_light_contrib = max(0.0,dot(objToLightDir, normal)) * light_diffuse.rgb*diffuse;
-
-
-	vec4 rim=vec4(0);
+		vec2 ruv=vec2(asin(rNormal.x)/3.14159625 + 0.5 ,asin(rNormal.y)/3.14159625 + 0.5);
+		diffuse=mix(diffuse,  
+		texture( textureMaps[0], vec3(ruv,
+		 f2u( material.texloc_1 ) ) ),  
+		 reflection);
 	
 
-	
-	// Calculate specular component
-	vec3 viewDir = -normalize(viewPos);
-	vec3 h = normalize(viewDir + objToLightDir);
-	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
-	total_light_contrib += specular * final_specular;
-
-    //LT_DIRECTIONAL = 0,
-    //LT_POINT = 1,
-    // LT_SPOTLIGHT = 2,
-
-	float attenuation = dot(light_attenuation.yzw, vec3(1.0, len, len_sq));
-	total_light_contrib /= attenuation;
-	
-	vec2 test =(vec4(light_position.xyz,1)).xy-viewPos.xy;
-	float len2_sq = dot(objToLightVec, objToLightVec);
-	float len2 = sqrt(len_sq);
-	vec2 objToLightDir2 = test/len2;
-	//final=vec4(0) ;
-	//if(len<15.0){
-	//	final=vec4( pow( (15.0-len)/15.0,2 ))*pass.flip;	
-	//}
-	
-
-
-
-		
 	
 	
 
 	
 		
-		
+	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
+	//Ogre Shadows want different depth than DS lighting
+	//Linear depth
+	pos.x= (inPs.glPosition.z ) ;
+
+
 	
-		
 
-	if(floatBitsToUint(pass.debug.x)==0u){
-		if(floatBitsToUint(pass.debug.y)==7u){
-			ShadowVal=vec4(1);
-		}
+ 	
 
-		final=vec4((total_light_contrib*light_power), 0.0)*ShadowVal;
-		
 
-		//final=vec4(ShadowVal)/10.0;
 
-		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){
-		//if(light_type==0u){
-			//final=vec4(0);
-		//}
-		return;
-	}else if(floatBitsToUint(pass.debug.x)==6u){
-		final=vec4(0,0.0,0,0);
+
 	
-		if(light_type==1u){
-			final=vec4(0.1,0.0,0,0);
-		}
-		if(light_type==2u){
-			final=vec4(0,0.1,0,0);
-		}
-		return;
-	}else {
-		final=vec4(0);
-		return;
-	}
 
-		
+
+
 
 	
 		
+												
+		
+			
+		
+	
+	
+	diffuse.a=0.9;
 
 	
+	if(floatBitsToUint(pass.debug.x)==9u){
+ 		glow=material.idColor;	
+ 	}
  }
  
-
+ 
 

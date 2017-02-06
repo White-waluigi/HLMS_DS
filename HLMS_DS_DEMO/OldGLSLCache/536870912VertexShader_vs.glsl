@@ -62,11 +62,22 @@ out block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		
 		float depth;
 				
 			
 		vec2 uv0;		
 				
+			
+			
+		
+
 
 } outVs;
 
@@ -145,7 +156,10 @@ void main()
     mat4 worldMat = UNPACK_MAT4( worldMatBuf, drawId<<1);
 	
     mat4 worldView = UNPACK_MAT4( worldMatBuf, (drawId<<1) + 1u );
-	
+    
+    
+    
+    outVs.worldMat=worldMat;
 	//vec4	worldPos = vec4( (worldView*vertex) );
 	
 	
@@ -197,9 +211,10 @@ void main()
 
         vcolor=vertex;
     
-    
+	
 
-		
+
+		 
 	    
 
 

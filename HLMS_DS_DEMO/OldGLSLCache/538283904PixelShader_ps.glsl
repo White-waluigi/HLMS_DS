@@ -55,6 +55,17 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
 }
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
+}
 
 
 
@@ -98,8 +109,6 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_wave;
 
 
 
@@ -212,8 +221,6 @@ in block
 		vec4 worldPos;
 		vec4 glPosition;
 		float depth;
-		
-			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -254,8 +261,6 @@ vec4 normal_map =  texture( textureMaps[0], vec3(
 f2u( material.texloc_0 ) ) ); 
 
 
-vec4 wave=material.vec4_wave;
-
 
 	diffuse=vec4(0);
 	normal=vec4(0);
@@ -283,26 +288,27 @@ vec4 wave=material.vec4_wave;
 	normal.w=1.0;
 
 	
-	
+
 		vec3 geomNormal = normalize( inPs.normal );
 		vec3 vTangent = normalize( inPs.tangent );
 
 		//Get the TBN matrix
     	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
 		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-	
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
 		normal.xyz= getTSNormal( vec3( 
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
 		f2u(material.texloc_0 ) ) );
+		
 		normal.xyz = normalize( (TBN * normal.xyz) );
-		
-		
+	}
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -336,22 +342,15 @@ vec4 wave=material.vec4_wave;
 	pos.x= (inPs.glPosition.z ) ;
 
 
-	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
-uv.y=uv.y+sin((uv.x)*5.0*(2*PI)+wave.x*3.0)/500.0;
-uv.x=uv.x+sin((uv.y)*5.0*(2*PI)+wave.y*3.0)/100.0;
-normal.xyz= getTSNormal( vec3( 
-uv.xy,  
-f2u(material.texloc_0 ) ) );
-
-normal.xyz = normalize( (TBN * normal.xyz) );
-
+	
 
  	
 
 
 
 
-	
+	opacity=1-(pow(screenPos.x-0.5,2)+pow(screenPos.y-0.5,2))*5.0;
+
 
 
 

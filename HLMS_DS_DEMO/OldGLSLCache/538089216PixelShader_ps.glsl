@@ -66,6 +66,22 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 			retval=mix(sb,retval,b.a);
 	return retval;
 }
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
 
 
 
@@ -365,8 +381,7 @@ vec4 wave=material.vec4_wave;
 		(vec4(inPs.uv0.xy,0,1)*material.texmat_3).xy,  
 		f2u(material.texloc_3 ) ) );
 		
-			normal.xyz = normalize( (TBN * normal.xyz) );
-			normal.xyz = TBN*vec3(1,0,0);
+		normal.xyz = normalize( (TBN * normal.xyz) );
 	}
 			
 

@@ -4,8 +4,6 @@
 
 //Light Material 
 		
-//DIRECTIONAL
-	
 
 
 	
@@ -68,6 +66,40 @@ vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
 			retval=mix(sb,retval,b.a);
 	return retval;
 }
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x<f.x){
+		retval.x+=.5;
+	}
+	if(d.y<f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x>t.x){
+		retval.x+=.5;
+	}
+	if(d.y>t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
 
 
 
@@ -93,12 +125,12 @@ layout(binding = 1) uniform MaterialBuffer
 	 vec4 vec4_spotdirection;
 	 vec4 vec4_spotparams;
 	 vec4 vec4_lightparams;
+	 vec4 vec4_lightsettings;
 	 vec4 vec4_shadowParams;
 	 vec4 vec4_shadowQualityParams;
-	 vec4 vec4_shadowRes[3];
-	 vec4 vec4_shadowDr[3];
-	 mat4 vec4_shadowMat[3];
-	 vec4 vec4_shadowPssmSplits[4];
+	 vec4 vec4_shadowRes[1];
+	 vec4 vec4_shadowDr[1];
+	 mat4 vec4_shadowMat[1];
 
 
 
@@ -154,7 +186,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[6];
+				ShadowData shadowD[4];
 	
 } pass;
 
@@ -179,7 +211,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[6];
+			uniform sampler2D texShadowMap[4];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -199,11 +231,22 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		
 		float depth;
 				
 					
 		
-			vec4 posL[6];		
+			vec4 posL[4];		
+			
+			
+		
+
 
 } inPs;
 
@@ -249,6 +292,8 @@ vec4 rainbow(float phase)
 
 void main() {
 
+
+	
 	
 	
 	
@@ -270,14 +315,21 @@ void main() {
 	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
 
 
-
+	
+	
 	
 		
 	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
 	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
 
-	float light_power				=material.vec4_lightparams.y;	
+	float light_power				=material.vec4_lightparams.y;
+	
+	float light_visible				=material.vec4_lightsettings.x;
+	
+	float light_static				=material.vec4_lightsettings.y;
+	
+	float light_shadows				=material.vec4_lightsettings.z;
 	
 	vec4 light_position				=material.vec4_position;
 	
@@ -294,6 +346,10 @@ void main() {
 	vec4 ShadowVal=vec4(1);
 
 
+		if(light_visible<=0){
+			final=vec4(0);
+			return;
+		}
 		
 
 	
@@ -304,12 +360,11 @@ void main() {
 		diffuse=vec3(1);
 	}else if(floatBitsToUint(pass.debug.y)==2u){
 
-		normal=vec3(0);
 
 	}else if(floatBitsToUint(pass.debug.y)==3u){
 		glow=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==4u){
-		depth=(0);
+		diffuse=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==5u){
 		specular=vec3(0);
 	}else if(floatBitsToUint(pass.debug.y)==6u){
@@ -353,29 +408,64 @@ void main() {
 
 
 		
+		
+	
+	
+		
+	
 	
 		
 
+	
+	objToLightVec =(vec4(light_position.xyz,1)).xyz-viewPos;
+	float len_sq = dot(objToLightVec, objToLightVec);
+	float len = sqrt(len_sq);
+	vec3 objToLightDir = objToLightVec/len;
+		
 	// Calculate diffuse colour
-	//Light Position is Direction for Directional Lights
-	total_light_contrib = max(0.0,dot(-light_position.xyz, normal)) * light_diffuse.rgb*diffuse;
+	total_light_contrib = max(0.0,dot(objToLightDir, normal)) * light_diffuse.rgb*diffuse;
 
+
+	vec4 rim=vec4(0);
+	
+
+	
+	// Calculate specular component
 	vec3 viewDir = -normalize(viewPos);
-	vec3 h = normalize(viewDir + -light_position.xyz);
+	vec3 h = normalize(viewDir + objToLightDir);
 	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
 	total_light_contrib += specular * final_specular;
 
+    //LT_DIRECTIONAL = 0,
+    //LT_POINT = 1,
+    // LT_SPOTLIGHT = 2,
 
-		
+	float attenuation = dot(light_attenuation.yzw, vec3(1.0, len, len_sq));
+	total_light_contrib /= attenuation;
 	
+	vec2 test =(vec4(light_position.xyz,1)).xy-viewPos.xy;
+	float len2_sq = dot(objToLightVec, objToLightVec);
+	float len2 = sqrt(len_sq);
+	vec2 objToLightDir2 = test/len2;
+	//final=vec4(0) ;
+	//if(len<15.0){
+	//	final=vec4( pow( (15.0-len)/15.0,2 ))*pass.flip;	
+	//}
 	
-		
-	
+
+
+
+	float spotlightAngle = clamp(dot(         ( vec4(light_spotDirection.xyz,0) ).xyz        , -objToLightDir), 0.0, 1.0);
+	float spotFalloff = clamp((spotlightAngle - light_spotParams.x) / (light_spotParams.y - light_spotParams.x), 0.0, 1.0);
+	total_light_contrib *= (1-spotFalloff);
+			
+
 	
 
 	
 	
 			
+		if(light_shadows>0){
 			
 /***************************************************************Shadow**************************************************************************************************/
 		if(depth<1.0){
@@ -393,48 +483,8 @@ void main() {
 
 		
 		
+		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x);
 				
-		
-		
-		
-
-		uint inc=0u;
-		
-		float Pdepth	= (Sdepth  );
-
-
-			//ShadowVal=vec4(0.5,0.5,0.5,0);
-
-		
-		if((Pdepth)<= material.vec4_shadowPssmSplits[1].x){
-			//ShadowVal=vec4(0,1,1,0);
-       	}
-		
-		else if( (Pdepth)<= material.vec4_shadowPssmSplits[1+1].x ){
-			inc=1u;
-			
-			 
-			//ShadowVal=vec4(1==0,1==1,1==2,0);
-
-		}
-
-		
-		else if( (Pdepth)<= material.vec4_shadowPssmSplits[2+1].x ){
-			inc=2u;
-			
-			 
-			//ShadowVal=vec4(2==0,2==1,2==2,0);
-
-		}
-
-		
-
-		
-
-		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x)+inc;
-		IDoffset=inc;
-			
-		
 		
 
 
@@ -501,14 +551,16 @@ void main() {
 		}
 		ShadowVal/=pow(samplerate*2+1,2);
 		samplingoffset=vec2(0);
-		
+
+			
 
 
-		vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
+vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
 
 		vec2 centroidUV = (Soffset+(shadowRes.zw*0.5));
 		vec4 sampl=textureGather(texShadowMap[shadowID], Soffset);
-
+		
+		
 		for(int i=0;i<4;i++){
 
 			
@@ -517,12 +569,9 @@ void main() {
 			vec2 offset=vec2(0); 
 			if(i==1){
 				offset.y=vary;
-
-				
 			}
 			if(i==2){
 				offset.x=varx;
-			
 			}
 			if(i==3){
 				offset.x=varx;
@@ -532,12 +581,13 @@ void main() {
 			float samp=sampl[i];
 			float shadowDepth=samp;
 		
-			if( (shadowDistance)<(shadowDepth)){
+			if( (shadowDistance)<(shadowDepth)||sampl[i]>0.9999){
 				ls[i]=1.0;
 			}
 			
 
 		}
+		
 		float a = mix(ls[3], ls[0], fra.y);
         float b = mix(ls[2], ls[1], fra.y);
         float c = mix(a, b, fra.x);
@@ -623,13 +673,16 @@ shadowRes.xy);
 			return;
 		}
 		
-		//ShadowVal=vec4( pow(ShadowVal.x,2.0) );
+		
+		//Makes Shadows softer
+		ShadowVal=vec4( pow(ShadowVal.x,5.0) );
 		
 
 		
 		}
 
 
+		}
 
 		
 	
@@ -643,12 +696,14 @@ shadowRes.xy);
 			ShadowVal=vec4(1);
 		}
 
-		final=vec4((total_light_contrib*light_power), 0.0)*ShadowVal;
-		
+		final=ominf(  vec4((total_light_contrib*light_power), 0.0))*ShadowVal;
 		
 
-			final=vec4(0);
-				//final=vec4(ShadowVal)/10.0;
+
+
+			
+
+		//final=vec4(ShadowVal)/10.0;
 
 		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){
 		//if(light_type==0u){

@@ -143,7 +143,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[5];
+				ShadowData shadowD[7];
 	
 } pass;
 
@@ -168,7 +168,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[5];
+			uniform sampler2D texShadowMap[7];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -192,7 +192,7 @@ in block
 				
 					
 		
-			vec4 posL[5];		
+			vec4 posL[7];		
 
 } inPs;
 
@@ -238,6 +238,8 @@ vec4 rainbow(float phase)
 
 void main() {
 
+
+	
 	
 	
 
@@ -258,7 +260,8 @@ void main() {
 	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
 
 
-
+	
+	
 		
 
 	
@@ -391,7 +394,7 @@ void main() {
 		return;
 	}else if(floatBitsToUint(pass.debug.x)==7u){
 		
-	uint numtex=5u;
+	uint numtex=7u;
 
 	float fL=screenPos.x*3.0;
 	float ffL=(screenPos.y*float(3));
@@ -402,7 +405,7 @@ void main() {
 	uint curid=((i)+ii*3u);
 	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
 	
-	final=texture(texShadowMap[curid], coords)+(diffuse.rgbb/100.0);
+	final=texture(texShadowMap[curid], coords);
 	
 	if(curid>=numtex){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;

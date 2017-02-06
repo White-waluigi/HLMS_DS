@@ -264,11 +264,13 @@ void PbsMaterialsGameState::generateDebugText(float timeSinceLast,
 
 
 
-
 	TutorialGameState::generateDebugText(timeSinceLast, outText);
 
 
 	outText += "\n Camera Position: " + Ogre::StringConverter::toString(mGraphicsSystem->getCamera()->getDerivedPosition());
+
+	outText += "\n X to create Spotlights:";
+	outText += "\n C to place shadowed light:";
 
 	outText += "\n f6-f9 to set Debug Mode:";
 	outText += "\nY to set Debug Forward/Backward:";
@@ -318,7 +320,7 @@ void PbsMaterialsGameState::setTransparencyToMaterials(void) {
 void PbsMaterialsGameState::keyReleased(const SDL_KeyboardEvent &arg) {
 	if ((arg.keysym.mod & ~(KMOD_NUM | KMOD_CAPS)) != 0) {
 		TutorialGameState::keyReleased(arg);
-		return;
+		//return;
 	}
 
 	if (arg.keysym.sym == SDLK_F2) {
@@ -395,7 +397,26 @@ void PbsMaterialsGameState::keyReleased(const SDL_KeyboardEvent &arg) {
 	} else if (arg.keysym.sym == SDLK_h) {
 		blocksun++;
 		blocksun%=4;
+	} else if (arg.keysym.sym == SDLK_x) {
+		Museum::Mlight dL;
+		dL.light = museum->sceneManager->createLight();
+		Ogre::Vector3 rb=RainbowPhase(randf()*3.0);
+		dL.light->setDiffuseColour(rb.x, rb.y,rb.z); //Warm
+		dL.light->setSpecularColour(dL.light->getDiffuseColour()); //Warm
+		dL.light->setPowerScale(100);
+		dL.light->setType(Ogre::Light::LT_SPOTLIGHT);
+		dL.light->setAttenuationBasedOnRadius(30.0f, 0.01f);
+		dL.direction= Ogre::Vector3(mGraphicsSystem->getCamera()->getDerivedDirection());
+		dL.position= Ogre::Vector3(mGraphicsSystem->getCamera()->getDerivedPosition());
 
+		dL.light->setCastShadows(false);
+
+		museum->lights.push_back(dL);
+		museum->setupLights();
+	} else if (arg.keysym.sym == SDLK_c) {
+		museum->lights[museum->mobileLight].sn->setPosition(mGraphicsSystem->getCamera()->getDerivedPosition());
+		museum->lights[museum->mobileLight].light->setDirection(mGraphicsSystem->getCamera()->getDerivedDirection());
+		museum->lights[museum->mobileLight].light->setVisible(true);
 	} else {
 		TutorialGameState::keyReleased(arg);
 	}

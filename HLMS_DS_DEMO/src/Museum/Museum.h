@@ -17,6 +17,7 @@
 namespace Demo {
 
 class Museum {
+public:
 	struct exhibit{
 		int exID=0;
 
@@ -46,6 +47,7 @@ class Museum {
 		Ogre::SceneNode* sn;
 
 		Ogre::Vector3 position=Ogre::Vector3::ZERO;
+		Ogre::Vector3 offset=Ogre::Vector3::ZERO;
 		std::vector<Ogre::Vector3>* positions=0;
 		bool positionAutoOffset=true;
 		Ogre::Vector3 positionoffset=Ogre::Vector3::ZERO;
@@ -55,6 +57,8 @@ class Museum {
 		Ogre::String compareFunc;
 
 		bool skyanimate=false;
+
+		bool processed=false;
 	};
 	struct label{
 		Ogre::String description;
@@ -73,8 +77,11 @@ class Museum {
 		float sphase;
 		Ogre::DSDatablock * datablock;
 		Ogre::Item * item;
-		Ogre::SceneNode *sn;
+		Ogre::SceneNode *sn=NULL;
 		bool animate=false;
+
+		bool visible=true;
+		bool processed=false;
 	};
 
 	Ogre::DSDatablock * museumDatablock;
@@ -89,7 +96,7 @@ class Museum {
 	std::vector<label> 	labels;
 	std::vector<Mlight> 	lights;
 
-
+	int mobileLight=-1;
 	Ogre::HlmsDS * hlmsDS;
 	Ogre::SceneManager * sceneManager;
 

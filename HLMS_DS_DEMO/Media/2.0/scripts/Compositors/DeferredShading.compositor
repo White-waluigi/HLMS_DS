@@ -158,15 +158,14 @@ compositor_node_shadow DeferredShadingShadowNode
 	shadow_map 2 4096 4096 PF_FLOAT32_RGB light 0 split 2
 
 	technique focused
-	shadow_map 4 2048 2048 PF_FLOAT32_RGB light 1
-	shadow_map 5 2048 2048 PF_FLOAT32_RGB light 2
-	shadow_map 6 2048 2048 PF_FLOAT32_RGB light 3
-	shadow_map 7 2048 2048 PF_FLOAT32_RGB light 4
-	shadow_map 8 2048 2048 PF_FLOAT32_RGB light 6
-	shadow_map 9 2048 2048 PF_FLOAT32_RGB light 7
+	shadow_map 3 2048 2048 PF_FLOAT32_RGB light 1
+	shadow_map 4 2048 2048 PF_FLOAT32_RGB light 2
+	shadow_map 5 2048 2048 PF_FLOAT32_RGB light 3
+	shadow_map 6 2048 2048 PF_FLOAT32_RGB light 4
+
 	
 		
-	shadow_map 0 1 2 4 5 6 7
+	shadow_map 0 1 2 3 4 5 6
 	{
 		pass clear
 		{

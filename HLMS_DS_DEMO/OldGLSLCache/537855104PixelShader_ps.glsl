@@ -1,5 +1,5 @@
 //Datablock:	
-
+#define PI 3.14159625
 
 
 //Gbuffer Material
@@ -53,6 +53,51 @@ vec4 textureBicubic(sampler2D sampler, vec2 texCoords,vec2 texSize){
        mix(sample3, sample2, sx), mix(sample1, sample0, sx)
     , sy);
 }
+vec4 blend(vec4 s1,vec4 s2, float b){
+	return mix(s1,s2,b);
+	
+}
+vec4 blend(vec4 sb,vec4 s1, vec4 s2,vec4 s3, vec4 b){
+	vec4	retval=mix(vec4(0),s1,b.r);
+			retval+=mix(vec4(0),s2,b.g);
+			retval+=mix(vec4(0),s3,b.b);
+			retval=mix(sb,retval,b.a);
+	return retval;
+}
+vec4 ominf(vec4 data){
+	vec4 retval=data;
+	//min doesn't work for some reason
+	if(data.x>1)
+		retval.x=1;
+	if(data.y>1)
+		retval.y=1;
+	if(data.z>1)
+		retval.z=1;
+	if(data.w>1)
+		retval.w=1;
+	
+	return retval;
+	
+	
+}
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x>f.x){
+		retval.x+=.5;
+	}
+	if(d.y>f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x<t.x){
+		retval.x+=.5;
+	}
+	if(d.y<t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
 
 
 
@@ -95,27 +140,10 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_specular;
-
-
-
-
-	
-	vec4 texloc_0;
 	
 
-	
-	mat4 texmat_0;
 
-	
-	
-	vec4 texloc_1;
-	
 
-	
-	mat4 texmat_1;
-
-	
 
 /**/
 
@@ -174,7 +202,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -192,28 +220,6 @@ layout(binding = 2) uniform InstanceBuffer
     uvec4 worldMaterialIdx[4096];
 } instance;
 
-//layout(binding = 4) uniform indexBuffer
-//{
-//	uvec4 colour; //kD.w is alpha_test_threshold
-//	uvec4 viewProj0;
-//	uvec4 viewProj1;
-//	uvec4 viewProj2;
-//	uvec4 viewProj3;
-	
-//} test;
-
-//layout(binding = 2) uniform InstanceBuffer
-//{
-    //.x =
-	//The lower 9 bits contain the material's start index.
-    //The higher 23 bits contain the world matrix start index.
-    //
-    //.y =
-    //shadowConstantBias. Send the bias directly to avoid an
-    //unnecessary indirection during the shadow mapping pass.
-    //Must be loaded with uintBitsToFloat
-    //uvec4 worldMaterialIdx[4096];
-//} instance;
 
 in block
 {
@@ -226,11 +232,24 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		
 		float depth;
+		
+			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
 				
+			
+			
+		
+
 
 } inPs;
 in vec4 vcolor;
@@ -262,6 +281,7 @@ void main() {
 
 
 
+
 	diffuse=vec4(0);
 	normal=vec4(0);
 	specular=vec4(0);
@@ -272,17 +292,12 @@ void main() {
 		
 	
 	
+	
+					
+			diffuse.rgb=vec3(1);	
+			
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -295,13 +310,9 @@ void main() {
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
-	
-		specular.rgb*=  texture( textureMaps[1], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,
-		f2u(material.texloc_1 ) ) ).rgb;
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -335,9 +346,9 @@ void main() {
 	pos.x= (inPs.glPosition.z ) ;
 
 
+	
 
  	
-
 
 
 
