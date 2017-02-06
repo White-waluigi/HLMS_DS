@@ -73,7 +73,7 @@ out block
 				
 					
 		
-			vec4 posL[7];		
+			vec4 posL[6];		
 			
 			
 		
@@ -124,7 +124,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[7];
+				ShadowData shadowD[6];
 	
 } pass;
 
@@ -210,14 +210,10 @@ void main()
 
     outVs.glPosition = pass.Proj *(outVs.pos);
 	gl_Position=outVs.glPosition;
+	
 
         vcolor=vertex;
-    mat4 iproj=pass.Proj;
-    iproj[1][0] = -iproj[1][0];
-    iproj[1][1] = -iproj[1][1];
-    iproj[1][2] = -iproj[1][2];
-    iproj[1][3] = -iproj[1][3];
-	
+
 
 
 		 

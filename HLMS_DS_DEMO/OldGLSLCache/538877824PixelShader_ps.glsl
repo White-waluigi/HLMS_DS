@@ -82,6 +82,43 @@ vec4 ominf(vec4 data){
 	
 	
 }
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x<f.x){
+		retval.x+=.5;
+	}
+	if(d.y<f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x>t.x){
+		retval.x+=.5;
+	}
+	if(d.y>t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
+bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
+	vec2 v0 = vec2(c.x - a.x, c.y - a.y);
+	vec2 v1 = vec2(b.x - a.x, b.y - a.y);
+	vec2 v2 = vec2(p.x - a.x, p.y - a.y);
+
+    float dot00 = (v0.x * v0.x) + (v0.y * v0.y);
+    float dot01 = (v0.x * v1.x) + (v0.y * v1.y);
+    float dot02 = (v0.x * v2.x) + (v0.y * v2.y);
+    float dot11 = (v1.x * v1.x) + (v1.y * v1.y);
+    float dot12 = (v1.x * v2.x) + (v1.y * v2.y);
+
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
+	
+}
 
 
 
@@ -168,7 +205,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[5];
+				ShadowData shadowD[6];
 	
 } pass;
 
@@ -193,7 +230,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[5];
+			uniform sampler2D texShadowMap[6];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -213,11 +250,23 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		vec4 fc[4];
+		
 		float depth;
 				
 					
 		
-			vec4 posL[5];		
+			vec4 posL[6];		
+			
+			
+		
+
 
 } inPs;
 

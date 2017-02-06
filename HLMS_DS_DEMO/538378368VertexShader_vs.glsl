@@ -210,13 +210,6 @@ void main()
 
     outVs.glPosition = pass.Proj *(outVs.pos);
 	gl_Position=outVs.glPosition;
-
-        vcolor=vertex;
-    mat4 iproj=pass.Proj;
-    iproj[1][0] = -iproj[1][0];
-    iproj[1][1] = -iproj[1][1];
-    iproj[1][2] = -iproj[1][2];
-    iproj[1][3] = -iproj[1][3];
 	vec4 fc[4];
 outVs.fc[0]=vec4(0,0,0,1);
 outVs.fc[1]=vec4(1,0,0,1);
@@ -227,6 +220,9 @@ for(int i=0;i<4;i++){
    outVs.fc[i].w=1.0;
    outVs.fc[i] = pass.Proj*(pass.View*outVs.fc[i]);
 }
+
+
+        vcolor=vertex;
 
 
 

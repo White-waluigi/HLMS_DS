@@ -3,6 +3,8 @@
 
 
 //Light Material 
+	
+//AMBIENT
 		
 
 
@@ -82,6 +84,43 @@ vec4 ominf(vec4 data){
 	
 	
 }
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x<f.x){
+		retval.x+=.5;
+	}
+	if(d.y<f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x>t.x){
+		retval.x+=.5;
+	}
+	if(d.y>t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
+bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
+	vec2 v0 = vec2(c.x - a.x, c.y - a.y);
+	vec2 v1 = vec2(b.x - a.x, b.y - a.y);
+	vec2 v2 = vec2(p.x - a.x, p.y - a.y);
+
+    float dot00 = (v0.x * v0.x) + (v0.y * v0.y);
+    float dot01 = (v0.x * v1.x) + (v0.y * v1.y);
+    float dot02 = (v0.x * v2.x) + (v0.y * v2.y);
+    float dot11 = (v1.x * v1.x) + (v1.y * v1.y);
+    float dot12 = (v1.x * v2.x) + (v1.y * v2.y);
+
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
+	
+}
 
 
 
@@ -100,19 +139,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_position;
-	 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_attentuation;
-	 vec4 vec4_spotdirection;
-	 vec4 vec4_spotparams;
+		 vec4 vec4_diffuse;
 	 vec4 vec4_lightparams;
-	 vec4 vec4_lightsettings;
-	 vec4 vec4_shadowParams;
-	 vec4 vec4_shadowQualityParams;
-	 vec4 vec4_shadowRes[1];
-	 vec4 vec4_shadowDr[1];
-	 mat4 vec4_shadowMat[1];
 
 
 
@@ -168,7 +196,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[4];
+				ShadowData shadowD[5];
 	
 } pass;
 
@@ -193,7 +221,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[4];
+			uniform sampler2D texShadowMap[5];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -213,11 +241,23 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		vec4 fc[4];
+		
 		float depth;
 				
 					
 		
-			vec4 posL[4];		
+			vec4 posL[5];		
+			
+			
+		
+
 
 } inPs;
 
@@ -267,7 +307,6 @@ void main() {
 	
 	
 	
-	
 
 	vec2 screenPos=vec2((gl_FragCoord.x/pass.screenx),(gl_FragCoord.y/pass.screeny));
 
@@ -288,40 +327,15 @@ void main() {
 
 	
 	
+		
+
 	
 		
 	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
-	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
-
-	float light_power				=material.vec4_lightparams.y;
-	
-	float light_visible				=material.vec4_lightsettings.x;
-	
-	float light_static				=material.vec4_lightsettings.y;
-	
-	float light_shadows				=material.vec4_lightsettings.z;
-	
-	vec4 light_position				=material.vec4_position;
+	float light_power				=material.vec4_lightparams.y;	
 	
 	vec4 light_diffuse				=material.vec4_diffuse;
-	
-	vec4 light_specular				=material.vec4_specular;
-
-	vec4 light_attenuation			=material.vec4_attentuation;
-	
-	vec4 light_spotDirection			=pass.View*material.vec4_spotdirection;
-	
-	vec4 light_spotParams			=material.vec4_spotparams;
-	
-	vec4 ShadowVal=vec4(1);
-
-
-		if(light_visible<=0){
-			final=vec4(0);
-			return;
-		}
-		
 
 	
 
@@ -378,50 +392,16 @@ void main() {
 
 
 
+	
+		
+
+	//final.rgb=(light_diffuse.rgb*diffuse)+glow;
+	
+
 		
 		
 	
 	
-	
-		
-	objToLightVec =(vec4(light_position.xyz,1)).xyz-viewPos;
-	float len_sq = dot(objToLightVec, objToLightVec);
-	float len = sqrt(len_sq);
-	vec3 objToLightDir = objToLightVec/len;
-		
-	// Calculate diffuse colour
-	total_light_contrib = max(0.0,dot(objToLightDir, normal)) * light_diffuse.rgb*diffuse;
-
-
-	vec4 rim=vec4(0);
-	
-
-	
-	// Calculate specular component
-	vec3 viewDir = -normalize(viewPos);
-	vec3 h = normalize(viewDir + objToLightDir);
-	vec3 final_specular = pow(dot(normal, h),rough) * light_specular.rgb;
-	total_light_contrib += specular * final_specular;
-
-    //LT_DIRECTIONAL = 0,
-    //LT_POINT = 1,
-    // LT_SPOTLIGHT = 2,
-
-	float attenuation = dot(light_attenuation.yzw, vec3(1.0, len, len_sq));
-	total_light_contrib /= attenuation;
-	
-	vec2 test =(vec4(light_position.xyz,1)).xy-viewPos.xy;
-	float len2_sq = dot(objToLightVec, objToLightVec);
-	float len2 = sqrt(len_sq);
-	vec2 objToLightDir2 = test/len2;
-	//final=vec4(0) ;
-	//if(len<15.0){
-	//	final=vec4( pow( (15.0-len)/15.0,2 ))*pass.flip;	
-	//}
-	
-
-
-
 		
 	
 	
@@ -429,46 +409,124 @@ void main() {
 	
 		
 		
+		
+
+	
 	
 		
 
 	if(floatBitsToUint(pass.debug.x)==0u){
-		if(floatBitsToUint(pass.debug.y)==7u){
-			ShadowVal=vec4(1);
+		final.rgb=(light_diffuse.rgb*diffuse)+glow;		
+
+		return;
+	}	
+	else if(floatBitsToUint(pass.debug.x)==1u){
+			if(light_type>=1u){
+	
+				final=vec4(depth);
+			}else {
+				final=vec4(0);
+			}	
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==2u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(normal.rgbb);
 		}
-
-		final=ominf(  vec4((total_light_contrib*light_power), 0.0))*ShadowVal;
-		
-
-
-
-			
-
-		//final=vec4(ShadowVal)/10.0;
-
-		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){
-		//if(light_type==0u){
-			//final=vec4(0);
-		//}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==3u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(diffuse.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==4u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(glow.rgbb);
+		}
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==5u){
+		final=vec4(0);
+		if(light_type==4u){
+			final=vec4(specular.rgbb);
+		}
 		return;
 	}else if(floatBitsToUint(pass.debug.x)==6u){
-		final=vec4(0,0.0,0,0);
+		
+		final.rgb=(light_diffuse.rgb*diffuse);		
+
+		return;
+	}else if(floatBitsToUint(pass.debug.x)==7u){
+		
+	uint numtex=5u;
+
+	float fL=screenPos.x*3.0;
+	float ffL=(screenPos.y*float(3));
+		
+	uint i=uint(fL);
+	uint ii=uint(ffL);
+		
+	uint curid=((i)+ii*3u);
+	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.3333 ))*vec2(3.0,3.0);
 	
-		if(light_type==1u){
-			final=vec4(0.1,0.0,0,0);
-		}
-		if(light_type==2u){
-			final=vec4(0,0.1,0,0);
-		}
-		return;
-	}else {
-		final=vec4(0);
-		return;
+	final=texture(texShadowMap[curid], coords);
+	
+	if(curid>=numtex){
+		final.rgb=(light_diffuse.rgb*diffuse)+glow;
+
 	}
 
-		
 
+		return;
+		
+	}else if(floatBitsToUint(pass.debug.x)==8u){
+	 	if(light_type==4u){
+			if(texCoord.x>0.666666){
+				if(texCoord.y>0.5){
+					final.rgb=normal.rgb;
+				}else {
+					final.rgb=diffuse.rgb;
+				}
+				
+			}else if(texCoord.x>0.333333){
+				if(texCoord.y>0.5){
+					final.rgb=specular.rgb;
+				}
+				else {
+					final.rgb=(light_diffuse.rgb*diffuse)+glow;		
+				}
+				
+				
+			}else if(texCoord.x>0.133333){
+				if(texCoord.y>0.5){
+					final=vec4(1,0,0,0);
+				}
+				else {
+					final=vec4(0,0,1,0);
+				}		
+				}else {
+		
+					if(texCoord.y>0.5){
+						final.rgb=glow.rgb;
+					}
+					else {
+					final=vec4(depth);
+					}
+
+				}
+			
+			
+			}else {
+				final=vec4(0);
+			}
+	} else if (floatBitsToUint(pass.debug.x)==9u){
 	
+			final.rgb=glow.rgb;
+					
+ 	}
+	
+
 		
 
 	

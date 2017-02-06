@@ -208,7 +208,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[7];
+				ShadowData shadowD[6];
 	
 } pass;
 
@@ -233,7 +233,7 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[7];
+			uniform sampler2D texShadowMap[6];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -265,7 +265,7 @@ in block
 				
 					
 		
-			vec4 posL[7];		
+			vec4 posL[6];		
 			
 			
 		
@@ -512,6 +512,7 @@ void main() {
 
 		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x)+inc;
 		IDoffset=inc;
+		
 			
 		
 		
@@ -609,7 +610,9 @@ vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
 			//float samp=texture(texShadowMap[shadowID], centroidUV+offset).x;
 			float samp=sampl[i];
 			float shadowDepth=samp;
-		
+			
+			
+			//sampl[i]>0.9999 to generate shadows beyond shadowcam range
 			if( (shadowDistance)<(shadowDepth)||sampl[i]>0.9999){
 				ls[i]=1.0;
 			}

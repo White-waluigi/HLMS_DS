@@ -67,12 +67,13 @@ out block
 		vec4 sF;
 		vec4 eF;
 				
+		vec4 fc[4];
 		
 		float depth;
 				
 					
 		
-			vec4 posL[3];		
+			vec4 posL[5];		
 			
 			
 		
@@ -123,7 +124,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[3];
+				ShadowData shadowD[5];
 	
 } pass;
 
@@ -207,8 +208,8 @@ void main()
 		outVs.pos		=pass.View*worldPos;
 	    outVs.normal	= mat3(worldView) * normal;
 
-    gl_Position = pass.Proj *(outVs.pos);
-	outVs.glPosition =gl_Position;
+    outVs.glPosition = pass.Proj *(outVs.pos);
+	gl_Position=outVs.glPosition;
 
         vcolor=vertex;
     mat4 iproj=pass.Proj;

@@ -93,6 +93,30 @@ void JSONMaterialCreator::initializeSettings(MT_MultiData* mt) {
 		const Ogre::HlmsBlendblock bl=*blocks.blendblocks[LwConstString::FromUnsafeCStr(blendblockname.c_str())];
 		db->setBlendblock(bl);
 	}
+
+	if(mt->has("shadow_const_bias")){
+		float pfix=mt->getData("shadow_const_bias").f;
+		DSMaterialParam* param=new DSMaterialParam();
+
+		param->array=false;
+
+		param->type=DSMaterialParam::VEC4;
+		param->paramName="shadow_const_bias";
+		param->postFix="shadow_const_bias";
+
+		float *data=new float[4];
+		for(int i=0;i<4;i++){
+			data[i]=pfix;
+		}
+
+		param->setData(data);
+		//param.type = &*it;
+
+		db->materialParams->push_back(param);
+	}
+
+
+
 	//******************************************************************************************************************
 
 }

@@ -50,6 +50,7 @@
 
 		uint shadowID= floatBitsToUint(material.vec4_shadowParams.x)+inc;
 		IDoffset=inc;
+		
 		@end 	
 		
 		@end
@@ -187,7 +188,9 @@ vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
 			//float samp=texture(texShadowMap[shadowID], centroidUV+offset).x;
 			float samp=sampl[i];
 			float shadowDepth=samp;
-		
+			
+			
+			//sampl[i]>0.9999 to generate shadows beyond shadowcam range
 			if( (shadowDistance)<(shadowDepth)||sampl[i]>0.9999){
 				ls[i]=1.0;
 			}

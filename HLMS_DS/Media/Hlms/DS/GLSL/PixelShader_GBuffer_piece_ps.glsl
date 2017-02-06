@@ -149,17 +149,14 @@ void main() {
 	@property(hlms_shadowcaster)
 		
 		
-		//depth=texelFetch(worldMatBuf,int(inPs.drawId)+(int(gl_FragCoord.x)%16) );
-
-		//depth=vec4((length(inPs.pos.xyz) / pass.farClip));
-		
-		//depth=vcolor;
-		//depth=normalize(vcolor);
-		//depth=inPs.pos;	
-		depth.x	=inPs.glPosition.z/ pass.farClip;
+		float scb=0;
+	
+		@property(vec4_shadow_const_bias)
+			scb=material.vec4_shadow_const_bias.x;
+		@end
+		depth.x	=((inPs.glPosition.z+scb)/ pass.farClip);
 
 
-		//depth=vec4(inPs.pos.xyzz);
 		
 		@insertpiece(custom_post_shadow)
 	@end

@@ -159,7 +159,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-	
+		 vec4 vec4_shadow_const_bias;
+
 
 
 

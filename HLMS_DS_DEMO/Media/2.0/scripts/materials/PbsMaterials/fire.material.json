@@ -70,7 +70,7 @@
 			"settings": {
 				"macroblock": "Macroblock_1",
 				"blendblock": "Blendblock_1",
-				"shadow_const_bias": 0.01,
+				"shadow_const_bias": 0.0,
 				"renderer": "deferred",
 				"optimizable": true,
 				"category": "default",
@@ -298,7 +298,7 @@
 			"settings": {
 				"macroblock": "Macroblock_1",
 				"blendblock": "Blendblock_1",
-				"shadow_const_bias": 0.01,
+				"shadow_const_bias": 0.0,
 				"renderer": "deferred",
 				"optimizable": true,
 				"category": "default",
@@ -388,7 +388,7 @@
 			"settings": {
 				"macroblock": "Macroblock_1",
 				"blendblock": "Blendblock_1",
-				"shadow_const_bias": 0.01,
+				"shadow_const_bias": 0.00,
 				"renderer": "deferred",
 				"optimizable": true,
 				"category": "default",

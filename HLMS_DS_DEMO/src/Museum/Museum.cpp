@@ -290,6 +290,7 @@ void Museum::initExhibits() {
 		tree.materialParams1.push_back("opacity-diffuse$1");
 		tree.materialParams1.push_back("opacity-sharp$1");
 		tree.materialParams1.push_back("opacity-cutoff$3");
+		tree.materialParams1.push_back("shadow_const_bias$0.001");
 		//jollyroger.materialParams.push_back("reflection$0.3");
 		//	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
 		//jollyroger.materialParams.push_back("diffuse$1 1 1");

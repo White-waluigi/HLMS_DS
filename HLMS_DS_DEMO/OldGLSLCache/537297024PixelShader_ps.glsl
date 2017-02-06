@@ -360,17 +360,11 @@ void main() {
 	
 		
 		
-		//depth=texelFetch(worldMatBuf,int(inPs.drawId)+(int(gl_FragCoord.x)%16) );
-
-		//depth=vec4((length(inPs.pos.xyz) / pass.farClip));
-		
-		//depth=vcolor;
-		//depth=normalize(vcolor);
-		//depth=inPs.pos;	
-		depth.x	=inPs.glPosition.z/ pass.farClip;
+		float scb=0;
+	
+				depth.x	=((inPs.glPosition.z+scb)/ pass.farClip);
 
 
-		//depth=vec4(inPs.pos.xyzz);
 		
 		
 			

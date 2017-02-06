@@ -165,7 +165,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
+		 vec4 vec4_shadow_const_bias;
+	 vec4 vec4_diffuse;
 	 vec4 vec4_specular;
 	 vec4 vec4_wave;
 
@@ -398,17 +399,13 @@ vec4 wave=material.vec4_wave;
 	
 		
 		
-		//depth=texelFetch(worldMatBuf,int(inPs.drawId)+(int(gl_FragCoord.x)%16) );
-
-		//depth=vec4((length(inPs.pos.xyz) / pass.farClip));
+		float scb=0;
+	
 		
-		//depth=vcolor;
-		//depth=normalize(vcolor);
-		//depth=inPs.pos;	
-		depth.x	=inPs.glPosition.z/ pass.farClip;
+			scb=material.vec4_shadow_const_bias.x;
+				depth.x	=((inPs.glPosition.z+scb)/ pass.farClip);
 
 
-		//depth=vec4(inPs.pos.xyzz);
 		
 		
 			

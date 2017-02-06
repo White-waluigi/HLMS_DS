@@ -127,6 +127,12 @@ void DSMaterialDatablock::initializeParamTypes() {
 		type->postFix = "reflection";
 		type->numVec = 1;
 		vec4ParamTypes->push_back(*type);
+
+		type = new DSMaterialParamType();
+		type->paramName = "shadow_const_bias";
+		type->postFix = "shadow_const_bias";
+		type->numVec = 1;
+		vec4ParamTypes->push_back(*type);
 	}
 	{
 		DSPropertyParamType type= DSPropertyParamType("rainbow");

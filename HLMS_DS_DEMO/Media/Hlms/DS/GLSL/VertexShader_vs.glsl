@@ -175,15 +175,11 @@ void main()
 
     outVs.glPosition = pass.Proj *(outVs.pos);
 	gl_Position=outVs.glPosition;
+	@insertpiece(custom_vertex_post)
 
     @end
     vcolor=vertex;
-    mat4 iproj=pass.Proj;
-    iproj[1][0] = -iproj[1][0];
-    iproj[1][1] = -iproj[1][1];
-    iproj[1][2] = -iproj[1][2];
-    iproj[1][3] = -iproj[1][3];
-	@insertpiece(custom_vertex_post)
+
 
 @property( hlms_dual_paraboloid_mapping)
 	//Dual Paraboloid Mapping
