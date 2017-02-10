@@ -38,7 +38,6 @@
 #include "Datablocks/Data/DSTextureParamType.h"
 #include "Datablocks/DSMaterialDatablock.h"
 #include "limits"
-#include "Shadow/ShadowManager.h"
 
 #include "OgreHlmsJson.h"
 #include "OgreLwString.h"
@@ -95,7 +94,6 @@ HlmsDS::HlmsDS(Archive* dataFolder, ArchiveVec* libraryFolders) :
 				ConstBufferPool::ExtraBufferParams()) {
 	//std::cout <<"*****************************************\n"<<"HlmsDS"<<"\n";
 	this->lightmanager = new DSLightManager(this);
-	this->shadowmanager = new ShadowManager(new ShadowManager::Config(), this);
 	this->mShadowmapCmpSamplerblock = 0;
 	this->mShadowmapSamplerblock = 0;
 	this->mCurrentShadowmapSamplerblock = 0;
@@ -126,10 +124,13 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 
 
 	//find the GBUffer Compoistor texture
-	int size = sceneManager->getCompositorTextures().size();
+	uint size = sceneManager->getCompositorTextures().size();
 	for (uint i = 0; i < size; i++) {
+
+
 		IdString name =
-				sceneManager->getCompositorTextures().at(i).name.mDebugString;
+				sceneManager->getCompositorTextures().at(i).name;
+
 		if ((name == IdString("GBuffer"))) {
 			GbufferTexID = i;
 		}
@@ -571,11 +572,12 @@ void HlmsDS::destroyAllBuffers(void) {
 			mVaoManager->destroyConstBuffer(
 					dsDatablocks->at(i)->MaterialBuffer);
 
-			if (dsDatablocks->at(i)->ShadowMaterialBuffer->getMappingState()
-					!= MS_UNMAPPED)
+			if (dsDatablocks->at(i)->ShadowMaterialBuffer!=NULL&&dsDatablocks->at(i)->ShadowMaterialBuffer->getMappingState()!= MS_UNMAPPED){
 				dsDatablocks->at(i)->ShadowMaterialBuffer->unmap(UO_UNMAP_ALL);
-			mVaoManager->destroyConstBuffer(
-					dsDatablocks->at(i)->ShadowMaterialBuffer);
+				mVaoManager->destroyConstBuffer(
+						dsDatablocks->at(i)->ShadowMaterialBuffer);
+			}
+
 		}
 
 		mPassBuffers.clear();
@@ -869,7 +871,10 @@ HlmsDatablock* HlmsDS::createDatablockImpl(IdString datablockName,
 
 	bool light = false;
 
+
 	for (uint i = 0; i < paramVec.size(); i++) {
+
+
 		if (paramVec.at(i).first == IdString("type")) {
 			light = paramVec[i].second.compare("light") == 0;
 		}
@@ -1126,6 +1131,9 @@ const HlmsSamplerblock* HlmsDS::getSamplerBlock(
 Ogre::String HlmsDS::getShaderProfile() {
 	return mShaderProfile;
 }
-
+HlmsDS::~HlmsDS() {
+	//destroyAllBuffers();
+}
 } /* namespace Ogre */
+
 

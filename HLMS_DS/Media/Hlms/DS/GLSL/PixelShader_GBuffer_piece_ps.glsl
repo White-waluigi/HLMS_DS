@@ -52,9 +52,10 @@ in vec4 vcolor;
 @property( !hlms_shadowcaster)
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 SSR;
+
 @end
 @property(hlms_shadowcaster)
 out vec4 depth;
@@ -113,7 +114,7 @@ void main() {
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	@insertpiece(custom_GBuffer_No_Shadow)
@@ -152,12 +153,13 @@ void main() {
 		float scb=0;
 	
 		@property(vec4_shadow_const_bias)
-			scb=material.vec4_shadow_const_bias.x;
+		//material.vec4_shadow_const_bias.x
+			scb=(material.vec4_shadow_const_bias.x*10000)/ pow(pass.farClip,3);
+			
 		@end
-		depth.x	=((inPs.glPosition.z+scb)/ pass.farClip);
-
-
-		
+		depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
+		//depth.yz=vec2(tan(tan(screenPos.x*100.0)),sin(sin(screenPos.y*100.0)));
+		depth.yz=vec2(0);
 		@insertpiece(custom_post_shadow)
 	@end
 	@property(!hlms_shadowcaster)

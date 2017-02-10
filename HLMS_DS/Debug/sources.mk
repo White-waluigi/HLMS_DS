@@ -33,5 +33,4 @@ src/Datablocks/Data/DSBlocks/MappingBlocks/Modulators \
 src/Helper \
 src/Light \
 src \
-src/Shadow \
 

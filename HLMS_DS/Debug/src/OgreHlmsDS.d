@@ -352,12 +352,7 @@ src/OgreHlmsDS.o: ../src/OgreHlmsDS.cpp \
  ../src/Datablocks/Data/../DSDatablock.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsSamplerblock.h \
  ../src/Datablocks/Data/DSTextureParamType.h \
- ../src/Datablocks/DSMaterialDatablock.h ../src/Shadow/ShadowManager.h \
- ../src/Shadow/../Datablocks/Data/DSVec4Param.h \
- ../src/Shadow/../Datablocks/Data/DSMaterialParamType.h \
- ../src/Shadow/../Datablocks/Data/DSTextureParam.h \
- ../src/Shadow/../Datablocks/Data/DSTextureParamType.h \
- ../src/Shadow/../OgreHlmsDS.h \
+ ../src/Datablocks/DSMaterialDatablock.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLwString.h
 
 ../src/Datablocks/Data/DSMaterialParamType.h:
@@ -1077,17 +1072,5 @@ src/OgreHlmsDS.o: ../src/OgreHlmsDS.cpp \
 ../src/Datablocks/Data/DSTextureParamType.h:
 
 ../src/Datablocks/DSMaterialDatablock.h:
-
-../src/Shadow/ShadowManager.h:
-
-../src/Shadow/../Datablocks/Data/DSVec4Param.h:
-
-../src/Shadow/../Datablocks/Data/DSMaterialParamType.h:
-
-../src/Shadow/../Datablocks/Data/DSTextureParam.h:
-
-../src/Shadow/../Datablocks/Data/DSTextureParamType.h:
-
-../src/Shadow/../OgreHlmsDS.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreLwString.h:

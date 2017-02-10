@@ -33,13 +33,15 @@ void JsonParser::loadMaterial(const rapidjson::Value& json,
     db = static_cast<DSDatablock*>(datablock);
     Ogre::String name="";
 #ifdef OGRE_DEBUG_MODE
+#ifndef NDEBUG
     name=datablock->getName().mDebugString;
+
+#endif
 #endif
     std::cout <<"#####################################JSON: "<<name<<"#####################################\n";
    // printValue(json,1);
 
 
-	int inte=0;
 
 	QueueItem *test=new QueueItem();
 	test->templ=new MaterialTemplate(json);
@@ -93,7 +95,9 @@ void JsonParser::loadMaterial(const rapidjson::Value& json,
 			}catch (Ogre::Exception *e){
 			    Ogre::String name=iterator->first.getReleaseText();
 			#ifdef OGRE_DEBUG_MODE
+			#ifndef NDEBUG
 			    name=datablock->getName().mDebugString;
+			#endif
 			#endif
 				std::cout<<"Parsing Material "<<name<<" failed because "<<e->getDescription()<<"\n";
 				assert(false);

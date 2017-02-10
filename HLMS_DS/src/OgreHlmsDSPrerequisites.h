@@ -28,6 +28,8 @@ THE SOFTWARE.
 #ifndef _OgreHlmsDSPrerequisites_H_
 #define _OgreHlmsDSPrerequisites_H_
 
+#define OgreHlmsDS_EXPORTS
+
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32 || OGRE_PLATFORM == OGRE_PLATFORM_WINRT
 #   if defined( OGRE_STATIC_LIB ) || defined( OGRE_PBS__STATIC_LIB )
 #       define _OgreHlmsDSExport

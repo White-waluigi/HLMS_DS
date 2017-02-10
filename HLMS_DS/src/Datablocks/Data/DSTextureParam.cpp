@@ -75,7 +75,7 @@ uvec2* DSTextureParam::getActiveLocation() {
 	if (!isMultiTex()) {
 		return getLocation(0);
 	}
-	return getLocation(UVindexOffet);
+	return getLocation(UVindexOffet%texLocation.size());
 
 }
 

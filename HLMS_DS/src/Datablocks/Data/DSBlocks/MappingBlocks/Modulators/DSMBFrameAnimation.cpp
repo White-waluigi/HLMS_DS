@@ -23,7 +23,7 @@ DSMBFrameAnimation::~DSMBFrameAnimation() {
 void DSMBFrameAnimation::modulate() {
 	DSMBModulator::modulate();
 	float final=elapsed[0]*numUV;
-	parent->UVindexOffset=(int)final;
+	parent->UVindexOffset=((int)final)%numUV;
 }
 
 } /* namespace Ogre */

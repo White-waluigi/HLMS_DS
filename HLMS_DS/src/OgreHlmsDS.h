@@ -94,6 +94,7 @@ public:
    bool requiresTextureFlipping;
 
 	HlmsDS( Archive *dataFolder, ArchiveVec *libraryFolders );
+	~HlmsDS();
 
 	virtual HlmsCache preparePassHash (const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, SceneManager *sceneManager);
     virtual void calculateHashForPreCreate( Renderable *renderable, PiecesMap *inOutPieces );

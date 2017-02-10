@@ -145,7 +145,7 @@ public:
 
 	Status status;
 
-	bool manualtexture = false;
+
 
 	bool safeForRewrite;
 	bool staticMaterial = true;
