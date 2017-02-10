@@ -47,7 +47,7 @@ all: HLMS_DS_DEMO
 HLMS_DS_DEMO: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: GCC C++ Linker'
-	g++  -o "HLMS_DS_DEMO" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/home/marvin/workspace/HLMS_DS/Release -Xlinker -rpath "." -o "HLMS_DS_DEMO" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

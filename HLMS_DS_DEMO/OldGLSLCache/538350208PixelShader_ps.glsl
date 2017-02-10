@@ -100,6 +100,25 @@ vec4 inside(vec4 d,vec4 f,vec4 t){
 	}	
 	return retval;
 }
+bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
+	vec2 v0 = vec2(c.x - a.x, c.y - a.y);
+	vec2 v1 = vec2(b.x - a.x, b.y - a.y);
+	vec2 v2 = vec2(p.x - a.x, p.y - a.y);
+
+    float dot00 = (v0.x * v0.x) + (v0.y * v0.y);
+    float dot01 = (v0.x * v1.x) + (v0.y * v1.y);
+    float dot02 = (v0.x * v2.x) + (v0.y * v2.y);
+    float dot11 = (v1.x * v1.x) + (v1.y * v1.y);
+    float dot12 = (v1.x * v2.x) + (v1.y * v2.y);
+
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
+	
+}
 
 
 
@@ -142,7 +161,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
+		 vec4 vec4_shadow_const_bias;
+	 vec4 vec4_diffuse;
 
 
 
@@ -260,6 +280,7 @@ in block
 		vec4 sF;
 		vec4 eF;
 				
+		vec4 fc[4];
 		
 		float depth;
 				
@@ -277,9 +298,10 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 SSR;
+
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -384,7 +406,7 @@ f2u( material.texloc_0 ) ) );
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	
@@ -394,21 +416,14 @@ f2u( material.texloc_0 ) ) );
 
 
 
-	diffuse=vec4(0);
-vec4 fc[2];
-fc[0]=inPs.sF;
-fc[1]=inPs.eF;
-vec2 sF = vec2(pass.screenx,pass.screeny) * (1 + inPs.sF.xy / inPs.sF.w)/2;
-vec2 eF = vec2(pass.screenx,pass.screeny) * (1 + inPs.eF.xy / inPs.eF.w)/2;
-//if(!inside(vec4(inPs.glPosition.xy,0,0),fc[0],fc[1]) ){
-//   discard;
-diffuse=inside(vec4(screenPos.xy,0,0),vec4(sF,0,0),vec4(eF,0,0));
-//}
-for(int i=0;i<2;i++){
-   float fg=1-min(length(inPs.glPosition.xyz-(fc[i].xyz)),1 );
-   //diffuse+=fg;
+	vec4 fc[4];
+for(int i=0;i<4;i++){
+    fc[i].xy = ((inPs.fc[i].xy)/inPs.fc[i].w);
 }
-if(floatBitsToUint(pass.debug.w)%2==1){opacity=0.9;}
+vec3 sP = ((inPs.glPosition.xyz)/inPs.glPosition.w);
+bool A0=insideTri(sP.xy,fc[0].xy,fc[1].xy,fc[2].xy);
+bool A1=insideTri(sP.xy,fc[0].xy,fc[2].xy,fc[3].xy);
+if(!(A0||A1)){discard;}
 
 
 

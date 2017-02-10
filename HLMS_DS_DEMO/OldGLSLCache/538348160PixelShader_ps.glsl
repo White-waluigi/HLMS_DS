@@ -161,7 +161,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
+		 vec4 vec4_shadow_const_bias;
+	 vec4 vec4_diffuse;
 
 
 
@@ -297,7 +298,6 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
 
@@ -404,7 +404,7 @@ f2u( material.texloc_0 ) ) );
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	//pos.x= (inPs.glPosition.z ) ;
 
 
 	
@@ -414,29 +414,14 @@ f2u( material.texloc_0 ) ) );
 
 
 
-	diffuse=vec4(0);
-vec4 fc[4];
+	vec4 fc[4];
 for(int i=0;i<4;i++){
     fc[i].xy = ((inPs.fc[i].xy)/inPs.fc[i].w);
 }
 vec3 sP = ((inPs.glPosition.xyz)/inPs.glPosition.w);
-float op=float(floatBitsToUint(pass.debug.z));
-float oq=float(floatBitsToUint(pass.debug.w));
-//if(!inside(vec4(inPs.glPosition.xy,0,0),fc[0],fc[1]) ){
-//   discard;
-//diffuse=inside(vec4(screenPos.xy,0,0),vec4(sF,0,0),vec4(eF,0,0));
-//diffuse.xy=mod(fc[0].xy,1.0);
-if(screenPos.x<0.5){
-//   diffuse.xy=screenPos.xy;
-}
-//}
-for(int i=0;i<4;i++){
-   float fg=0.01-min(length(sP.xy-fc[i].xy),0.01 );
-   diffuse+=vec4(fg*100.0);
-}
 bool A0=insideTri(sP.xy,fc[0].xy,fc[1].xy,fc[2].xy);
 bool A1=insideTri(sP.xy,fc[0].xy,fc[2].xy,fc[3].xy);
-if(A0||A1){discard;}
+if(!(A0||A1)){discard;}
 
 
 

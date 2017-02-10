@@ -68,6 +68,7 @@ out block
 		vec4 sF;
 		vec4 eF;
 				
+		vec4 fc[4];
 		
 		float depth;
 				
@@ -205,25 +206,21 @@ void main()
 		outVs.pos		=pass.View*worldPos;
 	    outVs.normal	= mat3(worldView) * normal;
 
-    gl_Position = pass.Proj *(outVs.pos);
-	outVs.glPosition =gl_Position;
+    outVs.glPosition = pass.Proj *(outVs.pos);
+	gl_Position=outVs.glPosition;
+	vec4 fc[4];
+outVs.fc[0]=vec4(0,0,0,1);
+outVs.fc[1]=vec4(1,0,0,1);
+outVs.fc[2]=vec4(1,1,0,1);
+outVs.fc[3]=vec4(0,1,0,1);
+for(int i=0;i<4;i++){
+   outVs.fc[i].xyz =  vec4( (worldMat * outVs.fc[i]) ).xyz;
+   outVs.fc[i].w=1.0;
+   outVs.fc[i] = pass.Proj*(pass.View*outVs.fc[i]);
+}
+
 
         vcolor=vertex;
-    mat4 iproj=pass.Proj;
-    iproj[1][0] = -iproj[1][0];
-    iproj[1][1] = -iproj[1][1];
-    iproj[1][2] = -iproj[1][2];
-    iproj[1][3] = -iproj[1][3];
-	vec4 fc[2];
-fc[0]=vec4(0,0,0,1);
-fc[1]=vec4(.1,.1,0,1);
-for(int i=0;i<2;i++){
-   fc[i].xyz =  vec4( (worldMat * fc[i]) ).xyz;
-   fc[i].w=1.0;
-   fc[i] = pass.Proj*(pass.View*fc[i]);
-}
-outVs.sF=vertex;
-outVs.eF=fc[1];
 
 
 

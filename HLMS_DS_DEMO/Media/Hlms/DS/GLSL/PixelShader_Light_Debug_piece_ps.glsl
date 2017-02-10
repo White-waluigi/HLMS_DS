@@ -64,7 +64,7 @@
 				}
 				
 				
-			}else if(texCoord.x>0.133333){
+			}else if(texCoord.x>0.3){
 				if(texCoord.y>0.5){
 					final=vec4(1,0,0,0);
 				}

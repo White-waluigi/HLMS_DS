@@ -73,7 +73,7 @@ out block
 				
 					
 		
-			vec4 posL[7];		
+			vec4 posL[3];		
 			
 			
 		
@@ -124,7 +124,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[7];
+				ShadowData shadowD[3];
 	
 } pass;
 

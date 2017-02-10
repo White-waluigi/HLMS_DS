@@ -159,8 +159,7 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_specular;
-
+	
 
 
 
@@ -284,9 +283,10 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 SSR;
+
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -342,9 +342,9 @@ void main() {
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -375,7 +375,7 @@ void main() {
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	

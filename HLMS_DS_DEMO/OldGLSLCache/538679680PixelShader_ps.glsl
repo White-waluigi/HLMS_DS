@@ -236,7 +236,6 @@ layout(binding = 2) uniform InstanceBuffer
 		uniform sampler2D GBuffer1;
 		uniform sampler2D GBuffer2;
 		uniform sampler2D GBuffer3;
-		uniform sampler2D GBuffer4;
 	
 
 in block
@@ -327,12 +326,12 @@ void main() {
 	vec3 diffuse=texture2D(GBuffer0 ,texCoord).rgb;
 	float depth=texture2D(GBuffer1 ,texCoord).a;
 	vec3 normal=texture2D(GBuffer1 ,texCoord).rgb;
-	vec3 specular=texture2D(GBuffer3 ,texCoord).rgb;
-	float rough=texture2D(GBuffer3 ,texCoord).w;
+	vec3 specular=texture2D(GBuffer2 ,texCoord).rgb;
+	float rough=texture2D(GBuffer2 ,texCoord).w;
 	
-	float Sdepth=texture2D(GBuffer2 ,texCoord).x;
+	float Sdepth=texture2D(GBuffer1 ,texCoord).x;
 	
-	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
+	vec3 glow=texture2D(GBuffer3 ,texCoord).rgb;
 
 
 	

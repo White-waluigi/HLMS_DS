@@ -80,6 +80,7 @@ void main() {
 	@insertpiece(LightCalc)
 
 
+	if(floatBitsToUint(pass.debug.x)==0u){
 
 	@property(LIGHTTYPE_Ambient)
 		@insertpiece(LightCalcAmbient)
@@ -112,6 +113,7 @@ void main() {
 
 	@end
 
+	}
 		
 		
 	@property(!LIGHTTYPE_Ambient)

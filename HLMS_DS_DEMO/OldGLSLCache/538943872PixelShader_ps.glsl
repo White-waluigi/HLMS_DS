@@ -205,7 +205,7 @@ layout(binding = 0) uniform PassBuffer
 	
 		
 			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[7];
+				ShadowData shadowD[3];
 	
 } pass;
 
@@ -230,13 +230,12 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[7];
+			uniform sampler2D texShadowMap[3];
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
 		uniform sampler2D GBuffer2;
 		uniform sampler2D GBuffer3;
-		uniform sampler2D GBuffer4;
 	
 
 in block
@@ -262,7 +261,7 @@ in block
 				
 					
 		
-			vec4 posL[7];		
+			vec4 posL[3];		
 			
 			
 		
@@ -327,12 +326,12 @@ void main() {
 	vec3 diffuse=texture2D(GBuffer0 ,texCoord).rgb;
 	float depth=texture2D(GBuffer1 ,texCoord).a;
 	vec3 normal=texture2D(GBuffer1 ,texCoord).rgb;
-	vec3 specular=texture2D(GBuffer3 ,texCoord).rgb;
-	float rough=texture2D(GBuffer3 ,texCoord).w;
+	vec3 specular=texture2D(GBuffer2 ,texCoord).rgb;
+	float rough=texture2D(GBuffer2 ,texCoord).w;
 	
-	float Sdepth=texture2D(GBuffer2 ,texCoord).x;
+	float Sdepth=texture2D(GBuffer1 ,texCoord).x;
 	
-	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
+	vec3 glow=texture2D(GBuffer3 ,texCoord).rgb;
 
 
 	
@@ -600,7 +599,9 @@ vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
 			//float samp=texture(texShadowMap[shadowID], centroidUV+offset).x;
 			float samp=sampl[i];
 			float shadowDepth=samp;
-		
+			
+			
+			//sampl[i]>0.9999 to generate shadows beyond shadowcam range
 			if( (shadowDistance)<(shadowDepth)||sampl[i]>0.9999){
 				ls[i]=1.0;
 			}

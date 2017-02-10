@@ -119,11 +119,16 @@
 									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_r/include/OGRE/Hlms"/>
 									<listOptionValue builtIn="false" value="/home/marvin/lib/ogre/sdk_r/include/OGRE/Overlay"/>
 								</option>
+								<option id="gnu.cpp.compiler.option.dialect.std.1819346043" name="Language standard" superClass="gnu.cpp.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.cpp.compiler.dialect.default" valueType="enumerated"/>
+								<option id="gnu.cpp.compiler.option.preprocessor.def.925128624" name="Defined symbols (-D)" superClass="gnu.cpp.compiler.option.preprocessor.def" useByScannerDiscovery="false" valueType="definedSymbols">
+									<listOptionValue builtIn="false" value="NDEBUG"/>
+								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.compiler.input.237332597" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.compiler.exe.release.1236470541" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.exe.release">
-								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.exe.release.option.optimization.level.564430630" name="Optimization Level" superClass="gnu.c.compiler.exe.release.option.optimization.level" useByScannerDiscovery="false" valueType="enumerated"/>
+								<option defaultValue="gnu.c.optimization.level.most" id="gnu.c.compiler.exe.release.option.optimization.level.564430630" name="Optimization Level" superClass="gnu.c.compiler.exe.release.option.optimization.level" useByScannerDiscovery="false" value="gnu.c.optimization.level.most" valueType="enumerated"/>
 								<option id="gnu.c.compiler.exe.release.option.debugging.level.576305689" name="Debug Level" superClass="gnu.c.compiler.exe.release.option.debugging.level" useByScannerDiscovery="false" value="gnu.c.debugging.level.none" valueType="enumerated"/>
+								<option id="gnu.c.compiler.option.dialect.std.926088840" name="Language standard" superClass="gnu.c.compiler.option.dialect.std" useByScannerDiscovery="true" value="gnu.c.compiler.dialect.default" valueType="enumerated"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.865212359" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.exe.release.369799731" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.exe.release"/>
@@ -135,14 +140,22 @@
 									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/libOgreHlmsUnlitMobile.so.2.1.0"/>
 									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/libOgreMain.so.2.1.0"/>
 									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/libOgreMeshLodGenerator.so.2.1.0"/>
-									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/libHLMS_DS.so"/>
 									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/libOgreOverlay.so.2.1.0"/>
-									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/Plugin_ParticleFX_d.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/Plugin_ParticleFX.so.2.1.0"/>
 									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/RenderSystem_GL3Plus_d.so.2.1.0"/>
-									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/RenderSystem_NULL_d.so.2.1.0"/>
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS_DEMO/RenderSystem_NULL.so.2.1.0"/>
 								</option>
 								<option id="gnu.cpp.link.option.other.380069807" name="Other options (-Xlinker [option])" superClass="gnu.cpp.link.option.other" useByScannerDiscovery="false" valueType="stringList">
 									<listOptionValue builtIn="false" value="-rpath &quot;.&quot;"/>
+								</option>
+								<option id="gnu.cpp.link.option.libs.2131360194" name="Libraries (-l)" superClass="gnu.cpp.link.option.libs" useByScannerDiscovery="false" valueType="libs">
+									<listOptionValue builtIn="false" value="SDL2"/>
+									<listOptionValue builtIn="false" value="HLMS_DS"/>
+									<listOptionValue builtIn="false" value="boost_system"/>
+									<listOptionValue builtIn="false" value="boost_thread"/>
+								</option>
+								<option id="gnu.cpp.link.option.paths.134759003" name="Library search path (-L)" superClass="gnu.cpp.link.option.paths" useByScannerDiscovery="false" valueType="libPaths">
+									<listOptionValue builtIn="false" value="/home/marvin/workspace/HLMS_DS/Release"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.cpp.linker.input.905640905" superClass="cdt.managedbuild.tool.gnu.cpp.linker.input">
 									<additionalInput kind="additionalinputdependency" paths="$(USER_OBJS)"/>
@@ -181,5 +194,13 @@
 		</scannerConfigBuildInfo>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
-	<storageModule moduleId="refreshScope"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/HLMS_DS_DEMO"/>
+		</configuration>
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/HLMS_DS_DEMO"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>

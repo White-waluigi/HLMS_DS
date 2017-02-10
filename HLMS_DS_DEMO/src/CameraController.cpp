@@ -116,8 +116,8 @@ namespace Demo
     //-----------------------------------------------------------------------------------
     void CameraController::mouseMoved( const SDL_Event &arg )
     {
-        float width  = mGraphicsSystem->getRenderWindow()->getWidth();
-        float height = mGraphicsSystem->getRenderWindow()->getHeight();
+        float width  = mGraphicsSystem->getRenderWindow()->getWidth()*5.0;
+        float height = mGraphicsSystem->getRenderWindow()->getHeight()*5.0;
 
         mCameraYaw   += -arg.motion.xrel / width;
         mCameraPitch += -arg.motion.yrel / height;

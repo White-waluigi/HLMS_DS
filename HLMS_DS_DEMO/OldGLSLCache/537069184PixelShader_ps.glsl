@@ -160,20 +160,11 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_reflection;
+	 vec4 vec4_opacity;
 
 
 
 
-	
-	vec4 texloc_0;
-	
-
-	
-	mat4 texmat_0;
-
-	
 
 /**/
 
@@ -232,7 +223,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -286,9 +277,10 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 SSR;
+
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -339,9 +331,9 @@ void main() {
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -354,25 +346,16 @@ void main() {
 
 
 		
+				
+				opacity=material.vec4_opacity.r;							
 							
 			
 				
 
 	
-	
-		float reflection=material.vec4_reflection.r;
 		
-			
-	
-		//Not sure about this
-		//vec3 rNormal=(vec4(normal.xyz,0)*pass.View).xyz;
-		vec3 rNormal=reflect(normalize(-inPs.pos.xyz),normal.xyz);
+		float reflection=0.5;	
 		
-		vec2 ruv=vec2(asin(rNormal.x)/3.14159625 + 0.5 ,asin(rNormal.y)/3.14159625 + 0.5);
-		diffuse=mix(diffuse,  
-		texture( textureMaps[0], vec3(ruv,
-		 f2u( material.texloc_0 ) ) ),  
-		 reflection);
 	
 
 	
@@ -383,7 +366,7 @@ void main() {
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	
@@ -399,6 +382,38 @@ void main() {
 
 
 	
+		
+				
+				
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
+		
 		
 												
 		

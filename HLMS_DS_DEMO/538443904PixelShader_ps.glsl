@@ -402,11 +402,12 @@ vec4 wave=material.vec4_wave;
 		float scb=0;
 	
 		
-			scb=material.vec4_shadow_const_bias.x;
-				depth.x	=((inPs.glPosition.z+scb)/ pass.farClip);
-
-
-		
+		//material.vec4_shadow_const_bias.x
+			scb=(material.vec4_shadow_const_bias.x*10000)/ pow(pass.farClip,3);
+			
+				depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
+		//depth.yz=vec2(tan(tan(screenPos.x*100.0)),sin(sin(screenPos.y*100.0)));
+		depth.yz=vec2(0);
 		
 			
 	

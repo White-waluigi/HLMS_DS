@@ -80,6 +80,43 @@ vec4 ominf(vec4 data){
 	
 	
 }
+vec4 inside(vec4 d,vec4 f,vec4 t){
+	
+	vec4 retval=vec4(0); 
+	if(d.x<f.x){
+		retval.x+=.5;
+	}
+	if(d.y<f.y){
+		retval.z+=.5;
+	}	
+
+	if(d.x>t.x){
+		retval.x+=.5;
+	}
+	if(d.y>t.y){
+		retval.z+=.5;
+	}	
+	return retval;
+}
+bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
+	vec2 v0 = vec2(c.x - a.x, c.y - a.y);
+	vec2 v1 = vec2(b.x - a.x, b.y - a.y);
+	vec2 v2 = vec2(p.x - a.x, p.y - a.y);
+
+    float dot00 = (v0.x * v0.x) + (v0.y * v0.y);
+    float dot01 = (v0.x * v1.x) + (v0.y * v1.y);
+    float dot02 = (v0.x * v2.x) + (v0.y * v2.y);
+    float dot11 = (v1.x * v1.x) + (v1.y * v1.y);
+    float dot12 = (v1.x * v2.x) + (v1.y * v2.y);
+
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
+	
+}
 
 
 
@@ -122,12 +159,35 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
+		 vec4 vec4_specular;
 
 
 
 
+	
+	vec4 texloc_0;
+	
+
+	
+	mat4 texmat_0;
+
+	
+	
+	vec4 texloc_1;
+	
+
+	
+	mat4 texmat_1;
+
+	
+	
+	vec4 texloc_2;
+	
+
+	
+	mat4 texmat_2;
+
+	
 
 /**/
 
@@ -186,8 +246,19 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
+
+vec3 getTSNormal( vec3 uv )
+{
+	vec3 tsNormal;
+	//Normal texture must be in U8V8 or BC5 format!
+	tsNormal.xy = texture( textureMaps[1], uv ).xy;
+
+	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
+
+	return tsNormal;
+}
 
 
 //Uniforms that change per Item/Entity
@@ -216,11 +287,23 @@ in block
 		vec3 tangent;
 		vec4 worldPos;
 		vec4 glPosition;
+		
+		mat4 worldMat;
+		
+		vec4 sF;
+		vec4 eF;
+				
+		vec4 fc[4];
+		
 		float depth;
 				
 			
 		vec2 uv0;		
 				
+			
+			
+		
+
 
 } inPs;
 in vec4 vcolor;
@@ -228,9 +311,10 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 SSR;
+
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -263,12 +347,17 @@ void main() {
 		
 	
 	
-	
-			
-			diffuse.rgb=material.vec4_diffuse.rgb;	
-					
 		
-			
+		
+		diffuse=  texture( textureMaps[0], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
+		f2u(material.texloc_0) ) );
+//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
+		
+		
+		
+
+		
 
 	
 
@@ -278,12 +367,32 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
+	
+
+		vec3 geomNormal = normalize( inPs.normal );
+		vec3 vTangent = normalize( inPs.tangent );
+
+		//Get the TBN matrix
+    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
+		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
+		
+	if(floatBitsToUint(pass.debug.y)!=2u){
+		normal.xyz= getTSNormal( vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,  
+		f2u(material.texloc_1 ) ) );
+		
+		normal.xyz = normalize( (TBN * normal.xyz) );
+	}
 			
 
 	
 			
 			specular=material.vec4_specular;	
 					
+	
+		specular.rgb*=  texture( textureMaps[0], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy,
+		f2u(material.texloc_2 ) ) ).rgb;
 	
 
 	
@@ -314,7 +423,7 @@ void main() {
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	

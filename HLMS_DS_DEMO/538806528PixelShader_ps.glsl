@@ -330,12 +330,15 @@ void main() {
 	vec3 diffuse=texture2D(GBuffer0 ,texCoord).rgb;
 	float depth=texture2D(GBuffer1 ,texCoord).a;
 	vec3 normal=texture2D(GBuffer1 ,texCoord).rgb;
-	vec3 specular=texture2D(GBuffer3 ,texCoord).rgb;
-	float rough=texture2D(GBuffer3 ,texCoord).w;
+	vec3 specular=texture2D(GBuffer2 ,texCoord).rgb;
+	float rough=texture2D(GBuffer2 ,texCoord).w;
 	
-	float Sdepth=texture2D(GBuffer2 ,texCoord).x;
 	
-	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
+	
+	vec3 glow=texture2D(GBuffer3 ,texCoord).rgb;
+	
+	float Sdepth=texture2D(GBuffer4 ,texCoord).x;
+	float SSR=texture2D(GBuffer4 ,texCoord).y;
 
 
 	
@@ -429,6 +432,7 @@ void main() {
 
 
 
+	if(floatBitsToUint(pass.debug.x)==0u){
 
 		
 	
@@ -718,6 +722,7 @@ shadowRes.xy);
 
 		
 	
+	}
 		
 		
 	

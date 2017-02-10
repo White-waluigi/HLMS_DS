@@ -68,6 +68,7 @@ out block
 		vec4 sF;
 		vec4 eF;
 				
+		vec4 fc[4];
 		
 		float depth;
 				
@@ -207,14 +208,10 @@ void main()
 
     outVs.glPosition = pass.Proj *(outVs.pos);
 	gl_Position=outVs.glPosition;
+	
 
         vcolor=vertex;
-    mat4 iproj=pass.Proj;
-    iproj[1][0] = -iproj[1][0];
-    iproj[1][1] = -iproj[1][1];
-    iproj[1][2] = -iproj[1][2];
-    iproj[1][3] = -iproj[1][3];
-	
+
 
 
 		 

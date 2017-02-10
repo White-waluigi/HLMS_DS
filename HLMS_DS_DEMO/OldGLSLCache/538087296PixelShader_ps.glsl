@@ -161,7 +161,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
+		 vec4 vec4_shadow_const_bias;
+	 vec4 vec4_diffuse;
 	 vec4 vec4_specular;
 	 vec4 vec4_wave;
 
@@ -339,7 +340,6 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
 
@@ -468,7 +468,7 @@ vec4 wave=material.vec4_wave;
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	//pos.x= (inPs.glPosition.z ) ;
 
 
 	diffuse=blend(grass,dirt,tiles,stone,blendmap);

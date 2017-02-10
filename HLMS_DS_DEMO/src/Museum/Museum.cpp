@@ -290,7 +290,7 @@ void Museum::initExhibits() {
 		tree.materialParams1.push_back("opacity-diffuse$1");
 		tree.materialParams1.push_back("opacity-sharp$1");
 		tree.materialParams1.push_back("opacity-cutoff$3");
-		tree.materialParams1.push_back("shadow_const_bias$0.001");
+		tree.materialParams1.push_back("shadow_const_bias$4");
 		//jollyroger.materialParams.push_back("reflection$0.3");
 		//	goldstatue.materialParams.push_back("specular$1.5 0.5 0.2 150.0");
 		//jollyroger.materialParams.push_back("diffuse$1 1 1");
@@ -312,6 +312,7 @@ void Museum::initExhibits() {
 
 	firewood.position = Ogre::Vector3(56.63, -1, -105.136);
 
+	firewood.scale = Ogre::Vector3(0.3,0.3,0.3);
 	exhibits.push_back(firewood);
 	//************************************************************
 
@@ -424,7 +425,6 @@ void Museum::initExhibits() {
 //	blendtest3.pedastol=1;
 //	blendtest3.position=Ogre::Vector3(1,2,10);
 //	exhibits.push_back(blendtest3);
-
 	//************************************************************
 }
 
@@ -692,15 +692,15 @@ Museum::daystruct Museum::updateLights(float t) {
 	daystruct retVal;
 	for (int i = 0; i < lights.size(); i++) {
 		if (lights.at(i).animate) {
-			float sunphase = fmod((timer) / 2.0, M_PI * 2);
-			float monthpase = fmod((timer) / 20.0, M_PI * 2 * 10);
+			float sunphase = fmod((timer) / 2.0, Ogre::Math::PI * 2);
+			float monthpase = fmod((timer) / 20.0, Ogre::Math::PI * 2 * 10);
 
 			bool ismoon = false;
-			float dayphase = sunphase / M_PI;
+			float dayphase = sunphase / Ogre::Math::PI;
 
-			if (sunphase > M_PI) {
+			if (sunphase > Ogre::Math::PI) {
 
-				sunphase = (sunphase) - M_PI;
+				sunphase = (sunphase) - Ogre::Math::PI;
 				ismoon = true;
 
 			}
@@ -784,6 +784,7 @@ Museum::daystruct Museum::updateLights(float t) {
 			}
 			lights.at(i).light->setDirection(x);
 			lights.at(i).light->setDiffuseColour(c);
+			sceneManager->setAmbientLight(c/5.0,c,Ogre::Vector3::UNIT_X,1);
 			if(!ismoon){
 				lights.at(i).light->setSpecularColour(c);
 			}else{
@@ -878,7 +879,7 @@ void Museum::initLights() {
 	Sun.light->setSpecularColour(0.8f, 0.8f, 0.8f);
 	Sun.light->setPowerScale(2.0);
 	Sun.light->setType(Ogre::Light::LT_DIRECTIONAL);
-	Sun.light->setShadowFarDistance(2000);
+	//Sun.light->setShadowFarDistance(2000);
 
 	Sun.position = Ogre::Vector3(5, 5.0f, -5);
 	//exhibitL1.light->setDirection(Ogre::Vector3(1, -1, -1).normalisedCopy());
@@ -900,7 +901,7 @@ void Museum::initLights() {
 	//firelight.light->setSpecularColour(20.9f, 7.8f, 2.6f); //Warm
 	mobileLight.light->setType(Ogre::Light::LT_SPOTLIGHT);
 	mobileLight.light->setAttenuationBasedOnRadius(60.0f, 0.01f);
-	mobileLight.position = Ogre::Vector3(16.63, 5, -105.136);
+	mobileLight.position = Ogre::Vector3(16.63, -50, -105.136);
 	mobileLight.light->setCastShadows(true);
 	mobileLight.direction = Ogre::Vector3(0.0, -0.8, -1).normalisedCopy();
 	mobileLight.visible=true;
@@ -1019,9 +1020,9 @@ void Museum::initLights() {
 			break;
 		}
 	}
-
-	cameraL.swing = &exhibits.at(exid);
-
+	if(exid<exhibits.size()){
+		cameraL.swing = &exhibits.at(exid);
+	}
 	lights.push_back(cameraL);
 
 	//******************************

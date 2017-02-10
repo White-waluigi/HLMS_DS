@@ -160,8 +160,6 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_specular;
-	 vec4 vec4_opacity;
-	 vec4 autoparam0;
 
 
 
@@ -174,9 +172,16 @@ layout(binding = 1) uniform MaterialBuffer
 	mat4 texmat_0;
 
 	
+	
+	vec4 texloc_1;
+	
 
-/*	vec4 autoparam0;
-*/
+	
+	mat4 texmat_1;
+
+	
+
+/**/
 
 
 
@@ -233,7 +238,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -287,9 +292,10 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 SSR;
+
 
 uint f2u(float f){
 	return floatBitsToUint(f);
@@ -349,6 +355,10 @@ void main() {
 			specular=material.vec4_specular;	
 					
 	
+		specular.rgb*=  texture( textureMaps[1], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,
+		f2u(material.texloc_1 ) ) ).rgb;
+	
 
 	
 		
@@ -360,8 +370,6 @@ void main() {
 
 
 		
-				
-				opacity=material.vec4_opacity.r;							
 							
 			
 				
@@ -380,54 +388,22 @@ void main() {
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	
 
  	
-opacity = ((material.autoparam0.x*2.0)-0.5);
-
-
-
-	
 
 
 
 
 	
-		
-				
-				
-		
-		if(opacity<0.999&&opacity>0.001){
-			bool big=opacity>=0.5;
-			if(!big){	
-				float dval=opacity;
-				uint uval=uint(1/dval);
-				uint inc=uint(gl_FragCoord.y)%2u; 
-				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
-			
-				
-				if((offsetx)%uval!=0u){
-					discard;
-				}
-			}
-			else {	
-				float dval=abs(1-opacity);
-				uint uval=uint(1/dval);
-				
-				uint inc=uint(gl_FragCoord.y)%2u; 
-				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
-				
-				if((offsetx)%uval==0u){
-					discard;
-				}
-			}
-		}else if(opacity<0.001){
-			discard;
-		}
-		
+
+
+
+
+	
 		
 												
 		

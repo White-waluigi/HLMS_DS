@@ -68,6 +68,7 @@ out block
 		vec4 sF;
 		vec4 eF;
 				
+		vec4 fc[4];
 		
 		float depth;
 				
@@ -205,13 +206,12 @@ void main()
 		outVs.pos		=pass.View*worldPos;
 	    outVs.normal	= mat3(worldView) * normal;
 
-    gl_Position = pass.Proj *(outVs.pos);
-
-	outVs.glPosition =gl_Position;
+    outVs.glPosition = pass.Proj *(outVs.pos);
+	gl_Position=outVs.glPosition;
+	
 
         vcolor=vertex;
-    
-	
+
 
 
 		 

@@ -3,8 +3,8 @@ compositor_node DSNode
 {
 	in 0 rt_renderwindow
 	
-	//													Diffuse			Normal			Depth			Specular		Glow
-	texture GBuffer 		target_width target_height PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA
+	//													Diffuse			Normal			Specular		Glow			SSR+l. depth
+	texture GBuffer 		target_width target_height PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA 
 	texture PreAntialias 	target_width target_height PF_R8G8B8A8
 	texture PreSSAO 		target_width target_height PF_R8G8B8A8
 	
@@ -169,7 +169,7 @@ compositor_node_shadow DeferredShadingShadowNode
 	{
 		pass clear
 		{
-			colour_value 1 0 0 0
+			colour_value 1 1 1 0
 		}
 		pass render_scene
 		{

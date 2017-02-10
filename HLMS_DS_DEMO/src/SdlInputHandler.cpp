@@ -23,7 +23,7 @@ namespace Demo
         mWantMouseVisible( true ),
         mIsMouseRelative( !mWantRelative ),
         mWrapPointerManually( false ),
-        mGrabPointer( false ),
+        mGrabPointer( true ),
         mMouseInWindow( true ),
         mWindowHasFocus( true ),
         mWarpX( 0 ),

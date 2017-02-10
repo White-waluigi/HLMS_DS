@@ -379,10 +379,9 @@ opacity = ((material.autoparam0.x*2.0)-0.5);
 		
 		float scb=0;
 	
-				depth.x	=((inPs.glPosition.z+scb)/ pass.farClip);
-
-
-		
+				depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
+		//depth.yz=vec2(tan(tan(screenPos.x*100.0)),sin(sin(screenPos.y*100.0)));
+		depth.yz=vec2(0);
 		
 			
 	

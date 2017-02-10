@@ -276,9 +276,10 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 pos;
+
 
 uint f2u(float f){
 	return floatBitsToUint(f);

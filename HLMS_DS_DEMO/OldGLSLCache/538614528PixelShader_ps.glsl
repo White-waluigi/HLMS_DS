@@ -102,6 +102,25 @@ vec4 inside(vec4 d,vec4 f,vec4 t){
 	}	
 	return retval;
 }
+bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
+	vec2 v0 = vec2(c.x - a.x, c.y - a.y);
+	vec2 v1 = vec2(b.x - a.x, b.y - a.y);
+	vec2 v2 = vec2(p.x - a.x, p.y - a.y);
+
+    float dot00 = (v0.x * v0.x) + (v0.y * v0.y);
+    float dot01 = (v0.x * v1.x) + (v0.y * v1.y);
+    float dot02 = (v0.x * v2.x) + (v0.y * v2.y);
+    float dot11 = (v1.x * v1.x) + (v1.y * v1.y);
+    float dot12 = (v1.x * v2.x) + (v1.y * v2.y);
+
+    float invDenom = 1 / (dot00 * dot11 - dot01 * dot01);
+
+    float u = (dot11 * dot02 - dot01 * dot12) * invDenom;
+    float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
+
+    return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
+	
+}
 
 
 
@@ -228,6 +247,7 @@ in block
 		vec4 sF;
 		vec4 eF;
 				
+		vec4 fc[4];
 		
 		float depth;
 				
@@ -297,12 +317,15 @@ void main() {
 	vec3 diffuse=texture2D(GBuffer0 ,texCoord).rgb;
 	float depth=texture2D(GBuffer1 ,texCoord).a;
 	vec3 normal=texture2D(GBuffer1 ,texCoord).rgb;
-	vec3 specular=texture2D(GBuffer3 ,texCoord).rgb;
-	float rough=texture2D(GBuffer3 ,texCoord).w;
+	vec3 specular=texture2D(GBuffer2 ,texCoord).rgb;
+	float rough=texture2D(GBuffer2 ,texCoord).w;
 	
-	float Sdepth=texture2D(GBuffer2 ,texCoord).x;
 	
-	vec3 glow=texture2D(GBuffer4 ,texCoord).rgb;
+	
+	vec3 glow=texture2D(GBuffer3 ,texCoord).rgb;
+	
+	float Sdepth=texture2D(GBuffer4 ,texCoord).x;
+	float SSR=texture2D(GBuffer4 ,texCoord).y;
 
 
 	
@@ -371,6 +394,7 @@ void main() {
 
 
 
+	if(floatBitsToUint(pass.debug.x)==0u){
 
 	
 		
@@ -387,6 +411,7 @@ void main() {
 	
 
 	
+	}
 		
 		
 		
@@ -478,7 +503,7 @@ void main() {
 				}
 				
 				
-			}else if(texCoord.x>0.133333){
+			}else if(texCoord.x>0.3){
 				if(texCoord.y>0.5){
 					final=vec4(1,0,0,0);
 				}

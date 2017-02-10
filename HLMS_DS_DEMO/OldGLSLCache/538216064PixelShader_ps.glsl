@@ -161,7 +161,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
+		 vec4 vec4_shadow_const_bias;
+	 vec4 vec4_diffuse;
 	 vec4 vec4_glow;
 	 vec4 vec4_leaf;
 	 vec4 vec4_specular;
@@ -307,9 +308,10 @@ in vec4 vcolor;
 
 out vec4 diffuse;
 out vec4 normal;
-out vec4 pos;
 out vec4 specular;
 out vec4 glow;
+out vec4 pos;
+
 
 uint f2u(float f){
 	return floatBitsToUint(f);
