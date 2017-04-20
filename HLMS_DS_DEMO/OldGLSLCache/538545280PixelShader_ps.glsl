@@ -9,7 +9,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -117,6 +117,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -180,14 +195,6 @@ layout(binding = 1) uniform MaterialBuffer
 	mat4 texmat_1;
 
 	
-	
-	vec4 texloc_2;
-	
-
-	
-	mat4 texmat_2;
-
-	
 
 /**/
 
@@ -249,17 +256,6 @@ layout(binding = 0) uniform PassBuffer
 uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
-vec3 getTSNormal( vec3 uv )
-{
-	vec3 tsNormal;
-	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[1], uv ).xy;
-
-	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
-
-	return tsNormal;
-}
-
 
 //Uniforms that change per Item/Entity
 layout(binding = 2) uniform InstanceBuffer
@@ -306,14 +302,13 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;
 out vec4 normal;
 out vec4 specular;
 out vec4 glow;
-out vec4 pos;
+out vec4 SSR;
 
 
 uint f2u(float f){
@@ -367,22 +362,6 @@ void main() {
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
-	
-
-		vec3 geomNormal = normalize( inPs.normal );
-		vec3 vTangent = normalize( inPs.tangent );
-
-		//Get the TBN matrix
-    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
-		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-		
-	if(floatBitsToUint(pass.debug.y)!=2u){
-		normal.xyz= getTSNormal( vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,  
-		f2u(material.texloc_1 ) ) );
-		
-		normal.xyz = normalize( (TBN * normal.xyz) );
-	}
 			
 
 	
@@ -390,9 +369,9 @@ void main() {
 			specular=material.vec4_specular;	
 					
 	
-		specular.rgb*=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy,
-		f2u(material.texloc_2 ) ) ).rgb;
+		specular.rgb*=  texture( textureMaps[1], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,
+		f2u(material.texloc_1 ) ) ).rgb;
 	
 
 	
@@ -423,7 +402,7 @@ void main() {
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	

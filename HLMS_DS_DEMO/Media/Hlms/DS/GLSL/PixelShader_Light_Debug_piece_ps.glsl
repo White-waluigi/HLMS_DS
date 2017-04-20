@@ -1,4 +1,6 @@
 @piece(DebugAmbient)
+		
+		
 
 	if(floatBitsToUint(pass.debug.x)==0u){
 		final.rgb=(light_diffuse.rgb*diffuse)+glow;		
@@ -130,13 +132,10 @@
 			ShadowVal=vec4(1);
 		}
 
+
+		
 		final=ominf(  vec4((total_light_contrib*light_power), 0.0))*ShadowVal;
 		
-
-
-
-			
-
 		//final=vec4(ShadowVal)/10.0;
 
 		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){

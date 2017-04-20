@@ -64,7 +64,7 @@ Ogre::Vector3 PbsMaterialsGameState::randv1() {
 Ogre::Vector3 PbsMaterialsGameState::randv2() {
 	Ogre::Vector3 retv;
 
-	float big,small,swap;
+	float big;
 
 	big = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	if(big<0.3){
@@ -87,7 +87,9 @@ Ogre::Vector3 PbsMaterialsGameState::RainbowPhase(float f){
 	float x=fmod(f,1.0);
 	float y=1-fmod(f,1.0);
 
-	float r,g,b;
+	float r=0;
+	float g=0;
+	float b=0;
 	if(level<1){
 		r=y;
 		g=x;
@@ -100,13 +102,17 @@ Ogre::Vector3 PbsMaterialsGameState::RainbowPhase(float f){
 		r=x;
 		g=0;
 		b=y;
+	}else{
+		r=1;
+		g=1;
+		b=1;
 	}
 
 	return Ogre::Vector3(r,g,b);
 }
 Ogre::Vector3 PbsMaterialsGameState::randv3() {
 	Ogre::Vector3 retv=Ogre::Vector3::ZERO;
-	float big,small,swap;
+	float big;
 
 	big = static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 	if(big>0.8){
@@ -120,7 +126,18 @@ Ogre::Vector3 PbsMaterialsGameState::randv3() {
 PbsMaterialsGameState::PbsMaterialsGameState(
 		const Ogre::String &helpDescription) :
 		TutorialGameState(helpDescription), mAnimateObjects(true), mNumSpheres(
-				0), mTransparencyMode(0), mTransparencyValue(1.0f) {
+				0), mTransparencyMode(0), mTransparencyValue(1.0f),mSceneNodePole(NULL),mSceneNodePole2(NULL),museum(NULL),pole_db(NULL) {
+	ghost_db=NULL;
+	ghost_anim=NULL;
+	for(uint i=0;i<16;i++){
+		mSceneNode[i]=NULL;
+	}
+	mSceneNodeAnim=NULL;
+	mSceneNodeGhost=NULL;
+	floord=NULL;
+	mLight=NULL;
+	hlmsDS=NULL;
+
 	memset(mSceneNode, 0, sizeof(mSceneNode));
 }
 //-----------------------------------------------------------------------------------
@@ -130,10 +147,8 @@ void PbsMaterialsGameState::createScene01(void) {
 	Ogre::SceneManager *sceneManager = mGraphicsSystem->getSceneManager();
 	Ogre::HlmsManager *hlmsManager =
 			mGraphicsSystem->getRoot()->getHlmsManager();
-	Ogre::HlmsTextureManager *hlmsTextureManager =
-			hlmsManager->getTextureManager();
 
-	Ogre::SceneNode *rootNode = sceneManager->getRootSceneNode();
+
 	mGraphicsSystem->getCamera()->setPosition(-19.5,2,-15);
 	mGraphicsSystem->getCamera()->setDirection(1,0,0);
 	mGraphicsSystem->getCamera()->setFarClipDistance(10000);
@@ -144,7 +159,6 @@ void PbsMaterialsGameState::createScene01(void) {
 	museum->setupExhibits();
 	museum->setupMuseum();
 	museum->setupLights();
-
 	mGraphicsSystem->mWorkspace->setListener(hlmsDS->mWSListener);
 
 //	Ogre::Light *light = sceneManager->createLight();
@@ -259,8 +273,6 @@ void PbsMaterialsGameState::update(float timeSinceLast) {
 //-----------------------------------------------------------------------------------
 void PbsMaterialsGameState::generateDebugText(float timeSinceLast,
 		Ogre::String &outText) {
-	Ogre::uint32 visibilityMask =
-			mGraphicsSystem->getSceneManager()->getVisibilityMask();
 
 
 
@@ -294,9 +306,7 @@ void PbsMaterialsGameState::setTransparencyToMaterials(void) {
 //
 //        assert( dynamic_cast<Ogre::HlmsPbs*>( hlmsManager->getHlms( Ogre::HLMS_PBS ) ) );
 //
-	Ogre::HlmsDS *hlmsDS = static_cast<Ogre::HlmsDS*>(hlmsManager->getHlms(
-			Ogre::HLMS_PBS));
-//
+
 //        Ogre::HlmsPbsDatablock::TransparencyModes mode =
 //                static_cast<Ogre::HlmsPbsDatablock::TransparencyModes>( mTransparencyMode );
 
@@ -309,9 +319,9 @@ void PbsMaterialsGameState::setTransparencyToMaterials(void) {
 	for (size_t i = 0; i < mNumSpheres; ++i) {
 		Ogre::String datablockName = "Test"
 				+ Ogre::StringConverter::toString(i);
-		Ogre::DSDatablock *datablock =
-				static_cast<Ogre::DSDatablock*>(hlmsDS->getDatablock(
-						datablockName));
+//		Ogre::DSDatablock *datablock =
+//				static_cast<Ogre::DSDatablock*>(hlmsDS->getDatablock(
+//						datablockName));
 
 //            datablock->setTransparency( mTransparencyValue, mode );
 	}

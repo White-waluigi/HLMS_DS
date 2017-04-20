@@ -9,7 +9,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -115,6 +115,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     float v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
+	
+}
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
 	
 }
 
@@ -278,7 +293,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;

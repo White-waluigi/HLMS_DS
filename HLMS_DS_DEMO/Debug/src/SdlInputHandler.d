@@ -21,6 +21,7 @@ src/SdlInputHandler.o: ../src/SdlInputHandler.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMemoryTracker.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h \
  ../src/Threading/MqMessages.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePrerequisites.h \
@@ -71,6 +72,8 @@ src/SdlInputHandler.o: ../src/SdlInputHandler.cpp \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h:
 

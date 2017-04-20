@@ -20,6 +20,7 @@ src/BaseSystem.o: ../src/BaseSystem.cpp ../src/BaseSystem.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMemoryTracker.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h \
  ../src/Threading/MqMessages.h ../src/GameState.h ../src/InputListeners.h
 
@@ -66,6 +67,8 @@ src/BaseSystem.o: ../src/BaseSystem.cpp ../src/BaseSystem.h \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h:
 

@@ -28,7 +28,8 @@ namespace Demo
         mWindowHasFocus( true ),
         mWarpX( 0 ),
         mWarpY( 0 ),
-        mWarpCompensate( false )
+        mWarpCompensate( false ),
+		mGraphicsSystem(NULL)
     {
     }
     //-----------------------------------------------------------------------------------

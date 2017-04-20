@@ -9,7 +9,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -117,6 +117,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -160,6 +175,8 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_specular;
+	 vec4 vec4_opacity;
+	 vec4 autoparam0;
 
 
 
@@ -172,16 +189,9 @@ layout(binding = 1) uniform MaterialBuffer
 	mat4 texmat_0;
 
 	
-	
-	vec4 texloc_1;
-	
 
-	
-	mat4 texmat_1;
-
-	
-
-/**/
+/*	vec4 autoparam0;
+*/
 
 
 
@@ -238,7 +248,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -287,7 +297,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;
@@ -355,10 +364,6 @@ void main() {
 			specular=material.vec4_specular;	
 					
 	
-		specular.rgb*=  texture( textureMaps[1], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy,
-		f2u(material.texloc_1 ) ) ).rgb;
-	
 
 	
 		
@@ -370,6 +375,8 @@ void main() {
 
 
 		
+				
+				opacity=material.vec4_opacity.r;							
 							
 			
 				
@@ -394,16 +401,48 @@ void main() {
 	
 
  	
+opacity = ((material.autoparam0.x*2.0)-0.5);
+
+
+
+	
 
 
 
 
 	
-
-
-
-
-	
+		
+				
+				
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
+		
 		
 												
 		

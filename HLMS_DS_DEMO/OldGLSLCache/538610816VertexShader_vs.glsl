@@ -46,6 +46,7 @@ in vec3 tangent;
 
     
 
+in vec2 uv0; 
 in uint drawId;
 
 
@@ -71,9 +72,9 @@ out block
 		
 		float depth;
 				
-					
-		
-			vec4 posL[6];		
+			
+		vec2 uv0;		
+				
 			
 			
 		
@@ -122,10 +123,6 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[6];
-	
 } pass;
 
 
@@ -142,7 +139,6 @@ layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
-out vec4 vcolor;
 void main()
 {
 
@@ -185,15 +181,12 @@ void main()
 
 		
 	
-	vcolor =vec4(0.5,float(drawId)/100.0,mod(float(drawId)/10.0,1.0),0);
-	vcolor=worldPos;
-	vcolor=worldPos;
+
+
+
+
 	
-	
-
-
-
-	    
+		outVs.uv0 = uv0;    
     
     outVs.vertex=vertex.xyz;
 		
@@ -212,17 +205,11 @@ void main()
 	gl_Position=outVs.glPosition;
 	
 
-        vcolor=vertex;
-
+    
 
 
 		 
 	
-        gl_Position = vertex*vec4(1,1,1,1);
-        
-
-
-
 		
     }
     

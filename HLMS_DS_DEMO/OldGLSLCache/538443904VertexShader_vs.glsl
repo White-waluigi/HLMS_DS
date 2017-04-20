@@ -1,4 +1,4 @@
-#version 330 core
+#version 400 core
 #extension GL_ARB_shading_language_420pack: require
 
 //Shadow Material
@@ -141,7 +141,6 @@ layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
-out vec4 vcolor;
 void main()
 {
 
@@ -184,11 +183,7 @@ void main()
 
 	worldView = pass.View;	
 	
-	vcolor =vec4(0.5,float(drawId)/100.0,mod(float(drawId)/10.0,1.0),0);
-	vcolor=worldPos;
-	vcolor=worldPos;
-	
-	
+
 
 
 
@@ -210,17 +205,23 @@ void main()
 
     outVs.glPosition = pass.Proj *(outVs.pos);
 	gl_Position=outVs.glPosition;
-	
+	vec4 fc[4];
+outVs.fc[0]=vec4(0,0,0,1);
+outVs.fc[1]=vec4(1,0,0,1);
+outVs.fc[2]=vec4(1,1,0,1);
+outVs.fc[3]=vec4(0,1,0,1);
+for(int i=0;i<4;i++){
+   outVs.fc[i].xyz =  vec4( (worldMat * outVs.fc[i]) ).xyz;
+   outVs.fc[i].w=1.0;
+   outVs.fc[i] = pass.Proj*(pass.View*outVs.fc[i]);
+}
 
-        vcolor=vertex;
 
+    
 
 
 		 
-	    
-
-
-
+	
 		
     }
     

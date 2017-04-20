@@ -20,6 +20,7 @@ src/GameEntityManager.o: ../src/GameEntityManager.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMemoryTracker.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h \
  ../src/Threading/MqMessages.h ../src/GameEntity.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector3.h \
@@ -78,6 +79,8 @@ src/GameEntityManager.o: ../src/GameEntityManager.cpp \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h:
+
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h:
 

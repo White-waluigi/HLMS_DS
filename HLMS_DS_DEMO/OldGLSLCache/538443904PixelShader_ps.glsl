@@ -13,7 +13,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -121,6 +121,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -167,8 +182,6 @@ layout(binding = 1) uniform MaterialBuffer
 	
 		 vec4 vec4_shadow_const_bias;
 	 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_wave;
 
 
 
@@ -299,7 +312,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 depth;
@@ -352,13 +364,19 @@ vec4 normal_map =  texture( textureMaps[0], vec3(
 f2u( material.texloc_0 ) ) ); 
 
 
-vec4 wave=material.vec4_wave;
 
 
 
 
+	vec4 fc[4];
+for(int i=0;i<4;i++){
+    fc[i].xy = ((inPs.fc[i].xy)/inPs.fc[i].w);
+}
+vec3 sP = ((inPs.glPosition.xyz)/inPs.glPosition.w);
+bool A0=insideTri(sP.xy,fc[0].xy,fc[1].xy,fc[2].xy);
+bool A1=insideTri(sP.xy,fc[0].xy,fc[2].xy,fc[3].xy);
+if(!(A0||A1)){discard;}
 
-	
 
 
 
@@ -405,9 +423,15 @@ vec4 wave=material.vec4_wave;
 		//material.vec4_shadow_const_bias.x
 			scb=(material.vec4_shadow_const_bias.x*10000)/ pow(pass.farClip,3);
 			
-				depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
+				depth=vec4(0);
+		depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
 		//depth.yz=vec2(tan(tan(screenPos.x*100.0)),sin(sin(screenPos.y*100.0)));
-		depth.yz=vec2(0);
+		
+		int px=int(screenPos.x*100);
+		int py=int(screenPos.y*100);
+		//depth=material.idColor;
+		//depth.yz=vec2(float((px%2==0)^^ (py%2==0)),float(!((px%2==0)^^ (py%2==0))) );
+		
 		
 			
 	

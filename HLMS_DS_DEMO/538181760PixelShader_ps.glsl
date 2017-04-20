@@ -11,7 +11,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -119,6 +119,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -163,19 +178,12 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_shadow_const_bias;
+		 vec4 vec4_diffuse;
+	 vec4 vec4_opacity;
 
 
 
 
-	
-	vec4 texloc_0;
-	
-
-	
-	mat4 texmat_0;
-
-	
 
 /**/
 
@@ -234,7 +242,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -283,7 +291,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 depth;
@@ -315,16 +322,7 @@ void main() {
 
 	
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -332,11 +330,11 @@ void main() {
 
 
 		
+				
+				opacity=material.vec4_opacity.r;							
 							
 			
 				
-			opacity=diffuse.a;
-		
 
 
 
@@ -353,29 +351,53 @@ void main() {
 
 	
 		
-							
+				
+				
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
 			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
 		
 		
-			float cutoff=0.5;
-			
-				cutoff=1.0-(1.0/(3*1.0));
-			
-			if(opacity < cutoff) discard;
-		
-							
+												
 	
 		
 		
 		float scb=0;
 	
-		
-		//material.vec4_shadow_const_bias.x
-			scb=(material.vec4_shadow_const_bias.x*10000)/ pow(pass.farClip,3);
-			
-				depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
+				depth=vec4(0);
+		depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
 		//depth.yz=vec2(tan(tan(screenPos.x*100.0)),sin(sin(screenPos.y*100.0)));
-		depth.yz=vec2(0);
+		
+		int px=int(screenPos.x*100);
+		int py=int(screenPos.y*100);
+		//depth=material.idColor;
+		//depth.yz=vec2(float((px%2==0)^^ (py%2==0)),float(!((px%2==0)^^ (py%2==0))) );
+		
 		
 			
 	

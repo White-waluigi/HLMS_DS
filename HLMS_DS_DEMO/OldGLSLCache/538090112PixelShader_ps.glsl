@@ -119,6 +119,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 

@@ -20,7 +20,16 @@ Museum::Museum(Ogre::HlmsDS * hlmsDS, Ogre::SceneManager * sceneManager) {
 	this->sceneManager = sceneManager;
 	this->hlmsDS = hlmsDS;
 	// TODO Auto-generated constructor stub
-
+	this->labeldb=NULL;
+	this->woodItem=NULL;
+	this->woodSn=NULL;
+	this->pedastaldb=NULL;
+	this->museum=NULL;
+	this->museumDatablock=NULL;
+	this->museumDatablockf=NULL;
+	this->woodDatablock=NULL;
+	this->museumSn=NULL;
+	this->museumItem=NULL;
 }
 
 void Museum::initExhibits() {
@@ -29,7 +38,9 @@ void Museum::initExhibits() {
 	statue.model = "Statue.mesh";
 	statue.pedastol = 1;
 
-	statue.materialParams.push_back("diffuse$0.7 0.7 0.2");
+//	statue.materialParams.push_back("diffuse$0.7 0.7 0.2");
+	statue.materialParams.push_back("diffuse_map$'file=GreenSkin.jpg,anim-uv=0.001'");
+
 	statue.materialParams.push_back("opacity$0.6");
 	statue.label = "transp";
 
@@ -690,7 +701,7 @@ Museum::daystruct Museum::updateLights(float t) {
 	timer += t * 0.1;
 
 	daystruct retVal;
-	for (int i = 0; i < lights.size(); i++) {
+	for (uint i = 0; i < lights.size(); i++) {
 		if (lights.at(i).animate) {
 			float sunphase = fmod((timer) / 2.0, Ogre::Math::PI * 2);
 			float monthpase = fmod((timer) / 20.0, Ogre::Math::PI * 2 * 10);
@@ -777,9 +788,9 @@ Museum::daystruct Museum::updateLights(float t) {
 			Ogre::Vector3 x = Ogre::Vector3(cos(sunphase), sin(sunphase) * -1.0,
 					-cos(monthpase + 0.5));
 //			Ogre::ColourValue c=Ogre::ColourValue(abs(3.0-sin(timer/2.0)*3.0),1.0,1.0);
-			for(int i=0;i<exhibits.size();i++){
-				if(exhibits[i].skyanimate){
-					exhibits[i].datablock->setParam("glow",Ogre::Vector4(c.r,c.g,c.b,1));
+			for(int ii=0;ii<exhibits.size();ii++){
+				if(exhibits[ii].skyanimate){
+					exhibits[ii].datablock->setParam("glow",Ogre::Vector4(c.r,c.g,c.b,1));
 				}
 			}
 			lights.at(i).light->setDirection(x);
@@ -798,12 +809,11 @@ Museum::daystruct Museum::updateLights(float t) {
 
 void Museum::updateExhibits(float t) {
 
-	for (int i = 0; i < exhibits.size(); i++) {
+	for (uint i = 0; i < exhibits.size(); i++) {
 
 		//exhibits.at(i).direction=(exhibits.at(i).direction+Ogre::Vector3(0,0.000001,0)).normalise();
 		Ogre::Vector3 curpos = exhibits.at(i).position
 				+ exhibits.at(i).positionoffset;
-		Ogre::Vector3 curdir = exhibits.at(i).direction;
 		float yaw = 0;
 
 		if (exhibits.at(i).floating != 0.0) {
@@ -1047,9 +1057,7 @@ Ogre::DSDatablock* Museum::getDatablock(std::vector<Ogre::String> params,
 
 		if (strv.at(0).compare("name") == 0) {
 
-			Ogre::DSDatablock* wat =
-					static_cast<Ogre::DSDatablock*>(hlmsDS->getDatablock(
-							Ogre::IdString(strv.at(1))));
+
 
 			return static_cast<Ogre::DSDatablock*>(hlmsDS->getDatablock(
 					Ogre::IdString(strv.at(1))));

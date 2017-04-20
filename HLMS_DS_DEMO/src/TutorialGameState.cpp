@@ -27,7 +27,8 @@ namespace Demo
         mHelpDescription( helpDescription ),
         mDisplayHelpMode( 1 ),
         mNumDisplayHelpModes( 2 ),
-        mDebugText( 0 )
+        mDebugText( 0 ),
+    	mDebugTextShadow(NULL)
     {
     }
     //-----------------------------------------------------------------------------------

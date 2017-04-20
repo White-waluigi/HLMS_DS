@@ -1,8 +1,6 @@
 //Datablock:	
 #define PI 3.14159625
 
-//	Json Material
-
 
 //Gbuffer Material
 
@@ -11,7 +9,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -119,6 +117,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -162,12 +175,6 @@ layout(binding = 1) uniform MaterialBuffer
 	vec4 idColor;
 	
 		 vec4 vec4_shadow_const_bias;
-	 vec4 vec4_diffuse;
-	 vec4 vec4_glow;
-	 vec4 vec4_leaf;
-	 vec4 vec4_specular;
-	 vec4 vec4_testvar55;
-	 vec4 vec4_wave;
 
 
 
@@ -178,22 +185,6 @@ layout(binding = 1) uniform MaterialBuffer
 
 	
 	mat4 texmat_0;
-
-	
-	
-	vec4 texloc_1;
-	
-
-	
-	mat4 texmat_1;
-
-	
-	
-	vec4 texloc_2;
-	
-
-	
-	mat4 texmat_2;
 
 	
 
@@ -254,7 +245,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[3];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -303,14 +294,13 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;
 out vec4 normal;
 out vec4 specular;
 out vec4 glow;
-out vec4 pos;
+out vec4 SSR;
 
 
 uint f2u(float f){
@@ -333,27 +323,6 @@ void main() {
 
 
 
-vec4 leaf=material.vec4_leaf;
-
- leaf =  texture( textureMaps[0], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
-f2u( material.texloc_0 ) ) ); 
-
-
-vec4 perlin =  texture( textureMaps[1], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_1).xy, 
-f2u( material.texloc_1 ) ) ); 
-
-
-vec4 testmap =  texture( textureMaps[2], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_2).xy, 
-f2u( material.texloc_2 ) ) ); 
-
-
-vec4 testvar55=material.vec4_testvar55;
-
-vec4 wave=material.vec4_wave;
-
 
 	diffuse=vec4(0);
 	normal=vec4(0);
@@ -365,12 +334,17 @@ vec4 wave=material.vec4_wave;
 		
 	
 	
-	
-			
-			diffuse.rgb=material.vec4_diffuse.rgb;	
-					
 		
-			
+		
+		diffuse=  texture( textureMaps[0], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
+		f2u(material.texloc_0) ) );
+//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
+		
+		
+		
+
+		
 
 	
 
@@ -383,15 +357,15 @@ vec4 wave=material.vec4_wave;
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
-	
-		glow.rgb=material.vec4_glow.rgb;	
-			
+		
+		glow.rgb=vec3(0);	
+		
 	
 
 	
@@ -401,6 +375,8 @@ vec4 wave=material.vec4_wave;
 							
 			
 				
+			opacity=diffuse.a;
+		
 
 	
 		
@@ -416,27 +392,34 @@ vec4 wave=material.vec4_wave;
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	
 
  	
-// glow *= tan(material.wave.x)*2.0;
 
 
 
 
-	diffuse=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);
-//opacity*=sqrt(1-pow(leaf.r,2.0));
-
+	
 
 
 
 
 	
 		
-												
+							
+			
+		
+		
+			float cutoff=0.5;
+			
+				cutoff=1.0-(1.0/(3*1.0));
+			
+			if(opacity < cutoff) discard;
+		
+							
 		
 			
 		

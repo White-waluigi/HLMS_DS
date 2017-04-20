@@ -78,7 +78,7 @@ namespace Demo
         void gameEntityAdded( const GameEntityManager::CreatedGameEntity *createdGameEntity );
         void gameEntityRemoved( GameEntity *toRemove );
     public:
-        Ogre::CompositorWorkspace   *mWorkspace;
+        Ogre::CompositorWorkspace   *mWorkspace=NULL;
 
         GraphicsSystem( GameState *gameState,
                         Ogre::ColourValue backgroundColour = Ogre::ColourValue( 0.2f, 0.4f, 0.6f ) );

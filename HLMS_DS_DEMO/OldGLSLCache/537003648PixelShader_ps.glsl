@@ -9,7 +9,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -117,6 +117,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -159,7 +174,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-	
+		 vec4 vec4_specular;
+
 
 
 
@@ -278,7 +294,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;
@@ -342,9 +357,9 @@ void main() {
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	

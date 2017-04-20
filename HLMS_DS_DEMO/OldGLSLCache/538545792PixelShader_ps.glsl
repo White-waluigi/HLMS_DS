@@ -117,6 +117,12 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
 
 
 
@@ -313,7 +319,7 @@ out vec4 diffuse;
 out vec4 normal;
 out vec4 specular;
 out vec4 glow;
-out vec4 pos;
+out vec4 SSR;
 
 
 uint f2u(float f){
@@ -423,7 +429,7 @@ void main() {
 	normal.w=vec4((length(inPs.pos.xyz) / pass.farClip)).a;
 	//Ogre Shadows want different depth than DS lighting
 	//Linear depth
-	pos.x= (inPs.glPosition.z ) ;
+	SSR.x= (inPs.glPosition.z ) ;
 
 
 	

@@ -30,15 +30,10 @@ void main(     )
 	vec4 h=vec4(1,1,1,1);
 	
 	vec3 total_light_contrib = max(0.0,dot(vec4(0.7,0.7,0.7,0), normalv)) *vec3(0.5,0.5,0.1);
-	fragColour =diffusev*ambient;
-	fragColour=(ambient*diffusev)+glowv;
+	fragColour =vec4(sin(lenght(oUV0)),tan(lenght(oUV0)),cos(lenght(oUV0)),0);
+	//fragColour=(ambient*diffusev)+glowv;
 	
-	fragColour=vec4(0);
 	
-	if(UV0.x<0.5&&UV0.y<0.5){
-		diffusev=texture2D( diffuse,(UV0*0.5)).rgba;
-	
-		fragColour=vec4(0);
-	}
+
 }
 

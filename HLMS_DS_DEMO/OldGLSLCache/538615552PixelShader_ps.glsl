@@ -194,10 +194,6 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[4];
-	
 } pass;
 
 
@@ -221,7 +217,11 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[4];
+		
+			uniform sampler2D texShadowMap[1];
+			
+		
+
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -252,8 +252,7 @@ in block
 		float depth;
 				
 					
-		
-			vec4 posL[4];		
+				
 			
 			
 		
@@ -387,13 +386,14 @@ void main() {
    	float f=pass.farClip;
 	float n = pass.nearClip;
    	
-	vec3 objToLightVec ;
-	vec3 total_light_contrib;
+	vec3 objToLightVec =vec3(-1);
+	vec3 total_light_contrib=vec3(-1);
 
 
 
 
 
+	if(floatBitsToUint(pass.debug.x)==0u){
 
 	
 		
@@ -410,6 +410,7 @@ void main() {
 	
 
 	
+	}
 		
 		
 		
@@ -462,7 +463,7 @@ void main() {
 		return;
 	}else if(floatBitsToUint(pass.debug.x)==7u){
 		
-	uint numtex=4u;
+	uint numtex=0u;
 
 	float fL=screenPos.x*3.0;
 	float ffL=(screenPos.y*float(3));

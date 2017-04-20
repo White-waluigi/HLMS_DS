@@ -72,8 +72,7 @@ out block
 		float depth;
 				
 					
-		
-			vec4 posL[4];		
+				
 			
 			
 		
@@ -121,10 +120,6 @@ layout(binding = 0) uniform PassBuffer
 	vec4 test;
 	
 
-	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[4];
 	
 } pass;
 

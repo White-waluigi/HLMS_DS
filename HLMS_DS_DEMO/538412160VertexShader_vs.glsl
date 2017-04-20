@@ -1,4 +1,4 @@
-#version 330 core
+#version 400 core
 #extension GL_ARB_shading_language_420pack: require
 
 out gl_PerVertex
@@ -36,8 +36,10 @@ mat4x3 UNPACK_MAT4x3( samplerBuffer matrixBuf, uint pixelIdx )
 
 in vec4 vertex;
 
-in vec4 qtangent;
+in vec3 normal;
 
+
+in vec3 tangent;
 
 
 
@@ -69,8 +71,6 @@ out block
 		vec4 fc[4];
 		
 		float depth;
-		
-			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -132,37 +132,6 @@ layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
-vec3 xAxis( vec4 qQuat )
-{
-	float fTy  = 2.0 * qQuat.y;
-	float fTz  = 2.0 * qQuat.z;
-	float fTwy = fTy * qQuat.w;
-	float fTwz = fTz * qQuat.w;
-	float fTxy = fTy * qQuat.x;
-	float fTxz = fTz * qQuat.x;
-	float fTyy = fTy * qQuat.y;
-	float fTzz = fTz * qQuat.z;
-
-	return vec3( 1.0-(fTyy+fTzz), fTxy+fTwz, fTxz-fTwy );
-}
-
-
-vec3 yAxis( vec4 qQuat )
-{
-	float fTx  = 2.0 * qQuat.x;
-	float fTy  = 2.0 * qQuat.y;
-	float fTz  = 2.0 * qQuat.z;
-	float fTwx = fTx * qQuat.w;
-	float fTwz = fTz * qQuat.w;
-	float fTxx = fTx * qQuat.x;
-	float fTxy = fTy * qQuat.x;
-	float fTyz = fTz * qQuat.y;
-	float fTzz = fTz * qQuat.z;
-
-	return vec3( fTxy-fTwz, 1.0-(fTxx+fTzz), fTyz+fTwx );
-}
-
- 
 
 
 
@@ -170,8 +139,6 @@ vec3 yAxis( vec4 qQuat )
 
 
 
-
-out vec4 vcolor;
 void main()
 {
 
@@ -214,11 +181,7 @@ void main()
 
 		
 	
-	vcolor =vec4(0.5,float(drawId)/100.0,mod(float(drawId)/10.0,1.0),0);
-	vcolor=worldPos;
-	vcolor=worldPos;
-	
-	
+
 
 
 
@@ -226,11 +189,6 @@ void main()
 		outVs.uv0 = uv0;    
     
     outVs.vertex=vertex.xyz;
-
-	//Decode qTangent to TBN with reflection
-	vec3 normal		= xAxis( normalize( qtangent ) );
-	vec3 tangent	= yAxis( qtangent );
-	outVs.biNormalReflection = sign( qtangent.w ); //We ensure in C++ qtangent.w is never 0
 		
 		
 
@@ -245,17 +203,23 @@ void main()
 
     outVs.glPosition = pass.Proj *(outVs.pos);
 	gl_Position=outVs.glPosition;
-	
+	vec4 fc[4];
+outVs.fc[0]=vec4(0,0,0,1);
+outVs.fc[1]=vec4(1,0,0,1);
+outVs.fc[2]=vec4(1,1,0,1);
+outVs.fc[3]=vec4(0,1,0,1);
+for(int i=0;i<4;i++){
+   outVs.fc[i].xyz =  vec4( (worldMat * outVs.fc[i]) ).xyz;
+   outVs.fc[i].w=1.0;
+   outVs.fc[i] = pass.Proj*(pass.View*outVs.fc[i]);
+}
 
-        vcolor=vertex;
 
+    
 
 
 		 
-	    
-
-
-
+	
 		
     }
     

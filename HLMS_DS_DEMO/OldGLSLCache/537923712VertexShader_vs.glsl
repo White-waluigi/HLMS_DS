@@ -1,4 +1,4 @@
-#version 330 core
+#version 400 core
 #extension GL_ARB_shading_language_420pack: require
 
 out gl_PerVertex
@@ -171,7 +171,6 @@ vec3 yAxis( vec4 qQuat )
 
 
 
-out vec4 vcolor;
 void main()
 {
 
@@ -214,11 +213,7 @@ void main()
 
 		
 	
-	vcolor =vec4(0.5,float(drawId)/100.0,mod(float(drawId)/10.0,1.0),0);
-	vcolor=worldPos;
-	vcolor=worldPos;
-	
-	
+
 
 
 
@@ -252,15 +247,11 @@ void main()
 	gl_Position=outVs.glPosition;
 	
 
-        vcolor=vertex;
-
+    
 
 
 		 
-	    
-
-
-
+	
 		
     }
     

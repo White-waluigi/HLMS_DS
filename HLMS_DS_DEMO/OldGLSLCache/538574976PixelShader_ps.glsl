@@ -11,7 +11,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -119,6 +119,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -184,14 +199,6 @@ layout(binding = 1) uniform MaterialBuffer
 	mat4 texmat_1;
 
 	
-	
-	vec4 texloc_2;
-	
-
-	
-	mat4 texmat_2;
-
-	
 
 /**/
 
@@ -253,17 +260,6 @@ layout(binding = 0) uniform PassBuffer
 uniform sampler2DArray textureMaps[2];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
-vec3 getTSNormal( vec3 uv )
-{
-	vec3 tsNormal;
-	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[1], uv ).xy;
-
-	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
-
-	return tsNormal;
-}
-
 
 //Uniforms that change per Item/Entity
 layout(binding = 2) uniform InstanceBuffer
@@ -310,7 +306,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 depth;
@@ -384,9 +379,15 @@ void main() {
 		
 		float scb=0;
 	
-				depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
+				depth=vec4(0);
+		depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
 		//depth.yz=vec2(tan(tan(screenPos.x*100.0)),sin(sin(screenPos.y*100.0)));
-		depth.yz=vec2(0);
+		
+		int px=int(screenPos.x*100);
+		int py=int(screenPos.y*100);
+		//depth=material.idColor;
+		//depth.yz=vec2(float((px%2==0)^^ (py%2==0)),float(!((px%2==0)^^ (py%2==0))) );
+		
 		
 			
 	

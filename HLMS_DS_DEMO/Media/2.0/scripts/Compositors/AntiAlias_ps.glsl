@@ -97,7 +97,6 @@ void main(     )
 	
 	vec4 finalv=texture2D( final,(UV0)).rgba;
 	
-	
 
 
 	//compute the texture coords
@@ -106,15 +105,6 @@ void main(     )
 	
 	 mediump vec2 fragCoord = vUv * iResolution;
 	 		fragColour= fxaa(final, fragCoord, iResolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
-	 //return; 
-	//fragColour=(finalv);
-	
-	if(UV0.x<0.5){
-		//fragColour=normalv;
-//		fragColour= fxaa(final, fragCoord, iResolution, v_rgbNW, v_rgbNE, v_rgbSW, v_rgbSE, v_rgbM);
-	
-	}
-	
-	
+
 }
 

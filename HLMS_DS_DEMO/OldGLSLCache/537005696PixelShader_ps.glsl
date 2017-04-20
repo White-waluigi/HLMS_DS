@@ -117,6 +117,12 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
 
 
 
@@ -159,7 +165,8 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-	
+		 vec4 vec4_specular;
+
 
 
 
@@ -342,9 +349,9 @@ void main() {
 			
 
 	
-					
-			specular=vec4(vec3(0),32.0);	
 			
+			specular=material.vec4_specular;	
+					
 	
 
 	

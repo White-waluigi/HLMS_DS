@@ -117,6 +117,12 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
 
 
 
@@ -159,18 +165,12 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-	
+		 vec4 vec4_diffuse;
+	 vec4 vec4_opacity;
 
 
 
-	
-	vec4 texloc_0;
-	
 
-	
-	mat4 texmat_0;
-
-	
 
 /**/
 
@@ -229,7 +229,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -319,17 +319,12 @@ void main() {
 		
 	
 	
+	
+			
+			diffuse.rgb=material.vec4_diffuse.rgb;	
+					
 		
-		
-		diffuse=  texture( textureMaps[0], vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
-		f2u(material.texloc_0) ) );
-//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
-		
-		
-		
-
-		
+			
 
 	
 
@@ -357,6 +352,8 @@ void main() {
 
 
 		
+				
+				opacity=material.vec4_opacity.r;							
 							
 			
 				
@@ -391,6 +388,38 @@ void main() {
 
 
 	
+		
+				
+				
+		
+		if(opacity<0.999&&opacity>0.001){
+			bool big=opacity>=0.5;
+			if(!big){	
+				float dval=opacity;
+				uint uval=uint(1/dval);
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+			
+				
+				if((offsetx)%uval!=0u){
+					discard;
+				}
+			}
+			else {	
+				float dval=abs(1-opacity);
+				uint uval=uint(1/dval);
+				
+				uint inc=uint(gl_FragCoord.y)%2u; 
+				uint offsetx=uint(gl_FragCoord.x)+uint(gl_FragCoord.y*gl_FragCoord.y)+inc;
+				
+				if((offsetx)%uval==0u){
+					discard;
+				}
+			}
+		}else if(opacity<0.001){
+			discard;
+		}
+		
 		
 												
 		

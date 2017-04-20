@@ -11,7 +11,7 @@
 
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -119,6 +119,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -203,10 +218,6 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[3];
-	
 } pass;
 
 
@@ -230,7 +241,11 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[3];
+		
+			uniform sampler2D texShadowMap[2];
+			
+		
+
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -261,8 +276,7 @@ in block
 		float depth;
 				
 					
-		
-			vec4 posL[3];		
+				
 			
 			
 		
@@ -277,7 +291,6 @@ uint f2u(vec4 f){
 	return floatBitsToUint(f)[0];
 }
 
-in vec4 vcolor;
 out vec4 final;
 
 
@@ -312,7 +325,6 @@ vec4 rainbow(float phase)
 
 void main() {
 
-
 	
 	
 	
@@ -342,9 +354,10 @@ void main() {
 	
 	
 		
-	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
-	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
+	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
+
+	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
 	float light_power				=material.vec4_lightparams.y;
 	
@@ -362,7 +375,7 @@ void main() {
 
 	vec4 light_attenuation			=material.vec4_attentuation;
 	
-	vec4 light_spotDirection			=pass.View*material.vec4_spotdirection;
+	vec4 light_spotDirection		=pass.View*material.vec4_spotdirection;
 	
 	vec4 light_spotParams			=material.vec4_spotparams;
 	
@@ -422,8 +435,8 @@ void main() {
    	float f=pass.farClip;
 	float n = pass.nearClip;
    	
-	vec3 objToLightVec ;
-	vec3 total_light_contrib;
+	vec3 objToLightVec =vec3(-1);
+	vec3 total_light_contrib=vec3(-1);
 
 
 
@@ -491,13 +504,10 @@ void main() {
 			ShadowVal=vec4(1);
 		}
 
+
+		
 		final=ominf(  vec4((total_light_contrib*light_power), 0.0))*ShadowVal;
 		
-
-
-
-			
-
 		//final=vec4(ShadowVal)/10.0;
 
 		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){

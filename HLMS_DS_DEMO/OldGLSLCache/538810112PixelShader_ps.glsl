@@ -13,7 +13,7 @@
 
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -121,6 +121,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -206,10 +221,6 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[3];
-	
 } pass;
 
 
@@ -233,7 +244,11 @@ layout(binding = 2) uniform InstanceBuffer
 
 
 		
-			uniform sampler2D texShadowMap[3];
+		
+			uniform sampler2D texShadowMap[2];
+			
+		
+
 		
 		uniform sampler2D GBuffer0;
 		uniform sampler2D GBuffer1;
@@ -264,8 +279,7 @@ in block
 		float depth;
 				
 					
-		
-			vec4 posL[3];		
+				
 			
 			
 		
@@ -280,7 +294,6 @@ uint f2u(vec4 f){
 	return floatBitsToUint(f)[0];
 }
 
-in vec4 vcolor;
 out vec4 final;
 
 
@@ -315,7 +328,6 @@ vec4 rainbow(float phase)
 
 void main() {
 
-
 	
 	
 	
@@ -345,9 +357,10 @@ void main() {
 	
 	
 		
-	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
-	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
+	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
+
+	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
 	float light_power				=material.vec4_lightparams.y;
 	
@@ -365,7 +378,7 @@ void main() {
 
 	vec4 light_attenuation			=material.vec4_attentuation;
 	
-	vec4 light_spotDirection			=pass.View*material.vec4_spotdirection;
+	vec4 light_spotDirection		=pass.View*material.vec4_spotdirection;
 	
 	vec4 light_spotParams			=material.vec4_spotparams;
 	
@@ -425,8 +438,8 @@ void main() {
    	float f=pass.farClip;
 	float n = pass.nearClip;
    	
-	vec3 objToLightVec ;
-	vec3 total_light_contrib;
+	vec3 objToLightVec =vec3(-1);
+	vec3 total_light_contrib=vec3(-1);
 
 
 
@@ -458,9 +471,57 @@ void main() {
 	
 	
 			
+		
 		if(light_shadows>0){
 			
 /***************************************************************Shadow**************************************************************************************************/
+		//Why is this static?
+		vec4 s_UV_coords[7];
+
+		
+				s_UV_coords[0].x=0.0;
+				s_UV_coords[0].y=0.0;
+				
+				s_UV_coords[0].z=1.0 ;
+				s_UV_coords[0].w=0.33333 ;		
+		
+				s_UV_coords[1].x=0.0;
+				s_UV_coords[1].y=0.33333;
+				
+				s_UV_coords[1].z=1.0 ;
+				s_UV_coords[1].w=0.66666 ;		
+		
+				s_UV_coords[2].x=0.0;
+				s_UV_coords[2].y=0.66666;
+				
+				s_UV_coords[2].z=1.0 ;
+				s_UV_coords[2].w=1.0 ;		
+		
+				s_UV_coords[3].x=0.0;
+				s_UV_coords[3].y=0.0;
+				
+				s_UV_coords[3].z=0.50000 ;
+				s_UV_coords[3].w=0.50000 ;		
+		
+				s_UV_coords[4].x=0.50000;
+				s_UV_coords[4].y=0.0;
+				
+				s_UV_coords[4].z=1.0 ;
+				s_UV_coords[4].w=0.50000 ;		
+		
+				s_UV_coords[5].x=0.0;
+				s_UV_coords[5].y=0.50000;
+				
+				s_UV_coords[5].z=0.50000 ;
+				s_UV_coords[5].w=1.0 ;		
+		
+				s_UV_coords[6].x=0.50000;
+				s_UV_coords[6].y=0.50000;
+				
+				s_UV_coords[6].z=1.0 ;
+				s_UV_coords[6].w=1.0 ;		
+				
+		
 		if(depth<1.0){
 	
 		ShadowVal=vec4(0);
@@ -476,6 +537,7 @@ void main() {
 
 		
 		
+		uint shadowTexID= floatBitsToUint(material.vec4_shadowParams.w);
 				
 		
 		
@@ -486,18 +548,15 @@ void main() {
 		float Pdepth	= (Sdepth  );
 
 
-			//ShadowVal=vec4(0.5,0.5,0.5,0);
 
 		
 		if((Pdepth)<= material.vec4_shadowPssmSplits[1].x){
-			//ShadowVal=vec4(0,1,1,0);
        	}
 		
 		else if( (Pdepth)<= material.vec4_shadowPssmSplits[1+1].x ){
 			inc=1u;
 			
 			 
-			//ShadowVal=vec4(1==0,1==1,1==2,0);
 
 		}
 
@@ -506,7 +565,6 @@ void main() {
 			inc=2u;
 			
 			 
-			//ShadowVal=vec4(2==0,2==1,2==2,0);
 
 		}
 
@@ -522,36 +580,27 @@ void main() {
 		
 
 
-		uint i=uint(fL);
-		uint ii=uint(ffL);
+	uint i=uint(fL);
+	uint ii=uint(ffL);
 		
-		uint curid=((i*3u)+ii)%9u;
+	uint curid=((i*3u)+ii)%9u;
+	vec4 shadowRes=material.vec4_shadowRes[IDoffset];
 
-		vec4 shadowRes=	material.vec4_shadowRes[IDoffset];
-		mat4 shadowMat= material.vec4_shadowMat[IDoffset];
-		vec4 shadowDr= material.vec4_shadowDr[IDoffset];
+	
+	mat4 shadowMat= material.vec4_shadowMat[IDoffset];
+	vec4 shadowDr= material.vec4_shadowDr[IDoffset];
 		
 	vec4 shadowProjPos = 	shadowMat * vec4(worldPos,1);
 	float shadowDistance=(((shadowProjPos).z-PPoffset)/shadowDr.y);
-	//float shadowDistance=(shadowProjPos).z;
-	
-	//vec4 shadowProjPos =  pass.ShadowCamMat[curid] * (vec4(inPs.worldPos));
-	//vec4 shadowProjPos =inPs.worldPos; 	
+
     shadowProjPos /= shadowProjPos.w;
     vec2 shadowSampleTexCoord = vec2(shadowProjPos.x,shadowProjPos.y);
 		
 		
-	//shadowSampleTexCoord=inPs.posL[shadowID].xy/inPs.posL[shadowID].w;
 	
 
-	//vec2 texCoord=vec2(screenPos.x,1-screenPos.y);
 	vec2 coords=vec2(mod(texCoord.x,0.33333),mod(texCoord.y,0.5))*vec2(3.0,2.0);
-	//glow=texture2D(texShadowMap[curid], texCoord);
-	
-	//glow=texelFetch(worldMatBuf,(int(gl_FragCoord.x)));
 
-	
-	
 
 
 
@@ -562,7 +611,7 @@ void main() {
 
 		vec2 samplingoffset=vec2(0,0);
 
-		samplerate=1;
+		samplerate=0;
 		samplesize=0.2;
 
 		float varx=shadowRes.z;
@@ -589,10 +638,11 @@ void main() {
 			
 
 
-vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
+
+		vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
 
 		vec2 centroidUV = (Soffset+(shadowRes.zw*0.5));
-		vec4 sampl=textureGather(texShadowMap[shadowID], Soffset);
+		vec4 sampl=textureGather(texShadowMap[shadowTexID], Soffset);
 		
 		
 		for(int i=0;i<4;i++){
@@ -611,8 +661,9 @@ vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
 				offset.x=varx;
 				offset.y=vary;
 			}
-			//float samp=texture(texShadowMap[shadowID], centroidUV+offset).x;
+
 			float samp=sampl[i];
+						
 			float shadowDepth=samp;
 			
 			
@@ -631,8 +682,7 @@ vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
         float ssr=(((samplerate*2.0)+1.0)*((samplerate*2.0)+1.0));
 
 
-		float samp=texture(texShadowMap[shadowID], shadowSampleTexCoord+shadowRes.zw*samplingoffset)[0];
-		float shadowDepth=samp;
+
 
 
 
@@ -641,52 +691,20 @@ vec2 Soffset=(shadowSampleTexCoord.xy+(shadowRes.zw*samplingoffset));
         }else if(floatBitsToUint(pass.debug.z)%4u==1u){
         	ShadowVal+=vec4(( (ls[0]+ls[1]+ls[2]+ls[3]) / 4.0));
         }else{
-        	float samp=texture(texShadowMap[shadowID], centroidUV).x;
+        	
+
+        	float samp=texture(texShadowMap[shadowTexID], centroidUV).x;
         	float shadowDepth=samp;
 			if( (shadowDistance)<(shadowDepth)){
 				ShadowVal+=vec4(1.0);
 			}
         }
+        
+        
+        
 
 
 
-		/*
-				
-
-    vec2 texcoord=shadowSampleTexCoord;
-        float fx = fract(shadowSampleTexCoord.x);
-    float fy = fract(shadowSampleTexCoord.y);
-    texcoord.x -= fx;
-    texcoord.y -= fy;
-
-    vec4 xcubic = cubic(fx);
-    vec4 ycubic = cubic(fy);
-
-    vec4 c = vec4(texcoord.x - 0.5, texcoord.x + 1.5, texcoord.y -
-0.5, texcoord.y + 1.5);
-    vec4 s = vec4(xcubic.x + xcubic.y, xcubic.z + xcubic.w, ycubic.x +
-ycubic.y, ycubic.z + ycubic.w);
-    vec4 offset = c + vec4(xcubic.y, xcubic.w, ycubic.y, ycubic.w) /
-s;
-
-    vec4 sample0 = texture2D(GBuffer0, vec2(offset.x, offset.z) *
-shadowRes.xy);
-    vec4 sample1 = texture2D(GBuffer0, vec2(offset.y, offset.z) *
-shadowRes.xy);
-    vec4 sample2 = texture2D(GBuffer0, vec2(offset.x, offset.w) *
-shadowRes.xy);
-    vec4 sample3 = texture2D(GBuffer0, vec2(offset.y, offset.w) *
-shadowRes.xy);
-
-    float sx = s.x / (s.x + s.y);
-    float sy = s.z / (s.z + s.w);
-
-    final=fract( mix(
-        mix(sample3, sample2, sx),
-        mix(sample1, sample0, sx), sy) );
-        return;
- 
-		*/
 		int samplex=2;
 		int sampley=2;
 		
@@ -695,7 +713,7 @@ shadowRes.xy);
 
 		if(floatBitsToUint(pass.debug.z)%4u==2u){
 
-			float samp=texture(texShadowMap[shadowID], shadowSampleTexCoord)[0];
+			float samp=texture(texShadowMap[shadowTexID], shadowSampleTexCoord)[0];
 			float shadowDepth=samp;
         	ShadowVal=vec4(0);
 
@@ -712,9 +730,7 @@ shadowRes.xy);
 		
 		//Makes Shadows softer
 		ShadowVal=vec4( pow(ShadowVal.x,5.0) );
-		
 
-		
 		}
 
 
@@ -733,13 +749,10 @@ shadowRes.xy);
 			ShadowVal=vec4(1);
 		}
 
+
+		
 		final=ominf(  vec4((total_light_contrib*light_power), 0.0))*ShadowVal;
 		
-
-
-
-			
-
 		//final=vec4(ShadowVal)/10.0;
 
 		//if(light_id!=floatBitsToUint(pass.debug.z)+8u){

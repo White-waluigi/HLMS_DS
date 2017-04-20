@@ -1,8 +1,6 @@
 //Datablock:	
 #define PI 3.14159625
 
-//	Json Material
-
 
 //Gbuffer Material
 
@@ -11,7 +9,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -119,6 +117,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -161,24 +174,18 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_shadow_const_bias;
-	 vec4 vec4_diffuse;
+		 vec4 vec4_diffuse;
 	 vec4 vec4_specular;
-	 vec4 vec4_wave;
+	 vec4 vec4_glow;
+	 vec4 vec4_opacity;
+	 vec4 autoparam0;
 
 
 
 
-	
-	vec4 texloc_0;
-	
 
-	
-	mat4 texmat_0;
-
-	
-
-/**/
+/*	vec4 autoparam0;
+*/
 
 
 
@@ -235,19 +242,8 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
+layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
-
-vec3 getTSNormal( vec3 uv )
-{
-	vec3 tsNormal;
-	//Normal texture must be in U8V8 or BC5 format!
-	tsNormal.xy = texture( textureMaps[0], uv ).xy;
-
-	tsNormal.z	= sqrt( 1.0 - tsNormal.x * tsNormal.x - tsNormal.y * tsNormal.y );
-
-	return tsNormal;
-}
 
 
 //Uniforms that change per Item/Entity
@@ -285,8 +281,6 @@ in block
 		vec4 fc[4];
 		
 		float depth;
-		
-			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -297,7 +291,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;
@@ -327,13 +320,6 @@ void main() {
 
 
 
-vec4 normal_map =  texture( textureMaps[0], vec3( 
-(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
-f2u( material.texloc_0 ) ) ); 
-
-
-vec4 wave=material.vec4_wave;
-
 
 	diffuse=vec4(0);
 	normal=vec4(0);
@@ -360,22 +346,6 @@ vec4 wave=material.vec4_wave;
 	normal.xyz=normalize(inPs.normal);
 	normal.w=1.0;
 
-	
-
-		vec3 geomNormal = normalize( inPs.normal );
-		vec3 vTangent = normalize( inPs.tangent );
-
-		//Get the TBN matrix
-    	vec3 vBinormal   = normalize( cross( geomNormal, vTangent ) );
-		mat3 TBN		= mat3( vTangent, vBinormal, geomNormal );
-		
-	if(floatBitsToUint(pass.debug.y)!=2u){
-		normal.xyz= getTSNormal( vec3( 
-		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,  
-		f2u(material.texloc_0 ) ) );
-		
-		normal.xyz = normalize( (TBN * normal.xyz) );
-	}
 			
 
 	
@@ -385,15 +355,17 @@ vec4 wave=material.vec4_wave;
 	
 
 	
-		
-		glow.rgb=vec3(0);	
-		
+	
+		glow.rgb=material.vec4_glow.rgb;	
+			
 	
 
 	
 
 
 		
+				
+				opacity=material.vec4_opacity.r;							
 							
 			
 				
@@ -415,18 +387,10 @@ vec4 wave=material.vec4_wave;
 	SSR.x= (inPs.glPosition.z ) ;
 
 
-	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
-uv.y=uv.y+sin((uv.x)*1.0*(2*PI)+wave.x*3.0)/500.0;
-uv.x=uv.x+sin((uv.y)*1.0*(2*PI)+wave.y*3.0)/100.0;
-normal.xyz= getTSNormal( vec3( 
-uv.xy,  
-f2u(material.texloc_0 ) ) );
-
-normal.xyz = normalize( (TBN * normal.xyz) );
-
+	
 
  	
-
+opacity = ((material.autoparam0.x*2.0)-0.5);
 
 
 
@@ -435,8 +399,10 @@ normal.xyz = normalize( (TBN * normal.xyz) );
 
 
 
+	
 		
-		
+				
+				
 		
 		if(opacity<0.999&&opacity>0.001){
 			bool big=opacity>=0.5;
@@ -467,7 +433,7 @@ normal.xyz = normalize( (TBN * normal.xyz) );
 		}
 		
 		
-		
+												
 		
 			
 		

@@ -11,7 +11,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -119,6 +119,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -163,8 +178,6 @@ layout(binding = 1) uniform MaterialBuffer
 	
 		 vec4 vec4_shadow_const_bias;
 	 vec4 vec4_diffuse;
-	 vec4 vec4_specular;
-	 vec4 vec4_wave;
 
 
 
@@ -285,8 +298,6 @@ in block
 		vec4 fc[4];
 		
 		float depth;
-		
-			flat float biNormalReflection;
 				
 			
 		vec2 uv0;		
@@ -297,7 +308,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;
@@ -331,8 +341,6 @@ vec4 normal_map =  texture( textureMaps[0], vec3(
 (vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy, 
 f2u( material.texloc_0 ) ) ); 
 
-
-vec4 wave=material.vec4_wave;
 
 
 	diffuse=vec4(0);
@@ -379,9 +387,9 @@ vec4 wave=material.vec4_wave;
 			
 
 	
-			
-			specular=material.vec4_specular;	
 					
+			specular=vec4(vec3(0),32.0);	
+			
 	
 
 	
@@ -415,22 +423,22 @@ vec4 wave=material.vec4_wave;
 	SSR.x= (inPs.glPosition.z ) ;
 
 
-	vec4 uv=vec4(inPs.uv0.xy,0,1)*material.texmat_0;
-uv.y=uv.y+sin((uv.x)*1.0*(2*PI)+wave.x*3.0)/500.0;
-uv.x=uv.x+sin((uv.y)*1.0*(2*PI)+wave.y*3.0)/100.0;
-normal.xyz= getTSNormal( vec3( 
-uv.xy,  
-f2u(material.texloc_0 ) ) );
-
-normal.xyz = normalize( (TBN * normal.xyz) );
-
+	
 
  	
 
 
 
 
-	
+	vec4 fc[4];
+for(int i=0;i<4;i++){
+    fc[i].xy = ((inPs.fc[i].xy)/inPs.fc[i].w);
+}
+vec3 sP = ((inPs.glPosition.xyz)/inPs.glPosition.w);
+bool A0=insideTri(sP.xy,fc[0].xy,fc[1].xy,fc[2].xy);
+bool A1=insideTri(sP.xy,fc[0].xy,fc[2].xy,fc[3].xy);
+if(!(A0||A1)){discard;}
+
 
 
 

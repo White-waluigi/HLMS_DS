@@ -38,8 +38,8 @@ namespace Demo
             }
             else
             {
-                camera->yaw( Ogre::Radian( mCameraYaw*10.0 ) );
-                camera->pitch( Ogre::Radian( mCameraPitch*10.0 ) );
+                camera->yaw( Ogre::Radian( mCameraYaw*100.0 ) );
+                camera->pitch( Ogre::Radian( mCameraPitch*100.0 ) );
             }
 
             mCameraYaw   = 0.0f;

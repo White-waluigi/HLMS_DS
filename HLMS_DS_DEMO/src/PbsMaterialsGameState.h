@@ -141,7 +141,7 @@ namespace Demo
         	float totalWeight=0;
         	Ogre::Vector3 totalColor=Ogre::Vector3(0,0,0);
 
-        	for(int i=0;i<colors.size();i++){
+        	for(uint i=0;i<colors.size();i++){
 
 
         		colors[i]->weight=fbetween(progress, colors[i]->from,colors[i]->to);
@@ -156,6 +156,8 @@ namespace Demo
         	return totalColor;
 
         }
+
+
     };
 }
 

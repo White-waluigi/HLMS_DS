@@ -9,7 +9,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 
 vec4 cubic(float v){
     vec4 n = vec4(1.0, 2.0, 3.0, 4.0) - v;
@@ -117,6 +117,21 @@ bool insideTri(vec2 p, vec2 a, vec2 b, vec2 c ){
     return ((  (u >= 0) && (v >= 0) && (u + v < 1)  ));
 	
 }
+vec2 cropUV(vec2 uv, vec2 start, vec2 end){
+	
+	
+	return mix(start,end,uv);
+	
+}
+vec4 cropUV(vec4 uv, vec2 start, vec2 end){
+	
+	vec4 retval=uv;
+	uv.xy=mix(start,end,uv.xy);
+	uv.zw=1/uv.xy;
+	
+	return retval;
+	
+}
 
 
 
@@ -159,12 +174,19 @@ layout(binding = 1) uniform MaterialBuffer
 	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
 	vec4 idColor;
 	
-		 vec4 vec4_diffuse;
-	 vec4 vec4_opacity;
+		 vec4 vec4_opacity;
 
 
 
 
+	
+	vec4 texloc_0;
+	
+
+	
+	mat4 texmat_0;
+
+	
 
 /**/
 
@@ -223,7 +245,7 @@ layout(binding = 0) uniform PassBuffer
 
 
 
-layout(binding = 0) uniform samplerBuffer worldMatBuf;
+uniform sampler2DArray textureMaps[1];layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
@@ -272,7 +294,6 @@ in block
 
 
 } inPs;
-in vec4 vcolor;
 
 
 out vec4 diffuse;
@@ -313,12 +334,17 @@ void main() {
 		
 	
 	
-	
-			
-			diffuse.rgb=material.vec4_diffuse.rgb;	
-					
 		
-			
+		
+		diffuse=  texture( textureMaps[0], vec3( 
+		(vec4(inPs.uv0.xy,0,1)*material.texmat_0).xy,
+		f2u(material.texloc_0) ) );
+//		diffuse=pow(inPs.uv0.x,inPs.uv0.y);
+		
+		
+		
+
+		
 
 	
 

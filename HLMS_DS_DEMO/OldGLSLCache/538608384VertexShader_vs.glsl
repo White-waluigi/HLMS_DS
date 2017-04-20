@@ -72,8 +72,7 @@ out block
 		float depth;
 				
 					
-		
-			vec4 posL[7];		
+				
 			
 			
 		
@@ -122,10 +121,6 @@ layout(binding = 0) uniform PassBuffer
 	
 
 	
-		
-			vec4 pssmSplitPoints[3];
-				ShadowData shadowD[7];
-	
 } pass;
 
 
@@ -142,7 +137,6 @@ layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
-out vec4 vcolor;
 void main()
 {
 
@@ -185,11 +179,7 @@ void main()
 
 		
 	
-	vcolor =vec4(0.5,float(drawId)/100.0,mod(float(drawId)/10.0,1.0),0);
-	vcolor=worldPos;
-	vcolor=worldPos;
-	
-	
+
 
 
 
@@ -212,17 +202,13 @@ void main()
 	gl_Position=outVs.glPosition;
 	
 
-        vcolor=vertex;
-
+    
 
 
 		 
 	
         gl_Position = vertex*vec4(1,1,1,1);
-        
-
-
-
+    
 		
     }
     

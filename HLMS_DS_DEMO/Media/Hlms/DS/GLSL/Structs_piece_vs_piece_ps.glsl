@@ -90,9 +90,9 @@ layout(binding = 0) uniform PassBuffer
 
 	@property(hlms_num_shadow_maps)
 		@property( hlms_pssm_splits )
-			vec4 pssmSplitPoints[@value(hlms_pssm_splits)];
+	//		vec4 pssmSplitPoints[@value(hlms_pssm_splits)];
 		@end
-		ShadowData shadowD[@value(hlms_num_shadow_maps)];
+	//	ShadowData shadowD[@value(hlms_num_shadow_maps)];
 	@end
 
 } pass;

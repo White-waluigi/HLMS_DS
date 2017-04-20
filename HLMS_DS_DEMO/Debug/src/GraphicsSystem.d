@@ -20,6 +20,7 @@ src/GraphicsSystem.o: ../src/GraphicsSystem.cpp ../src/GraphicsSystem.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMemoryTracker.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h \
  ../src/Threading/MqMessages.h ../src/GameEntityManager.h \
  ../src/GameEntity.h \
@@ -40,7 +41,6 @@ src/GraphicsSystem.o: ../src/GraphicsSystem.cpp ../src/GraphicsSystem.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Compositor/Pass/OgreCompositorPassDef.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHeaderPrefix.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResourceTransition.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHeaderSuffix.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Compositor/OgreCompositorNodeDef.h \
@@ -395,6 +395,8 @@ src/GraphicsSystem.o: ../src/GraphicsSystem.cpp ../src/GraphicsSystem.h \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
+
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreFastArray.h:
 
 ../src/Threading/MqMessages.h:
@@ -436,8 +438,6 @@ src/GraphicsSystem.o: ../src/GraphicsSystem.cpp ../src/GraphicsSystem.h \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHeaderPrefix.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResourceTransition.h:
 
