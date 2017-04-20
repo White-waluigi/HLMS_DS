@@ -13,7 +13,8 @@ namespace Ogre {
 
 Ogre::String DSAutoParam::defaultDatatypes[(int)(Custom)]={"mat4","vec4","float","uvec4","uint"};
 DSAutoParam::DSAutoParam() {
-
+	size=0;
+	type=Ogre::DSAutoParam::_float;
 }
 
 DSAutoParam::~DSAutoParam() {
@@ -33,7 +34,6 @@ Ogre::String DSAutoParam::getParamString(int index) {
 	}
 
 	stringstream s;
-	int i;
 
 	s << index;
 
@@ -78,7 +78,7 @@ size_t DSAutoParam::getSize() {
 	}else if(type==Custom){
 		throw Ogre::Exception(Ogre::Exception::ERR_INTERNAL_ERROR,"Error, must implement getSize if custom Datatype is used!","DSAutoParam::getSize");
 	}
-
+	return 0;
 
 }
 

@@ -25,6 +25,7 @@ src/Light/DSLight.o: ../src/Light/DSLight.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMath.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector4.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSphere.h \
@@ -40,7 +41,6 @@ src/Light/DSLight.o: ../src/Light/DSLight.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreNode.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderable.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreGpuProgram.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResource.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringInterface.h \
@@ -319,6 +319,8 @@ src/Light/DSLight.o: ../src/Light/DSLight.cpp \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
+
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreVector4.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlane.h:
@@ -348,8 +350,6 @@ src/Light/DSLight.o: ../src/Light/DSLight.cpp \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderable.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreGpuProgram.h:
 

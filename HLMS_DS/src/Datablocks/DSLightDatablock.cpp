@@ -40,7 +40,7 @@ DSLightDatablock::DSLightDatablock(IdString name, HlmsDS *creator,
 	HlmsSamplerblock sb;
 
 	this->GBufferSamplerblock = hlmsManager->getSamplerblock(sb);
-
+	this->updateable=true;
 }
 
 DSLightDatablock::~DSLightDatablock() {
@@ -73,8 +73,8 @@ void DSLightDatablock::initializeParamTypes() {
 		vec4ParamTypes->push_back(*type);
 
 		type = new DSMaterialParamType();
-		type->paramName = "attentuation";
-		type->postFix = "attentuation";
+		type->paramName = "attenuation";
+		type->postFix = "attenuation";
 		type->numVec = 4;
 		vec4ParamTypes->push_back(*type);
 
@@ -170,13 +170,21 @@ void DSLightDatablock::initializeParamTypes() {
 
 
 	}
+	{
+		DSPropertyParamType type= DSPropertyParamType("Shadow_ID");
+		propertyParamTypes->push_back(type);
 
+		type= DSPropertyParamType("Shadow_Atlas_ID");
+		propertyParamTypes->push_back(type);
+
+	}
 	{
 		DSPieceParamType type= DSPieceParamType("custom_post_material",PixelShader);
 		pieceParamTypes->push_back(type);
 
 
-		type= DSPieceParamType("custom_pre_material",PixelShader);
+
+		type= DSPieceParamType("Shadow_ID",PixelShader);
 		pieceParamTypes->push_back(type);
 	}
 }

@@ -1,4 +1,4 @@
-#version 330 core
+#version 400 core
 #extension GL_ARB_shading_language_420pack: require
 @property(hlms_shadowcaster)
 //Shadow Material
@@ -23,7 +23,9 @@ in vec4 vertex;
 
 @property( !hlms_qtangent )
 in vec3 tangent;
-@property( hlms_binormal )in vec3 binormal;@end
+@property( hlms_binormal )
+in vec3 binormal;
+@end
 @end
 
 
@@ -78,7 +80,6 @@ layout(binding = 0) uniform samplerBuffer worldMatBuf;
 
 
 
-out vec4 vcolor;
 void main()
 {
 
@@ -122,11 +123,7 @@ void main()
 	@property( hlms_shadowcaster )worldView = pass.View;@end
 	
 	
-	vcolor =vec4(0.5,float(drawId)/100.0,mod(float(drawId)/10.0,1.0),0);
-	vcolor=worldPos;
-	vcolor=worldPos;
-	
-	
+
 
 
 
@@ -147,9 +144,6 @@ void main()
 	@property(noTransf)
         gl_Position = vertex*vec4(1,1,1,1);
     @end
-    
-
-
 
 		
     }
@@ -178,7 +172,6 @@ void main()
 	@insertpiece(custom_vertex_post)
 
     @end
-    vcolor=vertex;
 
 
 @property( hlms_dual_paraboloid_mapping)

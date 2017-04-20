@@ -30,6 +30,7 @@ src/Datablocks \
 src/Datablocks/Data \
 src/Datablocks/Data/DSBlocks/MappingBlocks \
 src/Datablocks/Data/DSBlocks/MappingBlocks/Modulators \
+src/HLMSHelper/PassBuffer \
 src/Helper \
 src/Light \
 src \

@@ -38,21 +38,25 @@ void JsonParser::loadMaterial(const rapidjson::Value& json,
 
 #endif
 #endif
-    std::cout <<"#####################################JSON: "<<name<<"#####################################\n";
+//    std::cout <<"#####################################JSON: "<<name<<"#####################################\n";
    // printValue(json,1);
 
-
+    //Convert JSON into MT_Multidata Object, which can be Merged with templates
 
 	QueueItem *test=new QueueItem();
 	test->templ=new MaterialTemplate(json);
 	test->blocks=blocks;
 	test->datablock= db;
 
+	//Input into Queued Templates temporarily
 	QueuedTemplates[datablock->getName()]=test;
 	bool change=true;
 	int loopcounter=0;
+
+	//Loop until the lower loop didn't lead to a Merge
 	while(change){
 
+		//Insert  the Material in QueuedTemplates if not all templates required are found. Once they are, insert into MergedTemplates
 		loopcounter++;
 		change=false;
 		for(std::map<Ogre::IdString,QueueItem *>::iterator iterator = QueuedTemplates.begin(); iterator != QueuedTemplates.end(); iterator++) {
@@ -60,35 +64,42 @@ void JsonParser::loadMaterial(const rapidjson::Value& json,
 				bool requiresTemplate=false;
 
 				Ogre::String s;
+
+				//Does it even need a template?
 				if(iterator->second->templ->data->getObject("meta").o->has("template")){
 					MT_MultiData* mto= iterator->second->templ->data->getObject("meta").o;
 
 					s=mto->getData("template").s;
 					requiresTemplate=true;
 				}
+				//Does it not require a Template or is the rquired Template in the list?
+				//If neither wait until it is found
 				if(!requiresTemplate||MergedTemplates.find(s)!=MergedTemplates.end()){
 					change=true;
 
 					MaterialTemplate* templ=new MaterialTemplate( iterator->second->templ);
 					if(requiresTemplate){
 
-
+						//Merge with Template
 						templ=new MaterialTemplate( MergedTemplates.find(s)->second->templ);
 						templ->RemoveMeta();
 						templ->Merge(iterator->second->templ);
 
 					}
 
+
 					MT_MultiData* mto= iterator->second->templ->data->getObject("meta").o;
 
 					s=mto->getData("type").s;
+
+					//If its an actual Material and not just a template, create the Material
 					if(s.compare("material")==0){
 						createMaterial(templ,iterator->second, blocks);
 					}
 					change=true;
 					MergedTemplates[iterator->first]=iterator->second;
 					QueuedTemplates.erase(iterator->first);
-					templ->data->print(0);
+					//templ->data->print(0);
 
 				}
 

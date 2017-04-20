@@ -16,6 +16,7 @@ DSTextureParamType::DSTextureParamType() {
 	this->samplerBlock.mW=Ogre::TAM_WRAP;
 
 	this->textureMapType=HlmsTextureManager::TEXTURE_TYPE_DIFFUSE;
+	this->textureType=DSDatablock::DS_TEXTURE_GLOW;
 }
 
 DSTextureParamType::~DSTextureParamType() {

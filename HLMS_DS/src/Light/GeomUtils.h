@@ -22,7 +22,14 @@ same license as the rest of the engine.
         float px, py, pz;   //Position
         float nx, ny, nz;   //Normals
 
-        VerticeData() {}
+        VerticeData() {
+        	px=0;
+        	py=0;
+        	pz=0;
+        	nx=0;
+        	ny=1;
+        	nz=0;
+        }
         VerticeData( float _px, float _py, float _pz,
                       float _nx, float _ny, float _nz ) :
             px( _px ), py( _py ), pz( _pz ),
@@ -32,6 +39,9 @@ same license as the rest of the engine.
         VerticeData( float _px, float _py, float _pz) :
             px( _px ), py( _py ), pz( _pz )
         {
+    		nx=0;
+    		ny=1;
+    		nz=0;
         }
     };
 class GeomUtils

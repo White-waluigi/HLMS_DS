@@ -23,9 +23,10 @@
 
 
 @piece(LightParams)
-	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
-	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
+	uint light_type					=floatBitsToUint(material.vec4_lightparams.x);
+
+	uint light_id					=floatBitsToUint(material.vec4_lightparams.z);
 
 	float light_power				=material.vec4_lightparams.y;
 	
@@ -41,9 +42,9 @@
 	
 	vec4 light_specular				=material.vec4_specular;
 
-	vec4 light_attenuation			=material.vec4_attentuation;
+	vec4 light_attenuation			=material.vec4_attenuation;
 	
-	vec4 light_spotDirection			=pass.View*material.vec4_spotdirection;
+	vec4 light_spotDirection		=pass.View*material.vec4_spotdirection;
 	
 	vec4 light_spotParams			=material.vec4_spotparams;
 	
@@ -82,8 +83,8 @@
    	float f=pass.farClip;
 	float n = pass.nearClip;
    	
-	vec3 objToLightVec ;
-	vec3 total_light_contrib;
+	vec3 objToLightVec =vec3(-1);
+	vec3 total_light_contrib=vec3(-1);
 
 
 @end

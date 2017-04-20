@@ -58,11 +58,14 @@ public:
     FastArray<ShadowCam> shadowCams;
 
 
-
+    //Default JSON Parser
     JsonParser * jsonDs;
 
 
+    //Light is for Light Voumes, GBuffer is for deferred Materials and Forward is for Forward rendered Materials
     enum Datablock_Type { DT_Light, DT_GBuffer, DT_Forward };
+
+
 
     uint32 mLastTextureHash;
 
@@ -74,8 +77,11 @@ public:
 
     uint32                  mCurrentPassBuffer;     /// Resets every to zero every new frame.
 
-    Ogre::Vector4 testdata;
 
+    //is the PassBuffer corrupted?
+    Ogre::Vector4 testdata= Vector4(0,1337,0.1234,5.4);
+
+    //Which Compositor Pass are we curtrently in?
     int currentpassID=0;
 
     DSLightManager * lightmanager;

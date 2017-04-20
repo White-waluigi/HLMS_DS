@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include src/Light/subdir.mk
 -include src/Helper/subdir.mk
+-include src/HLMSHelper/PassBuffer/subdir.mk
 -include src/Datablocks/Data/DSBlocks/MappingBlocks/Modulators/subdir.mk
 -include src/Datablocks/Data/DSBlocks/MappingBlocks/subdir.mk
 -include src/Datablocks/Data/subdir.mk

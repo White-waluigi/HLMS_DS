@@ -10,7 +10,7 @@
 #include "Ogre.h"
 
 namespace Ogre {
-
+//Generates on the fly Shader support
 class DSShaderGenerator {
 
 

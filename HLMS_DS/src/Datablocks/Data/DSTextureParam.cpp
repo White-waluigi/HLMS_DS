@@ -21,6 +21,7 @@ DSTextureParam::DSTextureParam(DSTextureParamType* type, DSDatablock * db) {
 	this->parent = db;
 
 	this->UVindex = 0;
+	this->type=NULL;
 
 }
 DSTextureParam::DSTextureParam(HlmsSamplerblock sb, DSDatablock * db) {
@@ -31,6 +32,7 @@ DSTextureParam::DSTextureParam(HlmsSamplerblock sb, DSDatablock * db) {
 	this->parent = db;
 
 	this->UVindex = 0;
+	this->type=NULL;
 }
 DSTextureParam::~DSTextureParam() {
 	// TODO Auto-generated destructor stub
@@ -69,6 +71,7 @@ DSDatablock::DSBakedTexture* DSTextureParam::getActiveTexture() {
 	if (!isMultiTex()) {
 		return getTexture(0);
 	}
+	return NULL;
 }
 
 uvec2* DSTextureParam::getActiveLocation() {
@@ -174,7 +177,7 @@ bool Ogre::DSTextureParam::update() {
 
 		MappingBlock->modulate(this);
 	}
-
+	return true;
 }
 bool DSTextureParam::isAnimatedUv() const {
 	return animatedUV;

@@ -5,7 +5,7 @@
 #version 400 core
 #extension GL_ARB_shading_language_420pack: require
 #extension GL_EXT_texture_array : enable
-
+layout(std140) uniform;
 @insertpiece(Helper)
 
 
@@ -47,7 +47,6 @@ in block
 {
 @insertpiece( VStoPS_block )
 } inPs;
-in vec4 vcolor;
 
 @property( !hlms_shadowcaster)
 out vec4 diffuse;
@@ -157,9 +156,15 @@ void main() {
 			scb=(material.vec4_shadow_const_bias.x*10000)/ pow(pass.farClip,3);
 			
 		@end
+		depth=vec4(0);
 		depth.x	=((inPs.glPosition.z)/ pass.farClip)+scb;
 		//depth.yz=vec2(tan(tan(screenPos.x*100.0)),sin(sin(screenPos.y*100.0)));
-		depth.yz=vec2(0);
+		
+		int px=int(screenPos.x*100);
+		int py=int(screenPos.y*100);
+		//depth=material.idColor;
+		//depth.yz=vec2(float((px%2==0)^^ (py%2==0)),float(!((px%2==0)^^ (py%2==0))) );
+		
 		@insertpiece(custom_post_shadow)
 	@end
 	@property(!hlms_shadowcaster)

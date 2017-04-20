@@ -112,6 +112,10 @@ void Ogre::DSMaterialParam::setPostFix(const Ogre::String& postFix) {
 }
 
 Ogre::DSMaterialParam::DSMaterialParam() {
+	this->data=NULL;
+	this->numVec4=0;
+	this->numVec=0;
+	this->type=DSMaterialParam::CUSTOM;
 }
 
 Ogre::DSMaterialParam::DSMaterialParam(Ogre::DSMaterialParamType* type) {
@@ -216,7 +220,7 @@ void Ogre::DSMaterialParam::setData(Ogre::String paramVal, int index = -1) {
 //			Vector4 val = StringConverter::parseVector4(CparamVal,
 //					Vector4::ZERO);
 
-		float * val;
+		float * val=0;
 
 		switch (this->type) {
 		case SINGLEFLOAT: {
@@ -280,6 +284,27 @@ void Ogre::DSMaterialParam::setData(Ogre::String paramVal, int index = -1) {
 
 			for (int i = 0; i < 16; i++) {
 				val[i] = mat[0][i];
+			}
+			break;
+
+		}
+		case CUSTOM: {
+
+			vector<String>::type split1=Ogre::StringUtil::split(CparamVal," ");
+
+			Real *flt=new Real[split1.size()];
+			assert(split1.size()==getSize()/4);
+
+			for(uint i=0;i<split1.size();i++){
+
+				flt[i]=StringConverter::parseReal(split1[i]);
+			}
+
+
+			val = new float[split1.size()];
+
+			for (uint i = 0; i < split1.size(); i++) {
+				val[i] = flt[i];
 			}
 			break;
 

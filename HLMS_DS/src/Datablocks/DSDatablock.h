@@ -224,6 +224,7 @@ public:
 	HlmsDS* getDsCreator();
 	bool isJsonMaterial() const;
 	void setJsonMaterial(bool jsonMaterial);
+
 };
 
 } /* namespace Ogre */

@@ -19,7 +19,7 @@ DSMBModulator::DSMBModulator(DSMappingBlock * parent,MT_MultiData * params) {
 void DSMBModulator::modulate() {
 
 	float sec=1000*1000;
-	for(int i=0;i<timeFrame.size();i++){
+	for(uint i=0;i<timeFrame.size();i++){
 		float ftime=(parent->getTimer().getMicroseconds()/sec)*this->timeFrame[i];
 
 		float time=fmod( ftime ,this->timeScale);
@@ -32,7 +32,7 @@ void DSMBModulator::modulate() {
 			}
 		}
 		float el=time/this->timeScale;
-		if(elapsed.size()<=i){
+		if(elapsed.size()<=(uint)i){
 			elapsed.push_back(el);
 		}else{
 			elapsed[i]=el;

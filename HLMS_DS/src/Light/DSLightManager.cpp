@@ -18,6 +18,7 @@ DSLightManager::DSLightManager(HlmsDS * parent) {
 	this->hlmsman = parent;
 	//todo fix this
 	this->ambientLightID = Ogre::Id::generateNewId<Ogre::Light>();
+	this->shadowNode=0;
 //	this->ambientLightID= 4294123295;
 }
 
@@ -90,17 +91,18 @@ bool DSLightManager::CheckForNewLights(SceneManager * sceneManager,
 DSLight* DSLightManager::createNewDLight(const Ogre::Light* light,
 		SceneManager * sceneManager) {
 	String meshName;
-	int type = 0;
-	if (light == NULL) {
-		type = 4;
-	} else if (light->getType() == Ogre::Light::LT_POINT) {
-		type = 1;
-	} else if (light->getType() == Ogre::Light::LT_DIRECTIONAL) {
-		type = 0;
-	} else if (light->getType() == Ogre::Light::LT_SPOTLIGHT) {
-		type = 2;
-
-	}
+//	int type = 0;
+//	if (light == NULL) {
+//		type = 4;
+//	} else if (light->getType() == Ogre::Light::LT_POINT) {
+//		type = 1;
+//	} else if (light->getType() == Ogre::Light::LT_DIRECTIONAL) {
+//		type = 0;
+//	} else if (light->getType() == Ogre::Light::LT_SPOTLIGHT) {
+//		type = 2;
+//
+//	}
+//
 	Ogre::DSLight * item = new Ogre::DSLight(light,
 			Ogre::Id::generateNewId<Ogre::MovableObject>(),
 			&sceneManager->_getEntityMemoryManager(Ogre::SCENE_DYNAMIC),
@@ -116,7 +118,6 @@ DSLight* DSLightManager::createNewDLight(const Ogre::Light* light,
 			getLightMaterial(light,
 					sceneManager->getCameraInProgress()->getViewMatrix(),
 					sceneManager->getAmbientLightUpperHemisphere()));
-	size_t idx = 0 * 4 + 16;
 	item->parentSN =
 			sceneManager->getRootSceneNode(Ogre::SCENE_DYNAMIC)->createChildSceneNode(
 					Ogre::SCENE_DYNAMIC);
@@ -169,7 +170,16 @@ Ogre::HlmsDatablock* DSLightManager::getLightMaterial(const Ogre::Light * light,
 
 
 		Ogre::HlmsParamVec params = getDatablockParams(light, viewmat,
-				AmbientColour, -1, -1);
+				AmbientColour, -1,-1, -1);
+
+		int fsfl=findShadowIDForLight(light);
+		if(fsfl!=-1){
+
+			params.push_back(std::pair<IdString, String>(IdString("Shadow_ID"), Ogre::StringConverter::toString(fsfl+1)));
+			params.push_back(std::pair<IdString, String>(IdString("Shadow_Atlas_ID"), Ogre::StringConverter::toString(1+shadowNode->getIndexToContiguousShadowMapTex(fsfl))));
+		}
+
+		std::sort(params.begin(), params.end());
 
 		defaultLightMaterial =
 				static_cast<Ogre::DSLightDatablock*>(this->hlmsman->createDatablock(
@@ -203,6 +213,10 @@ Vector4 RainbowPhase(float f) {
 		r = x;
 		g = 0;
 		b = y;
+	}else{
+		r=1;
+		g=1;
+		b=1;
 	}
 
 	return Vector4(r, g, b, 0.0);
@@ -256,7 +270,16 @@ void DSLightManager::updateLightData(SceneManager * sceneManager,
 
 			//Why is this the only way to link shadow maps to lights?
 			int currentShadowMap = 0;
-			for (int i = 0; i < test.size(); i++) {
+
+			std::vector<Light *> lights;
+
+			for(uint i = 0; i < shadownode->getShadowCastingLights().size(); i++){
+				lights.push_back((shadownode->getShadowCastingLights()[i]).light);
+			}
+			for (uint i = 0; i < test.size(); i++) {
+				if(shadownode->getShadowCastingLights()[i].light==NULL){
+					continue;
+				}
 				if (shadownode->getShadowCastingLights()[i].light->getId()
 						== iterator->second->parent->getId()) {
 
@@ -264,6 +287,7 @@ void DSLightManager::updateLightData(SceneManager * sceneManager,
 
 					//iterator->second->ShadowMapId =shadownode->getShadowCastingLights()[i].globalIndex;
 					iterator->second->ShadowMapId = currentShadowMap;
+					iterator->second->ShadowTexId =shadownode->getIndexToContiguousShadowMapTex(currentShadowMap);
 
 				}
 				if (shadownode->getShadowCastingLights()[i].light->getType()
@@ -280,6 +304,7 @@ void DSLightManager::updateLightData(SceneManager * sceneManager,
 				sceneManager->getCameraInProgress()->getViewMatrix(),
 				sceneManager->getAmbientLightUpperHemisphere(),
 				iterator->second->ShadowMapId,
+				iterator->second->ShadowTexId,
 				iterator->second->ShadowCasterID);
 
 		DSLightDatablock* db =
@@ -307,7 +332,7 @@ void DSLightManager::updateLightData(SceneManager * sceneManager,
 }
 
 Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
-		const Matrix4 viewmat, ColourValue AmbientColour, int ShadowMapID,
+		const Matrix4 viewmat, ColourValue AmbientColour, int ShadowMapID,int ShadowTexID,
 		int casterID) {
 
 	Ogre::HlmsParamVec params = Ogre::HlmsParamVec();
@@ -320,10 +345,15 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 
 	type_ smID;
 	smID.i = ShadowMapID;
+	type_ stID;
+
+	stID.i = ShadowTexID;
 	type_ LightID;
 
 	type_ type;
 	if (light != NULL) {
+
+
 		LightID.i = light->getId();
 		type.i = light->getType();
 		params.push_back(
@@ -341,7 +371,7 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 		params.push_back(
 				std::pair<IdString, String>(IdString("lightparams"),
 						StringValueUtils::getVectorStr(
-								Vector4(type.f, 1.0, ambientLightID, smID.f))));
+								Vector4(type.f, stID.f, ambientLightID, smID.f))));
 	}
 
 	if (light != NULL) {
@@ -374,7 +404,7 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 								light->getSpecularColour())));
 
 		params.push_back(
-				std::pair<IdString, String>(IdString("attentuation"),
+				std::pair<IdString, String>(IdString("attenuation"),
 						StringValueUtils::getVectorStr(
 								Vector4(light->getAttenuationRange(),
 										light->getAttenuationConstant(),
@@ -420,10 +450,10 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 			for (int i = 0; i < this->numPssm; i++) {
 
 				if (ShadowMapID != -1) {
-					wi = (float) shadowNode->getLocalTextures().at(
-							ShadowMapID + i).textures[0]->getWidth();
-					he = (float) shadowNode->getLocalTextures().at(
-							ShadowMapID + i).textures[0]->getHeight();
+					wi = (float) shadowNode->getContiguousShadowMapTex().at(
+							shadowNode->getIndexToContiguousShadowMapTex(ShadowMapID + i))->getWidth();
+					he = (float) shadowNode->getContiguousShadowMapTex().at(
+							shadowNode->getIndexToContiguousShadowMapTex(ShadowMapID + i))->getHeight();
 
 					mat = shadowNode->getViewProjectionMatrix(ShadowMapID + i);
 
@@ -468,10 +498,12 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 
 			if (casterID != -1) {
 				wi =
-						(float) shadowNode->getLocalTextures().at(ShadowMapID).textures[0]->getWidth();
+						(float) shadowNode->getContiguousShadowMapTex().at(shadowNode->getIndexToContiguousShadowMapTex(ShadowMapID ))->getWidth();
 				he =
-						(float) shadowNode->getLocalTextures().at(ShadowMapID).textures[0]->getHeight();
+						(float) shadowNode->getContiguousShadowMapTex().at(shadowNode->getIndexToContiguousShadowMapTex(ShadowMapID ))->getHeight();
 				mat = shadowNode->getViewProjectionMatrix(ShadowMapID);
+
+
 
 				if (shadowNode != NULL) {
 					shadowNode->getMinMaxDepthRange(ShadowMapID, fNear, fFar);
@@ -503,7 +535,7 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 						StringValueUtils::getVectorStr(
 								Vector4(smID.f, light->getShadowFarDistance(),
 										light->getShadowNearClipDistance(),
-										light->getShadowFarDistanceSquared()))));
+										stID.f))));
 
 		params.push_back(
 				std::pair<IdString, String>(IdString("shadowQualityParams"),
@@ -511,36 +543,6 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 
 
 
-//		for (int i = 0; i < 3; i++) {
-//			if (casterID == -1) {
-//				casterID = 0;
-//				params.push_back(
-//						std::pair<IdString, String>(
-//								IdString(
-//										"campos"
-//												+ Ogre::StringConverter::toString(
-//														i)),
-//								StringValueUtils::getVectorStr(
-//										Vector4(0, 0, 0, 0))));
-//
-//				continue;
-//			}
-//			params.push_back(
-//					std::pair<IdString, String>(
-//							IdString(
-//									"campos"
-//											+ Ogre::StringConverter::toString(
-//													i)),
-//							StringValueUtils::getVectorStr(
-//									shadowNode->getViewProjectionMatrix(
-//											casterID + i).inverse().getTrans())));
-//
-//		}
-
-//		params.push_back(.
-//				std::pair<IdString, String>(IdString("shadowParams"),
-//						StringValueUtils::getVectorStr(
-//								this->hlmsman->testdata)));
 
 	} else {
 		params.push_back(
@@ -552,4 +554,35 @@ Ogre::HlmsParamVec DSLightManager::getDatablockParams(const Light* light,
 	return params;
 
 }
+int DSLightManager::findShadowIDForLight(const Ogre::Light* light) {
+	LightClosestArray test = this->shadowNode->getShadowCastingLights();
+
+	//Why is this the only way to link shadow maps to lights?
+	int currentShadowMap = 0;
+
+	if(light==NULL){
+		return -1;
+	}
+
+
+	for (uint i = 0; i < test.size(); i++) {
+		if (this->shadowNode->getShadowCastingLights()[i].light == NULL) {
+			continue;
+		}
+		if (this->shadowNode->getShadowCastingLights()[i].light->getId()
+				== light->getId()) {
+
+			return currentShadowMap;
+		}
+		if (shadowNode->getShadowCastingLights()[i].light->getType()
+				== Light::LT_DIRECTIONAL) {
+			currentShadowMap += this->hlmsman->NumPssmSplits;
+		} else {
+			currentShadowMap++;
+		}
+	}
+
+	return -1;
+}
 } /* namespace Ogre */
+

@@ -43,6 +43,8 @@
 #include "OgreLwString.h"
 namespace Ogre {
 
+
+//Initaliaze Shadercode Keywords
 const IdString DSProperty::MaterialsPerBuffer = IdString(
 		"materials_per_buffer");
 
@@ -112,9 +114,20 @@ HlmsDS::HlmsDS(Archive* dataFolder, ArchiveVec* libraryFolders) :
 
 	this->jsonDs = new JsonParser(mHlmsManager, this);
 
+	mLastBoundPool=NULL;
+	mLastTextureHash=-1;
+	NumPssmSplits=-1;
+	requiresTextureFlipping=false;
+
+	shadowmanager=NULL;
+
 }
 HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 		bool casterPass, bool dualParaboloid, SceneManager* sceneManager) {
+	//std::cout <<"****************************preparePassHash***************\n";
+
+
+
 
 	incr = 0;
 	currentpassID++;
@@ -136,7 +149,7 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 		}
 
 	}
-	//need a GBUffer Compositor Texture
+	//Do we need a GBUffer Compositor Texture?
 	assert(
 			GbufferTexID != -1
 					|| mWSListener->passID != HLMSDSWorkspaceListener::LightID);
@@ -158,14 +171,36 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	HlmsCache retVal = Hlms::preparePassHashBase(shadowNode, casterPass,
 			dualParaboloid, sceneManager);
 
-	int32 numShadowMaps = getProperty(HlmsBaseProp::NumShadowMaps);
+	int32 numShadowMaps =0;
+	if(shadowNode!=0){
+		const TextureVec &contiguousShadowMapTex = shadowNode->getContiguousShadowMapTex();
+
+		numShadowMaps =contiguousShadowMapTex.size();
+	    mPreparedPass.shadowMaps.reserve( contiguousShadowMapTex.size() );
+
+	//      TextureVec::const_iterator itShadowMap = contiguousShadowMapTex.begin();
+	//      TextureVec::const_iterator enShadowMap = contiguousShadowMapTex.end();
+
+	      for( int i=0; i< numShadowMaps;i++ )
+	      {
+
+	          mPreparedPass.shadowMaps.push_back(contiguousShadowMapTex.at(i));
+
+	      }
+	}else{
+
+	}
 	int32 numPssmSplits = getProperty(HlmsBaseProp::PssmSplits);
 	this->NumPssmSplits = numPssmSplits;
 
-	mPreparedPass.shadowMaps.reserve(numShadowMaps);
-	for (int32 i = 0; i < numShadowMaps; ++i)
-		mPreparedPass.shadowMaps.push_back(
-				shadowNode->getLocalTextures()[i].textures[0]);
+//	mPreparedPass.shadowMaps.reserve(numShadowMaps);
+//	for (int32 i = 0; i < numShadowMaps; ++i)
+//		mPreparedPass.shadowMaps.push_back(
+//				shadowNode->getLocalTextures()[i].textures[0]);
+
+
+
+
 
 	//check check if we are in the first pass
 	if (mWSListener->passType == HLMSDSWorkspaceListener::PT_SHADOW
@@ -189,6 +224,8 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	static bool setonce = false;
 	view = sceneManager->getCameraInProgress()->getViewMatrix();
 	proj = sceneManager->getCameraInProgress()->getProjectionMatrix();
+
+
 	RenderTarget *renderTarget =
 			sceneManager->getCurrentViewport()->getTarget();
 	requiresTextureFlipping = false;
@@ -213,10 +250,11 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	Matrix4 tempTexProjMat;
 
 
-//seams more modern to hold the passbufferdata in a buffer instead of directly sending to thre GPU, since its a few kb at most and lets me keep better track of it and debug it easier
+//seams more modern to hold the passbufferdata in a buffer instead of directly sending to thre GPU, since its just a few kb at most and lets me keep better track of it and debug it easier
 
 	std::vector<float> * passbufferBuffer = new std::vector<float>();
 
+//The Pass Buffer is available to every material and is used for debugging and setting the matrixes
 	//******************Debug Modes**********************************************
 	uint dm = static_cast<int>(debugMode);
 	uint dm2 = static_cast<int>(fullBrightMode);
@@ -286,6 +324,9 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	passbufferBuffer->push_back(camera->getLastViewport()->getActualHeight());
 
 	Vector3 wspc = camera->getWorldSpaceCorners()[4];
+
+
+
 	float flip = 1;
 	if (requiresTextureFlipping) {
 		flip = -1;
@@ -294,6 +335,7 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	passbufferBuffer->push_back((camera->getViewMatrix(true) * (wspc)).x);
 	passbufferBuffer->push_back(
 			(camera->getViewMatrix(true) * (wspc)).y * flip);
+
 	passbufferBuffer->push_back((camera->getViewMatrix(true) * wspc).z);
 	passbufferBuffer->push_back(0);
 
@@ -329,82 +371,84 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 	passbufferBuffer->push_back(testdata.z);
 	passbufferBuffer->push_back(testdata.w);
 
-	//**********************Shadow Info********************************************
-	//Why is this the only way to link shadow maps to lights?
-	//mapp all the required shadow map and their data to the Passbuffer (Deferred shadows use data in their Datablocks, but this is needed for the forwarded lights)
-	if (!casterPass && shadowNode != NULL) {
-
-		int numPssmSplits = getProperty(HlmsBaseProp::PssmSplits);
-
-		for (size_t i = 0; i < numPssmSplits; i++) {
-			passbufferBuffer->push_back(
-					shadowNode->getPssmSplits(0)->at(i + 1));
-			passbufferBuffer->push_back(
-					1.0 / shadowNode->getPssmSplits(0)->at(i + 1));
-			passbufferBuffer->push_back(0);
-			passbufferBuffer->push_back(0);
-
-		}
-
-		for (int j = 0; j < numShadowMaps; j++) {
-			int currentShadowMap = 0;
-
-			uint lightID = 0;
-			if (shadowNode) {
-				LightClosestArray scl = shadowNode->getShadowCastingLights();
-
-				for (size_t i = 0; i < scl.size(); i++) {
-
-					if (currentShadowMap == j) {
-						//iterator->second->ShadowMapId =shadownode->getShadowCastingLights()[i].globalIndex;
-						lightID = scl[i].light->getId();
-					}
-					if (shadowNode->getShadowCastingLights()[i].light->getType()
-							== Light::LT_DIRECTIONAL) {
-						currentShadowMap += NumPssmSplits;
-					} else {
-						currentShadowMap++;
-					}
-
-				}
-			}
-			float flightID = reinterpret_cast<float &>(lightID);
-			passbufferBuffer->push_back(
-					((float) shadowNode->getLocalTextures().at(j).textures[0]->getWidth()));
-			passbufferBuffer->push_back(
-					((float) shadowNode->getLocalTextures().at(j).textures[0]->getHeight()));
-			passbufferBuffer->push_back(
-					1.0
-							/ ((float) shadowNode->getLocalTextures().at(j).textures[0]->getWidth()));
-			passbufferBuffer->push_back(
-					1.0
-							/ ((float) shadowNode->getLocalTextures().at(j).textures[0]->getHeight()));
-
-			passbufferBuffer->push_back(0);
-			passbufferBuffer->push_back(0);
-			passbufferBuffer->push_back(0);
-			passbufferBuffer->push_back(flightID);
-
-			Real fNear, fFar;
-			if (shadowNode != NULL) {
-				shadowNode->getMinMaxDepthRange(j, fNear, fFar);
-			}
-			const Real depthRange = fFar - fNear;
-
-			passbufferBuffer->push_back(fNear);
-			passbufferBuffer->push_back(fFar);
-			passbufferBuffer->push_back(1.0f / depthRange);
-			passbufferBuffer->push_back(depthRange);
-
-			Matrix4 tmp = shadowNode->getViewProjectionMatrix(j).transpose();
-			//tmp = tempTexProjMat.transpose();
-
-			for (size_t i = 0; i < 16; ++i) {
-				passbufferBuffer->push_back((float) tmp[0][i]);
-			}
-
-		}
-	}
+//	//**********************Shadow Info********************************************
+//	//Why is this the only way to link shadow maps to lights? Can't we just assign them unique ids?
+//	//mapp all the required shadow map and their data to the Passbuffer (Deferred shadows use data in their Datablocks, but this is needed for the forwarded lights)
+//	if (!casterPass && shadowNode != NULL) {
+//
+//		int numPssmSplits = getProperty(HlmsBaseProp::PssmSplits);
+//
+//		for (size_t i = 0; i < numPssmSplits; i++) {
+//			passbufferBuffer->push_back(
+//					shadowNode->getPssmSplits(0)->at(i + 1));
+//			passbufferBuffer->push_back(
+//					1.0 / shadowNode->getPssmSplits(0)->at(i + 1));
+//			passbufferBuffer->push_back(0);
+//			passbufferBuffer->push_back(0);
+//
+//		}
+//
+//		for (int j = 0; j < numShadowMaps; j++) {
+//			int currentShadowMap = 0;
+//
+//			uint lightID = 0;
+//			if (shadowNode) {
+//				LightClosestArray scl = shadowNode->getShadowCastingLights();
+//
+//				for (size_t i = 0; i < scl.size(); i++) {
+//
+//					if (currentShadowMap == j) {
+//						//iterator->second->ShadowMapId =shadownode->getShadowCastingLights()[i].globalIndex;
+//						lightID = scl[i].light->getId();
+//					}
+//					Ogre::Light * cl=shadowNode->getShadowCastingLights()[i].light;
+//					if(cl==0){continue;}
+//					if (cl->getType()
+//							== Light::LT_DIRECTIONAL) {
+//						currentShadowMap += NumPssmSplits;
+//					} else {
+//						currentShadowMap++;
+//					}
+//
+//				}
+//			}
+//			float flightID = reinterpret_cast<float &>(lightID);
+//			passbufferBuffer->push_back(
+//					((float) shadowNode->getLocalTextures().at(j).textures[0]->getWidth()));
+//			passbufferBuffer->push_back(
+//					((float) shadowNode->getLocalTextures().at(j).textures[0]->getHeight()));
+//			passbufferBuffer->push_back(
+//					1.0
+//							/ ((float) shadowNode->getLocalTextures().at(j).textures[0]->getWidth()));
+//			passbufferBuffer->push_back(
+//					1.0
+//							/ ((float) shadowNode->getLocalTextures().at(j).textures[0]->getHeight()));
+//
+//			passbufferBuffer->push_back(0);
+//			passbufferBuffer->push_back(0);
+//			passbufferBuffer->push_back(0);
+//			passbufferBuffer->push_back(flightID);
+//
+//			Real fNear, fFar;
+//			if (shadowNode != NULL) {
+//				shadowNode->getMinMaxDepthRange(j, fNear, fFar);
+//			}
+//			const Real depthRange = fFar - fNear;
+//
+//			passbufferBuffer->push_back(fNear);
+//			passbufferBuffer->push_back(fFar);
+//			passbufferBuffer->push_back(1.0f / depthRange);
+//			passbufferBuffer->push_back(depthRange);
+//
+//			Matrix4 tmp = shadowNode->getViewProjectionMatrix(j).transpose();
+//			//tmp = tempTexProjMat.transpose();
+//
+//			for (size_t i = 0; i < 16; ++i) {
+//				passbufferBuffer->push_back((float) tmp[0][i]);
+//			}
+//
+//		}
+//	}
 //	} else {
 //		for (int j = 0; j < 5; j++) {
 //			for (size_t i = 0; i < 16; ++i)
@@ -584,41 +628,7 @@ void HlmsDS::destroyAllBuffers(void) {
 	}
 }
 //very usefull for testing if buffers are uploaded correctly
-Vector3 rainbow(float x) {
 
-	float div = (std::abs(fmod(x, 1.0f)) * 6);
-	int ascending = (int) (fmod(div, 1.0f) * 255);
-	int descending = 255 - ascending;
-
-	float a = ascending / 255.0;
-	float d = descending / 255.0;
-
-	switch ((int) div) {
-	case 0:
-		return Vector3(1, a, 0);
-	case 1:
-		return Vector3(d, 1, 0);
-	case 2:
-		return Vector3(0, 1, a);
-	case 3:
-		return Vector3(0, d, 1);
-	case 4:
-		return Vector3(a, 0, 1);
-	default: // case 5:
-		return Vector3(1, 0, d);
-	}
-}
-
-//Also for testing
-Vector3 rainbow() {
-	static float r = 0;
-	r += 0.0001;
-	if (r > 1) {
-		r = 0;
-	}
-	return rainbow(r);
-
-}
 inline uint32 HlmsDS::fillBuffersFor(const HlmsCache* cache,
 		const QueuedRenderable& queuedRenderable, bool casterPass,
 		uint32 lastCacheHash, CommandBuffer* commandBuffer, bool isV1) {
@@ -643,14 +653,8 @@ inline uint32 HlmsDS::fillBuffersFor(const HlmsCache* cache,
 			const DSLightDatablock *ldatablock =
 					static_cast<const DSLightDatablock*>(queuedRenderable.renderable->getDatablock());
 
-			for (int i = 0; i < this->mNumGBuffers; i++) {
-				*commandBuffer->addCommand<CbTexture>() = CbTexture(
-						this->mGBufferInd->at(i), true,
-						this->mGBuffer->at(i).get(),
-						ldatablock->GBufferSamplerblock);
 
-				texUnit = this->mGBufferInd->at(i);
-			}
+
 			FastArray<TexturePtr>::const_iterator itors =
 					mPreparedPass.shadowMaps.begin();
 			FastArray<TexturePtr>::const_iterator ends =
@@ -658,7 +662,6 @@ inline uint32 HlmsDS::fillBuffersFor(const HlmsCache* cache,
 
 			int i = 0;
 			while (itors != ends) {
-
 				*commandBuffer->addCommand<CbTexture>() = CbTexture(
 						mPreparedPass.shadowMapTUs[i], true, itors->get(),
 						mCurrentShadowmapSamplerblock);
@@ -668,6 +671,14 @@ inline uint32 HlmsDS::fillBuffersFor(const HlmsCache* cache,
 				++i;
 			}
 
+			for (int i = 0; i < this->mNumGBuffers; i++) {
+				*commandBuffer->addCommand<CbTexture>() = CbTexture(
+						this->mGBufferInd->at(i), true,
+						this->mGBuffer->at(i).get(),
+						ldatablock->GBufferSamplerblock);
+
+				texUnit = this->mGBufferInd->at(i);
+			}
 //						mHlmsManager->getTextureManager()->createOrRetrieveTexture("BumpyMetal.jpg",HlmsTextureManager::TEXTURE_TYPE_DIFFUSE).texture.get()
 
 		}
@@ -784,6 +795,10 @@ void HlmsDS::frameEnded(void) {
 const HlmsCache* HlmsDS::createShaderCacheEntry(uint32 renderableHash,
 		const HlmsCache& passCache, uint32 finalHash,
 		const QueuedRenderable& queuedRenderable) {
+
+	std::cout <<"****************************createShaderCacheEntry***************\n";
+
+
 	const HlmsCache *retVal = Hlms::createShaderCacheEntry(renderableHash,
 			passCache, finalHash, queuedRenderable);
 
@@ -800,18 +815,10 @@ const HlmsCache* HlmsDS::createShaderCacheEntry(uint32 renderableHash,
 
 		int texUnit = 1; //Vertex shader consumes 1 slot with its tbuffer.
 
-		//Forward3D consumes 2 more slots.
 
 		if (getDatablocktype(queuedRenderable.renderable->getDatablock())
 				== DT_Light) {
-			for (int i = 0; i < this->mNumGBuffers; i++) {
 
-				std::stringstream ss;
-				ss << "GBuffer" << i;
-				std::string s = ss.str();
-				this->mGBufferInd->push_back(texUnit);
-				psParams->setNamedConstant(s, texUnit++);
-			}
 			if (!mPreparedPass.shadowMaps.empty()) {
 				vector<int>::type shadowMaps;
 				shadowMaps.reserve(mPreparedPass.shadowMaps.size());
@@ -822,12 +829,20 @@ const HlmsCache* HlmsDS::createShaderCacheEntry(uint32 renderableHash,
 					mPreparedPass.shadowMapTUs.push_back(texUnit);
 					texUnit++;
 				}
-
 				psParams->setNamedConstant("texShadowMap", &shadowMaps[0],
 						shadowMaps.size(), 1);
 
-			}
 
+
+			}
+			for (int i = 0; i < this->mNumGBuffers; i++) {
+
+				std::stringstream ss;
+				ss << "GBuffer" << i;
+				std::string s = ss.str();
+				this->mGBufferInd->push_back(texUnit);
+				psParams->setNamedConstant(s, texUnit++);
+			}
 		}
 		if (getDatablocktype(queuedRenderable.renderable->getDatablock())
 				== DT_GBuffer) {
@@ -844,7 +859,6 @@ const HlmsCache* HlmsDS::createShaderCacheEntry(uint32 renderableHash,
 
 	GpuProgramParametersSharedPtr vsParams =
 			retVal->pso.vertexShader->getDefaultParameters();
-//vsParams->setNamedConstant( "worldMatBuf", 0 );
 
 	mListener->shaderCacheEntryCreated(mShaderProfile, retVal, passCache,
 			mSetProperties, queuedRenderable);
@@ -968,6 +982,7 @@ HlmsDS::Datablock_Type HlmsDS::getDatablocktype(
 
 		assert(false);
 	}
+	return HlmsDS::DT_Forward;
 }
 const DSLightDatablock* HlmsDS::CastDatablockLight(
 		const HlmsDatablock*hlmsDatablock) {
@@ -983,6 +998,8 @@ const DSLightDatablock* HlmsDS::CastDatablockLight(
 
 		assert(false);
 	}
+
+	return NULL;
 }
 
 const DSDatablock* HlmsDS::CastDatablockGBuffer(
@@ -1035,6 +1052,8 @@ int HlmsDS::generateWorldMatrixBuffer(const HlmsCache* cache,
 			queuedRenderable.renderable->hasSkeletonAnimation();
 	const Matrix4 &worldMat =
 			queuedRenderable.movableObject->_getParentNodeFullTransform();
+
+
 
 #if !OGRE_DOUBLE_PRECISION
 

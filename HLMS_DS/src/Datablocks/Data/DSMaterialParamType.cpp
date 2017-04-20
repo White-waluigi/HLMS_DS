@@ -11,7 +11,8 @@ namespace Ogre {
 
 DSMaterialParamType::DSMaterialParamType() {
 	// TODO Auto-generated constructor stub
-
+	this->numVec=0;
+	this->type=DSMaterialParam::VEC4;
 }
 
 DSMaterialParamType::~DSMaterialParamType() {

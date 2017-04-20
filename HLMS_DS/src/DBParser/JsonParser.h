@@ -24,6 +24,8 @@ namespace Ogre {
 class DSDatablock;
 class JSONMaterialCreator;
 class JsonParser: public DBParser {
+	//Parse JSON Materials
+
 public:
 	class QueueItem{
 	public:

@@ -17,6 +17,7 @@ DSMBFactory::~DSMBFactory() {
 	// TODO Auto-generated destructor stub
 }
 DSMBModulator* Ogre::DSMBFactory::parseModulator(MT_MultiData* mt) {
+	return NULL;
 }
 } /* namespace Ogre */
 

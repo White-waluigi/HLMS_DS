@@ -14,6 +14,8 @@
 #include <string>     // std::string, std::to_string
 #include "OgreVector3.h"
 #include "stdlib.h"
+#include <OgreStringConverter.h>
+
 namespace Ogre {
 
 StringValueUtils::StringValueUtils() {
@@ -100,14 +102,13 @@ String StringValueUtils::getVectorStr(Ogre::Vector4 vector4) {
 float* StringValueUtils::getVectorV3(Ogre::String str) {
 
 	Ogre::String s=String(str);
-	float retval[3];
+	float *retval=new float[3];
 	std::string delimiter = " ";
 
 	size_t pos = 0;
 	std::string token;
 
 	int i=0;
-	int zer=0;
 	while ((pos = s.find(delimiter)) != std::string::npos) {
 
 	    token = s.substr(0, pos);
@@ -129,14 +130,13 @@ float* StringValueUtils::getVectorV3(Ogre::String str) {
 float* StringValueUtils::getVectorV4(Ogre::String str) {
 
 	Ogre::String s=String(str);
-	float retval[4];
+	float *retval=new float[4];
 	std::string delimiter = " ";
 
 	size_t pos = 0;
 	std::string token;
 
 	int i=0;
-	int zer=0;
 	while ((pos = s.find(delimiter)) != std::string::npos) {
 
 	    token = s.substr(0, pos);
@@ -167,6 +167,12 @@ String StringValueUtils::getMatrixStr(Matrix4 matrix4) {
 }
 
 float* StringValueUtils::getMatrixMat4x4(String allocator) {
+	Matrix4 mat= Ogre::StringConverter::parseMatrix4(allocator);
+	float * retval=new float[16];
+	for(int i=0;i<16;i++){
+		retval[i]=mat[0][i];
+	}
+	return retval;
 }
 } /* namespace Ogre */
 

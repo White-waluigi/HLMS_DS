@@ -14,7 +14,8 @@ namespace Ogre {
 
 HLMSDSWorkspaceListener::HLMSDSWorkspaceListener() {
 	// TODO Auto-generated constructor stub
-
+	this->passType=PT_GBUFFER;
+	this->passID=0;
 
 }
 

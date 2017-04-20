@@ -11,7 +11,7 @@
 #include "OgreVector4.h"
 #include "Compositor/OgreCompositorWorkspace.h"
 #include "Compositor/OgreCompositorWorkspaceListener.h"
-
+//Used to keep track on which Passtype we are currently in
 namespace Ogre {
 
 

@@ -20,8 +20,7 @@
 namespace Ogre {
 
 DSAutoParamTime::DSAutoParamTime() {
-	// TODO Auto-generated constructor stub
-
+	timer=NULL;
 }
 
 
@@ -69,7 +68,7 @@ void DSAutoParamTime::update() {
 	}else
 	{
 		data[0]=((timer->getMilliseconds()%timeLenght))/(timeLenght*1.0f);
-		if((timer->getMilliseconds()%(timeLenght*2))>=(timeLenght)){
+		if((timer->getMilliseconds()%(timeLenght*2))>=(uint)(timeLenght)){
 			data[0]=(timeLenght-(timer->getMilliseconds()%timeLenght))/(timeLenght*1.0f);
 		}
 	}

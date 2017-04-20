@@ -204,7 +204,7 @@ void DSDatablock::syncWithGPU() {
 	g->map(IDColour->g, 1);
 	g->map(IDColour->b, 1);
 	g->map(IDColour->a, 1);
-	float * start = g->passBufferPtr;
+	//float * start = g->passBufferPtr;
 
 	//************************Vec4*****************************************************
 
@@ -236,7 +236,7 @@ void DSDatablock::syncWithGPU() {
 		//g->map(textureParams->at(i).getTextMat());
 
 		if (textureParams->at(i)->isMultiTex()) {
-			for (int ii = 0; ii < textureParams->at(i)->getNumTextures(); ii++) {
+			for (uint ii = 0; ii < textureParams->at(i)->getNumTextures(); ii++) {
 				val = textureParams->at(i)->getLocation(ii)->y;
 				valf = reinterpret_cast<float &>(val);
 
@@ -376,7 +376,7 @@ ConstBufferPacked *DSDatablock::getMaterialBuffer() {
 size_t DSDatablock::getMaterialBufferSize() {
 	size_t size = materialParams->size() * sizeof(float) * 4;
 	size += sizeof(float) * 4;
-	for (int i = 0; i < materialParams->size(); i++) {
+	for (uint i = 0; i < materialParams->size(); i++) {
 		size += materialParams->at(i)->getSize();
 	}
 
@@ -412,7 +412,6 @@ void DSDatablock::frameEnded() {
 }
 void DSDatablock::createTexIndexPropertys(bool caster) {
 
-	int index = 0;
 
 	DSPropertyParam *param =new DSPropertyParam(DSProperty::MaxTextureParams,
 			MaxTextureParams, NULL);
@@ -461,7 +460,6 @@ void DSDatablock::createTexIndexPropertys(bool caster) {
 }
 void DSDatablock::createVec4IndexPropertys(bool Caster) {
 
-	int index = 0;
 
 	//************************Might be obsolete**********************************************
 	DSPropertyParam *param =new  DSPropertyParam(DSProperty::MaxVec4Params,
@@ -472,7 +470,7 @@ void DSDatablock::createVec4IndexPropertys(bool Caster) {
 	NULL);
 	propertyParams->push_back(param);
 
-	for (int i = 0; i < materialParams->size(); i++) {
+	for (uint i = 0; i < materialParams->size(); i++) {
 
 		DSMaterialParam * vec = materialParams->at(i);
 		String prefix = "";
@@ -493,7 +491,7 @@ void DSDatablock::createVec4IndexPropertys(bool Caster) {
 
 	String value;
 
-	for (int i = 0; i < materialParams->size(); i++) {
+	for (uint i = 0; i < materialParams->size(); i++) {
 		DSMaterialParam * vec = materialParams->at(i);
 		String prefix = "";
 		if (!vec->isNoPreFix()) {

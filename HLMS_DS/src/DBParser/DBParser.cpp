@@ -32,6 +32,7 @@ void DBParser::parse(HlmsManager *hlmsManager) {
 }
 
 DBParser::DBParser() {
+	hdb=NULL;
 }
 
 DBParser::~DBParser() {

@@ -38,6 +38,7 @@ src/Light/GeomUtils.o: ../src/Light/GeomUtils.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResource.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringInterface.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Threading/OgreThreadHeaders.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Threading/OgreThreadHeadersBoost.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/Threading/OgreThreadDefines.h \
@@ -79,7 +80,6 @@ src/Light/GeomUtils.o: ../src/Light/GeomUtils.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsManager.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBlendMode.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsDatablock.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsSamplerblock.h \
@@ -166,6 +166,8 @@ src/Light/GeomUtils.o: ../src/Light/GeomUtils.cpp \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
+
 /home/marvin/lib/ogre/sdk_d/include/OGRE/Threading/OgreThreadHeaders.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/Threading/OgreThreadHeadersBoost.h:
@@ -247,8 +249,6 @@ src/Light/GeomUtils.o: ../src/Light/GeomUtils.cpp \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsCommon.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBlendMode.h:
 

@@ -33,6 +33,8 @@ public:
     Ogre::SceneNode *parentSN;
 
     int ShadowMapId=-1;
+    int ShadowTexId=-1;
+
     int ShadowCasterID=-1;
 	DSLight(const Ogre::Light * parent,Ogre::IdType id,
     		Ogre::ObjectMemoryManager *objectMemoryManager,

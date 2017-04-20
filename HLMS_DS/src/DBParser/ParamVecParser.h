@@ -9,7 +9,7 @@
 #define DBPARSER_PARAMVECPARSER_H_
 
 #include "DBParser.h"
-
+//Used to parse simple ParamVec Materials, very usefull for quick and simple test Materials, although a bit deprecated
 namespace Ogre {
 class DSMaterialParam;
 class DSTextureParamType;

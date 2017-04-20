@@ -54,7 +54,7 @@ public:
 		UVEC4,
 		CUSTOM
 
-	}  type;
+	}  type=VEC4;
 
 	static Ogre::String defaultDatatypes[(size_t)CUSTOM];
 

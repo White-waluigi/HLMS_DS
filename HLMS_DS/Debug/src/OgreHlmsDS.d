@@ -22,6 +22,7 @@ src/OgreHlmsDS.o: ../src/OgreHlmsDS.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMath.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  ../src/Datablocks/Data/DSMaterialParam.h \
  ../src/Datablocks/Data/../../OgreHlmsDSPrerequisites.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsDatablock.h \
@@ -32,7 +33,6 @@ src/OgreHlmsDS.o: ../src/OgreHlmsDS.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreString.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsCommon.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBlendMode.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreColourValue.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsPso.h \
@@ -401,6 +401,8 @@ src/OgreHlmsDS.o: ../src/OgreHlmsDS.cpp \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgrePlatformInformation.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
+
 ../src/Datablocks/Data/DSMaterialParam.h:
 
 ../src/Datablocks/Data/../../OgreHlmsDSPrerequisites.h:
@@ -420,8 +422,6 @@ src/OgreHlmsDS.o: ../src/OgreHlmsDS.cpp \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreHlmsCommon.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreBlendMode.h:
 

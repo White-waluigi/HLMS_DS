@@ -19,6 +19,7 @@ src/Light/DSLightManager.o: ../src/Light/DSLightManager.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMemoryStdAlloc.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreAlignedAllocator.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMemoryTracker.h \
+ /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreDataStream.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreSharedPtr.h \
@@ -46,7 +47,6 @@ src/Light/DSLightManager.o: ../src/Light/DSLightManager.cpp \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreNode.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderable.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h \
- /home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreGpuProgram.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreResource.h \
  /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreStringInterface.h \
@@ -373,6 +373,8 @@ src/Light/DSLightManager.o: ../src/Light/DSLightManager.cpp \
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreMemoryTracker.h:
 
+/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
+
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreArchive.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreDataStream.h:
@@ -426,8 +428,6 @@ src/Light/DSLightManager.o: ../src/Light/DSLightManager.cpp \
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreRenderable.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreIdString.h:
-
-/home/marvin/lib/ogre/sdk_d/include/OGRE/Hash/MurmurHash3.h:
 
 /home/marvin/lib/ogre/sdk_d/include/OGRE/OgreGpuProgram.h:
 

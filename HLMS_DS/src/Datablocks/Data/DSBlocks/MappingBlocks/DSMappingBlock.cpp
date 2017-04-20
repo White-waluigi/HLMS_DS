@@ -30,7 +30,7 @@ DSMappingBlock::~DSMappingBlock() {
 void Ogre::DSMappingBlock::modulate(DSTextureParam * parent) {
 	matOffset=Matrix4::IDENTITY;
 
-	for(int i=0;i<this->modulators.size();i++){
+	for(uint i=0;i<this->modulators.size();i++){
 		modulators[i]->modulate();
 	}
  	parent->setTexMatOffset(BasematOffset*matOffset);
@@ -62,7 +62,7 @@ void Ogre::DSMappingBlock::initialize(MT_MultiData* mt) {
 	}
 
 	this->animated=true;
-	for(int i=0;i<modulatorFactorys.size();i++){
+	for(uint i=0;i<modulatorFactorys.size();i++){
 		for(int ii=0;ii<mt->getObject("animation").o->size();ii++){
 
 			DSMBModulator* mod=  modulatorFactorys[i]->parseModulator(mt->getData("animation",ii).o);
