@@ -17,7 +17,7 @@ RelWithDebInfo MinSizeRel."
       FORCE)
 endif(NOT CMAKE_BUILD_TYPE)
 
-set(OGRE_SDK_FOLDER "/home/marvin/lib/ogre/sdk_r" CACHE PATH "SDK Folder of OGRE")
+set(OGRE_SDK_FOLDER "/home/user/lib/ogre/sdk_r" CACHE PATH "SDK Folder of OGRE")
 set(OGRE_DEPS_FOLDER "/usr/include/" CACHE PATH "Ogre Dependencies")
 
 IF(NOT WIN32) 
