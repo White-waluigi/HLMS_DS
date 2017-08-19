@@ -1,0 +1,235 @@
+
+compositor_node DSNode
+{
+	in 0 rt_renderwindow
+	
+	//													Diffuse			Normal			Specular		Glow			
+	texture GBuffer 		target_width target_height PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA PF_FLOAT32_RGBA  
+	texture Post1 			target_width target_height PF_FLOAT32_RGBA
+	texture Post2	 		target_width target_height PF_FLOAT32_RGBA
+	
+	//PF_R8G8B8A8
+
+		
+	
+	//GBuffer render
+	target GBuffer{
+		pass clear
+		{
+		    expose GBuffer
+		
+		   	identifier 31;
+		
+			expose GBuffer
+			//colour_value 0.2 0.4 0.6 0
+			colour_value 0.0 0.0 0.0 0
+			depth_value 1.1
+		}
+		
+		pass render_scene{
+			expose GBuffer 
+          	identifier 801;
+		
+  			visibility_mask 0x0000000F
+  			overlays	off
+  			Katsus
+		}	
+
+
+	
+	}
+	//Deferred
+	target Post1
+	{		
+	
+
+  		pass clear
+		{
+			expose GBuffer
+		  	identifier 33;
+		
+			expose Post2
+		
+		    
+			colour_value 0.2 0.4 0.8 1.0
+			
+		}
+
+
+	
+
+
+		//Light render
+ 		pass render_scene{ 
+			expose GBuffer
+		
+  			visibility_mask 0x000080F0
+  			overlays	off
+  			shadows		DeferredShadingShadowNode
+  			identifier 802;
+  			
+		}	   
+
+	}
+	//Forward
+	target Post2
+	{
+	
+		//Rebuild Depth Buffer
+        pass render_quad
+        {
+          	identifier 804;
+          
+			material ReDepth
+			input 0 Post1
+			input 1 GBuffer 1
+		}
+		//Forward render
+ 		pass render_scene{ 
+			expose GBuffer
+			expose Post2
+			expose Post1
+			
+		
+  			visibility_mask 0x00000F00
+  			overlays	off
+  			shadows		DeferredShadingShadowNode
+  			identifier 802;
+  			
+		}	
+	}
+	//SSAO
+	target Post1
+	{		
+	
+	  	pass clear
+		{
+			colour_value 0.2 0.8 0.5 1.0
+			
+		}
+	  	pass clear
+		{
+          	identifier 804;
+		  
+		
+			expose Post1
+		
+		    
+			colour_value 0 0 0 
+		}
+
+        pass render_quad
+        {
+          	identifier 804;
+          
+			material ssao
+			input 0 Post2
+		}
+
+	}
+	//AntiAlias
+	target rt_renderwindow
+	{		
+
+		pass clear
+		{
+          	identifier 804;
+			expose Post1
+		
+		    
+			colour_value 0 0 0 
+		}
+          pass render_quad
+          {
+          	 	identifier 804;
+          	
+                material AntiAlias
+                input 0 Post1
+                input 1 GBuffer 0
+
+                       
+                        
+          }
+
+         pass render_scene{ 
+          	identifier 804;
+         
+  			visibility_mask 0x00000000
+  			overlays	on
+  			
+		}	
+	}
+	
+}
+compositor_node_shadow DeferredShadingShadowNode
+{
+	technique pssm
+
+	texture atlas 	1024 	1024 		PF_FLOAT32_R no_fsaa
+	texture dynamic 1024 	1024 		PF_FLOAT32_R no_fsaa
+
+
+	num_splits		3
+	pssm_lambda		0.95
+	shadow_map 0 atlas uv 0.0 0.000000000000000 	0.5 0.333333333333333 		light 0 split 0
+	shadow_map 1 atlas uv 0.5 0.0				 	0.5 0.333333333333333 		light 0 split 1
+	shadow_map 2 atlas uv 0.0 0.333333333333333 	1.0 0.666666666666666	 	light 0 split 2
+
+	technique focused
+	shadow_map 3 dynamic uv 0.0 0.0 0.5 0.5 light 1
+	shadow_map 4 dynamic uv 0.5 0.0 0.5 0.5 light 2
+	shadow_map 5 dynamic uv 0.0 0.5 0.5 0.5 light 3
+	shadow_map 6 dynamic uv 0.5 0.5 0.5 0.5 light 4
+
+	target dynamic
+	{
+		pass clear
+		{
+    		colour_value 1 1 1
+	  	}
+	  	
+	}
+
+	shadow_map_target_type spot
+	{
+  		shadow_map 3 4 5 6
+  		{
+  		
+  	  	pass render_scene
+  	  	{
+  	  	  		identifier 800;
+  	
+    	    	visibility_mask 0x000000FF
+    	    	overlays   off
+    		}
+ 		}
+	}
+
+	target atlas
+	{
+		pass clear
+		{
+	    	colour_value 1 1 1
+	 	}
+	}
+	shadow_map_target_type directional
+	{
+  		shadow_map 0 1 2
+  		{
+  	  		pass render_scene
+  	  		{
+  	   			identifier 800;
+  
+  	   	   		visibility_mask 0x000000FF
+  	   	   		overlays   off
+  		  	}
+  		}
+	}
+
+
+}
+
+workspace DeferredShadingWorkspace
+{
+	connect_output DSNode 0
+}

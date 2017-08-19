@@ -1,0 +1,102 @@
+
+// GLSL shaders
+vertex_program ReDepth_vs_GLSL glsl
+{
+	source ReDepth_vs.glsl
+    default_params
+    {
+        param_named_auto worldViewProj worldviewproj_matrix
+        param_named_auto texture_size texture_size 0
+    }
+}
+
+fragment_program ReDepth_ps_GLSL glsl
+{
+	source ReDepth_ps.glsl
+	default_params
+	{
+	param_named_auto worldViewProj  worldviewproj_matrix
+		param_named final int 0
+		param_named normal int 1
+
+		
+	}
+	
+}
+
+// HLSL shaders
+vertex_program ReDepth_HLSL hlsl
+{
+    source ReDepth_vs.hlsl
+    entry_point main
+    target vs_5_0 vs_4_0 vs_4_0_level_9_1 vs_4_0_level_9_3
+
+    default_params
+    {
+        param_named_auto worldViewProj worldviewproj_matrix
+        param_named_auto texture_size texture_size 0
+        
+    }
+}
+
+fragment_program ReDepth_ps_HLSL hlsl
+{
+	source ReDepth_ps.hlsl
+	entry_point main
+	target ps_5_0 ps_4_0 ps_4_0_level_9_1 ps_4_0_level_9_3
+}
+
+// Unified definitions
+vertex_program ReDepth_vs unified
+{
+	delegate ReDepth_vs_HLSL
+	delegate ReDepth_vs_GLSL
+}
+
+fragment_program ReDepth_ps unified
+{
+	delegate ReDepth_ps_HLSL
+	delegate ReDepth_ps_GLSL
+}
+
+// Material definition
+material ReDepth
+{
+	technique
+	{
+		pass
+		{
+			depth_check off
+			depth_write off
+
+			cull_hardware none
+
+			vertex_program_ref ReDepth_vs
+			{
+			}
+
+			fragment_program_ref ReDepth_ps
+			{
+			}
+
+
+			texture_unit normal
+			{
+				texture  MarioKart.jpg
+			
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering trilinear
+			}
+			texture_unit diffuse
+			{
+				texture swiss.jpg
+			
+				tex_coord_set 0
+				tex_address_mode clamp
+				filtering trilinear
+			}
+
+		}
+	}
+}
