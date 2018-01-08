@@ -1,0 +1,231 @@
+{
+	"samplers": {
+		"Samplerblock_Wrap1": {
+			"min": "anisotropic",
+			"mag": "anisotropic",
+			"mip": "anisotropic",
+			"u": "wrap",
+			"v": "wrap",
+			"w": "wrap",
+			"miplodbias": 0,
+			"max_anisotropic": 1,
+			"compare_function": "disabled",
+			"border": [
+				1,
+				1,
+				1,
+				1
+			],
+			"min_lod": -3.40282e+038,
+			"max_lod": 3.40282e+038
+		},
+		"DoomSB": {
+			"min": "none",
+			"mag": "none",
+			"mip": "none",
+			"u": "wrap",
+			"v": "wrap",
+			"w": "wrap",
+			"miplodbias": 0,
+			"max_anisotropic": 1,
+			"compare_function": "disabled",
+			"border": [
+				1,
+				1,
+				1,
+				1
+			],
+			"min_lod": -3.40282e+038,
+			"max_lod": 3.40282e+038
+		}
+	},
+	"macroblocks": {
+		"Macroblock_1": {
+			"scissor_test": false,
+			"depth_check": true,
+			"depth_write": true,
+			"depth_function": "less_equal",
+			"depth_bias_constant": 0,
+			"depth_bias_slope_scale": 0,
+			"cull_mode": "clockwise",
+			"polygon_mode": "solid"
+		}
+	},
+	"blendblocks": {
+		"Blendblock_1": {
+			"alpha_to_coverage": false,
+			"blendmask": "rgba",
+			"separate_blend": false,
+			"src_blend_factor": "one",
+			"dst_blend_factor": "zero",
+			"blend_operation": "replace"
+		}
+	},
+	"ds": {
+		"terrain": {
+			"meta": {
+				"type": "material",
+				"inheritDefault": false
+			},
+			"settings": {
+				"macroblock": "Macroblock_1",
+				"blendblock": "Blendblock_1",
+				"shadow_const_bias": 0.01,
+				"renderer": "deferred",
+				"optimizable": true,
+				"category": "default",
+				"opacity": true,
+				"opacity-sharp": false
+			},
+			"params": {
+				"terrainmb": {
+					"UVscalex": 100,
+					"UVscaley": 100,
+					"type": "mappingblock",
+					"animation": {
+						"VScroll": {
+							"type": "scroll",
+							"_speedx": 0.01,
+							"_speedy": 0.003,
+							"speedx": 0.0,
+							"speedy": 0.0,
+							"timescale": 1
+						}
+					}
+				},
+				"normalmb": {
+					"UVscalex": 300,
+					"UVscaley": 300,
+					"type": "mappingblock",
+					"animation": {
+						"VScroll": {
+							"type": "scroll",
+							"_speedx": 0.01,
+							"_speedy": 0.003,
+							"speedx": 0.0,
+							"speedy": 0.0,
+							"timescale": 1
+						}
+					}
+				},
+				"grass": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "t_grass.jpg",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "terrainmb"
+					}
+				},
+				"dirt": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "t_dirt.jpg",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "terrainmb"
+					}
+				},
+				"stone": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "frost.png",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "terrainmb"
+					}
+				},
+				"tiles": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "t_tiles.PNG",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "terrainmb"
+					}
+				},
+				"blendmap": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "t_blend.png",
+						"sampler": "Samplerblock_Wrap1"
+					}
+				},
+				"normal_map": {
+					"maptype":"normal",
+					"helper": false,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"file": "NMStripes.png",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "normalmb"
+					}
+				},
+				"wave": {
+					"type": "autoparam",
+					"helper": true,
+					"params": {
+						"type": "time",
+						"softpulse": true,
+						"time": 10000
+					}
+				},
+				"specular": {
+					"helper": false,
+					"type": "variable",
+					"datatype": "vec4",
+					"varData": {
+						"value": [
+							0.01,
+							0.01,
+							0.01,
+							10
+						]
+					}
+				},
+				"diffuse": {
+					"helper": false,
+					"type": "variable",
+					"datatype": "vec4",
+					"varData": {
+						"value": [
+							0.02,
+							0.02,
+							0.9,
+							0
+						]
+					}
+				},
+				"testmapshader": {
+					"type": "piece",
+					"shadertype": "pixel",
+					"optional": false,
+					"_comment": "options: add, to add after previous piece, first puts it before existing piece, replace to replace previous piece, noReplace to not replace if previous Piece exists,  child materials have replace priority",
+					"method": "add",
+					"id": "custom_GBuffer_No_Shadow",
+					"shader": {
+						"glsl": {
+							"_comment": "use Array for multiline shader",
+							"code": [
+								"diffuse=blend(grass,dirt,tiles,stone,blendmap);"
+							]
+						},
+						"hlsl": {
+							"_comment": "use Array for multiline shader",
+							"code": [
+								"glow=rainbow((inPs.uv0.x+inPs.uv0.y+pass.time.x)+perlin.r);"
+							]
+						}
+					}
+				}
+			}
+		}
+	}
+}

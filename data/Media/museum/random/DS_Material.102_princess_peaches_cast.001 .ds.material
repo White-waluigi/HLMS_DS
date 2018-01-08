@@ -1,0 +1,10 @@
+hlms Material.102_princess_peaches_cast.001  ds
+{
+	diffuse 		0.48750001192092896 0.48750001192092896 0.543749988079071 1.0
+	specular		0.0 0.0 0.0 1.0 0.25
+	glow 			0.0 0.0 0.0 1.0
+	
+	diffuse_map		'file=princess peaches castle (outside)_grp.png'
+	
+	
+}

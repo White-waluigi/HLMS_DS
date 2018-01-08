@@ -1,0 +1,179 @@
+{
+	"samplers": {
+		"Samplerblock_Wrap1": {
+			"min": "anisotropic",
+			"mag": "anisotropic",
+			"mip": "anisotropic",
+			"u": "wrap",
+			"v": "wrap",
+			"w": "wrap",
+			"miplodbias": 0,
+			"max_anisotropic": 1,
+			"compare_function": "disabled",
+			"border": [
+				1,
+				1,
+				1,
+				1
+			],
+			"min_lod": -3.40282e+038,
+			"max_lod": 3.40282e+038
+		},
+		"DoomSB": {
+			"min": "none",
+			"mag": "none",
+			"mip": "none",
+			"u": "wrap",
+			"v": "wrap",
+			"w": "wrap",
+			"miplodbias": 0,
+			"max_anisotropic": 1,
+			"compare_function": "disabled",
+			"border": [
+				1,
+				1,
+				1,
+				1
+			],
+			"min_lod": -3.40282e+038,
+			"max_lod": 3.40282e+038
+		}
+	},
+	"macroblocks": {
+		"Macroblock_1": {
+			"scissor_test": false,
+			"depth_check": true,
+			"depth_write": true,
+			"depth_function": "less_equal",
+			"depth_bias_constant": 0,
+			"depth_bias_slope_scale": 0,
+			"cull_mode": "clockwise",
+			"polygon_mode": "solid"
+		}
+	},
+	"blendblocks": {
+		"Blendblock_1": {
+			"alpha_to_coverage": false,
+			"blendmask": "rgba",
+			"separate_blend": false,
+			"src_blend_factor": "one",
+			"dst_blend_factor": "zero",
+			"blend_operation": "replace"
+		}
+	},
+	"ds": {
+		"riverTempl": {
+			"meta": {
+				"type": "template",
+				"inheritDefault": false
+			},
+			"settings": {
+				"macroblock": "Macroblock_1",
+				"blendblock": "Blendblock_1",
+				"shadow_const_bias": 0.0,
+				"renderer": "deferred",
+				"optimizable": true,
+				"category": "default",
+				"opacity": false,
+				"opacity-sharp": false
+			},
+			"params": {
+				"forward": {
+					"type": "property",
+					"value": 1
+				},
+				"Opacity_Specular": {
+					"type": "property",
+					"value": 1
+				},
+				
+				"flatRefract": {
+					"type": "property",
+					"value": 1
+				},
+				"opacity": {
+					"type": "variable",
+					"varData": {
+						"value": [
+							0.3
+						]
+					}
+				},
+				"MB1": {
+					"type": "mappingblock",
+					"UVscalex": 0.01,
+					"UVscaley": 0.1,
+					"UVoffsetx": 0.1,
+					"UVoffsety": 0.1
+				},
+				"scroll": {
+					"type": "mappingblock",
+					"UVscalex": 10,
+					"UVscaley": 100,
+					"animation": {
+						"Rotate": {
+							"type": "scroll",
+							"speedx": 0.01,
+							"speedy": 0.005,
+							"timescale": 1
+						}
+					}
+				},
+				"diffuse_map": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"type": "file",
+						"file": "Water02.jpg",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "scroll"
+					}
+				},
+				"normal_map": {
+					"helper": true,
+					"type": "texture",
+					"datatype": "vec4",
+					"texData": {
+						"type": "file",
+						"file": "water_n.jpg",
+						"sampler": "Samplerblock_Wrap1",
+						"mappingblock": "scroll"
+					}
+				},
+				"diffuse": {
+					"type": "variable",
+					"varData": {
+						"value": [
+							0.1,
+							0.1,
+							0.8,
+							0
+						]
+					}
+				}
+			}
+		},
+		"river": {
+			"meta": {
+				"type": "material",
+				"template": "riverTempl"
+			},
+			"params": {
+				"diffuse": {
+					"helper": false,
+					"type": "variable",
+					"datatype": "vec4",
+					"varData": {
+						"value": [
+							0.4,
+							0.4,
+							0.8,
+							0
+						]
+					}
+				}
+			}
+		}
+	}
+}

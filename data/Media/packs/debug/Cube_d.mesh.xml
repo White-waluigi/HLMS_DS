@@ -1,0 +1,168 @@
+<mesh>
+    <submeshes>
+        <submesh material="DebugCube" usesharedvertices="false" use32bitindexes="false" operationtype="triangle_list">
+            <faces count="12">
+                <face v1="0" v2="1" v3="2" />
+                <face v1="0" v2="2" v3="3" />
+                <face v1="4" v2="5" v3="7" />
+                <face v1="5" v2="6" v3="7" />
+                <face v1="8" v2="9" v3="11" />
+                <face v1="9" v2="10" v3="11" />
+                <face v1="12" v2="13" v3="15" />
+                <face v1="13" v2="14" v3="15" />
+                <face v1="16" v2="17" v3="18" />
+                <face v1="16" v2="18" v3="19" />
+                <face v1="20" v2="21" v3="23" />
+                <face v1="21" v2="22" v3="23" />
+            </faces>
+            <geometry vertexcount="24">
+                <vertexbuffer positions="true" normals="true" tangents="true" tangent_dimensions="4" texture_coord_dimensions_0="float2" texture_coords="1">
+                    <vertex>
+                        <position x="1" y="1" z="-1" />
+                        <normal x="6.62804e-05" y="-4.31583e-05" z="-0.999934" />
+                        <tangent x="4.31583e-05" y="-0.999867" z="4.31583e-05" w="1" />
+                        <texcoord u="0" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="-1" z="-1" />
+                        <normal x="6.62804e-05" y="-4.31583e-05" z="-0.999934" />
+                        <tangent x="4.31583e-05" y="-0.999867" z="4.31583e-05" w="1" />
+                        <texcoord u="1" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="-1" z="-1" />
+                        <normal x="6.62804e-05" y="-4.31583e-05" z="-0.999934" />
+                        <tangent x="4.31583e-05" y="-0.999867" z="4.31583e-05" w="1" />
+                        <texcoord u="1" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="1" z="-1" />
+                        <normal x="6.62804e-05" y="-4.31583e-05" z="-0.999934" />
+                        <tangent x="4.31583e-05" y="-0.999867" z="4.31583e-05" w="1" />
+                        <texcoord u="0" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="0.999999" z="1" />
+                        <normal x="6.10352e-05" y="0" z="0.999939" />
+                        <tangent x="-0.999939" y="6.10352e-05" z="0" w="1" />
+                        <texcoord u="0" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="1" z="1" />
+                        <normal x="6.10352e-05" y="0" z="0.999939" />
+                        <tangent x="-0.999939" y="6.10352e-05" z="0" w="1" />
+                        <texcoord u="1" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="-1" z="1" />
+                        <normal x="6.10352e-05" y="0" z="0.999939" />
+                        <tangent x="-0.999939" y="6.10352e-05" z="0" w="1" />
+                        <texcoord u="1" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="0.999999" y="-1" z="1" />
+                        <normal x="6.10352e-05" y="0" z="0.999939" />
+                        <tangent x="-0.999939" y="6.10352e-05" z="0" w="1" />
+                        <texcoord u="0" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="1" z="-1" />
+                        <normal x="1" y="0" z="0" />
+                        <tangent x="0" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="0" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="0.999999" z="1" />
+                        <normal x="1" y="0" z="0" />
+                        <tangent x="0" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="1" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="0.999999" y="-1" z="1" />
+                        <normal x="1" y="0" z="0" />
+                        <tangent x="0" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="1" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="-1" z="-1" />
+                        <normal x="1" y="0" z="0" />
+                        <tangent x="0" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="0" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="-1" z="-1" />
+                        <normal x="6.10352e-05" y="-0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="0.999939" w="1" />
+                        <texcoord u="0" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="0.999999" y="-1" z="1" />
+                        <normal x="6.10352e-05" y="-0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="0.999939" w="1" />
+                        <texcoord u="1" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="-1" z="1" />
+                        <normal x="6.10352e-05" y="-0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="0.999939" w="1" />
+                        <texcoord u="1" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="-1" z="-1" />
+                        <normal x="6.10352e-05" y="-0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="0.999939" w="1" />
+                        <texcoord u="0" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="-1" z="-1" />
+                        <normal x="-0.999867" y="4.31583e-05" z="-4.31583e-05" />
+                        <tangent x="-4.31583e-05" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="0" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="-1" z="1" />
+                        <normal x="-0.999867" y="4.31583e-05" z="-4.31583e-05" />
+                        <tangent x="-4.31583e-05" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="1" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="1" z="1" />
+                        <normal x="-0.999867" y="4.31583e-05" z="-4.31583e-05" />
+                        <tangent x="-4.31583e-05" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="1" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="1" z="-1" />
+                        <normal x="-0.999867" y="4.31583e-05" z="-4.31583e-05" />
+                        <tangent x="-4.31583e-05" y="6.62804e-05" z="0.999934" w="1" />
+                        <texcoord u="0" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="0.999999" z="1" />
+                        <normal x="6.10352e-05" y="0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="-0.999939" w="1" />
+                        <texcoord u="0" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="1" y="1" z="-1" />
+                        <normal x="6.10352e-05" y="0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="-0.999939" w="1" />
+                        <texcoord u="1" v="1" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="1" z="-1" />
+                        <normal x="6.10352e-05" y="0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="-0.999939" w="1" />
+                        <texcoord u="1" v="0" />
+                    </vertex>
+                    <vertex>
+                        <position x="-1" y="1" z="1" />
+                        <normal x="6.10352e-05" y="0.999939" z="0" />
+                        <tangent x="0" y="6.10352e-05" z="-0.999939" w="1" />
+                        <texcoord u="0" v="0" />
+                    </vertex>
+                </vertexbuffer>
+            </geometry>
+        </submesh>
+    </submeshes>
+</mesh>

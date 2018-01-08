@@ -1,0 +1,8 @@
+DebugFont
+{
+	type 		truetype
+	source 		cuckoo.ttf
+	size 		15
+	resolution 	96
+}
+

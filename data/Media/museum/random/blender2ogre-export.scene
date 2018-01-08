@@ -1,0 +1,90 @@
+<scene export_time="1477504909.9996138" exported_by="marvin" formatVersion="1.0.1" previous_export_time="1477504308.6581116" >
+  <nodes >
+    <node name="Hemi" >
+      <position x="-1.776398" y="-1.364273" z="2.340294" />
+      <rotation qw="1.000000" qx="-0.000000" qy="0.000000" qz="0.000000" />
+      <scale x="1.000000" y="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+    </node>
+    <node name="castle" >
+      <position x="-0.000000" y="0.000000" z="0.000000" />
+      <rotation qw="0.707107" qx="-0.707107" qy="0.000000" qz="0.000000" />
+      <scale x="1.000000" y="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <entity actor="False" anisotropic_friction="False" damping_rot="0.10000000149011612" damping_trans="0.03999999910593033" friction_x="1.0" friction_y="1.0" friction_z="1.0" ghost="False" inertia_tensor="0.4000000059604645" lock_rot_x="False" lock_rot_y="False" lock_rot_z="False" lock_trans_x="False" lock_trans_y="False" lock_trans_z="False" mass="1.0" mass_radius="1.0" meshFile="castle.mesh" name="castle" physics_type="STATIC" velocity_max="0.0" velocity_min="0.0" />
+    </node>
+    <node name="Camera" >
+      <position x="-7.481132" y="5.343665" z="-6.507640" />
+      <rotation qw="0.781600" qx="-0.481707" qy="0.334251" qz="0.212922" />
+      <scale x="1.000000" y="1.000000" z="1.000000" />
+      <game >
+        <sensors />
+        <actuators />
+      </game>
+      <camera fov="0.5033799435163735" name="Camera" projectionType="perspective" >
+        <clipping far="100.0" farPlaneDist="100.0" near="0.10000000149011612" nearPlaneDist="0.10000000149011612" />
+      </camera>
+    </node>
+  </nodes>
+  <externals >
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.106_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.103_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.002.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.101_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.135_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.102_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.104_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.003.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.136_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.004.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.105_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.126_princess_peaches_cast.001.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.005.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.006.material" />
+    </item>
+    <item type="material" >
+      <file name="/home/marvin/Documents/blender/castle/Material.007.material" />
+    </item>
+  </externals>
+  <environment >
+    <colourBackground b="0.05087608844041824" g="0.05087608844041824" r="0.05087608844041824" />
+    <colourAmbient b="0.0" g="0.0" r="0.0" />
+    <colourDiffuse b="0.05087608844041824" g="0.05087608844041824" r="0.05087608844041824" />
+  </environment>
+</scene>

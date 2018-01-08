@@ -1,0 +1,13 @@
+hlms Material.149_22492387_c.bmp.002  ds
+{
+	diffuse 		0.6400000190734865 0.6400000190734865 0.6400000190734865 0.0
+	specular		0.0 0.0 0.0 0.0 12.5
+	glow 			0.0 0.0 0.0 0.0
+	
+	diffuse_map		'file=22492387_c.png'
+	opacity-diffuse		1
+opacity-sharp		1
+opacity-cutoff		10
+
+	
+}
