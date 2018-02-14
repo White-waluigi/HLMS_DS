@@ -19,78 +19,100 @@
 #include "OgreMatrix4.h"
 #include "OgreHeaderPrefix.h"
 #include "OgreRoot.h"
+#include "Modules/ModuleReference.h"
 
+namespace Ogre {
 
-namespace Ogre{
+class DSDatablock;
+class ModuleBroker;
+class PassBufferManager;
+class ConstBufferPackedVec;
+class PassBufferDefaultVal;
 
+class _OgreHlmsDSExport HlmsDS: public Ogre::HlmsBufferManager,
+		public Ogre::ConstBufferPool,
+		public ModuleReference {
 
-class _OgreHlmsDSExport HlmsDS: public Ogre::HlmsBufferManager, public Ogre::ConstBufferPool {
-    struct PassData
-    {
-        Matrix4 viewProjMatrix[2];
-    };
+	friend DSDatablock;
+	friend PassBufferManager;
+	friend PassBufferDefaultVal;
 
-    PassData                mPreparedPass;
-    ConstBufferPackedVec    mPassBuffers;
-    uint32                  mCurrentPassBuffer;     /// Resets to zero every new frame.
+	struct PassData {
+		Matrix4 viewProjMatrix[2];
+	};
+	std::list<Ogre::DSDatablock*> mDSDatablocks;
 
-    ConstBufferPool::BufferPool const *mLastBoundPool;
+	ModuleBroker * mBroker;
 
-    uint32 mLastTextureHash;
+	//Managers
+	PassBufferManager * mPBMgr;
 
+	PassData mPreparedPass;
+	ConstBufferPackedVec mPassBuffers;
+	uint32 mCurrentPassBuffer=0;     /// Resets to zero every new frame.
+
+	ConstBufferPool::BufferPool const *mLastBoundPool;
+
+	uint32 mLastTextureHash;
+
+	enum BufferSlots {
+		PassBuffer, MaterialBuffer, InstanceBuffer
+	};
 
 public:
 
+	void uploadDirtyDSDatablocks();
 
-	HlmsDS( Archive *dataFolder, ArchiveVec *libraryFolders );
+	HlmsDS(Archive *dataFolder, ArchiveVec *libraryFolders);
 
 	virtual ~HlmsDS();
 
-	virtual HlmsCache preparePassHash (const Ogre::CompositorShadowNode *shadowNode, bool casterPass, bool dualParaboloid, SceneManager *sceneManager);
-    virtual void calculateHashForPreCreate( Renderable *renderable, PiecesMap *inOutPieces );
-    virtual void calculateHashForPreCaster( Renderable *renderable, PiecesMap *inOutPieces );
+	virtual HlmsCache preparePassHash(
+			const Ogre::CompositorShadowNode *shadowNode, bool casterPass,
+			bool dualParaboloid, SceneManager *sceneManager);
+	virtual void calculateHashForPreCreate(Renderable *renderable,
+			PiecesMap *inOutPieces);
+	virtual void calculateHashForPreCaster(Renderable *renderable,
+			PiecesMap *inOutPieces);
 
-    virtual void _changeRenderSystem( RenderSystem *newRs );
+	virtual void _changeRenderSystem(RenderSystem *newRs);
 
-    void setProperties(Renderable* ,
-    		PiecesMap* , bool);
+	void setProperties(Renderable*, PiecesMap*, DSDatablock*, bool);
 
-    void setPieces(Renderable* ,
-    		PiecesMap* , bool);
+	void setPieces(Renderable*, PiecesMap*, DSDatablock*, bool);
 
-    virtual const HlmsCache* createShaderCacheEntry( uint32 renderableHash,
-                                                     const HlmsCache &passCache,
-                                                     uint32 finalHash,
-                                                     const QueuedRenderable &queuedRenderable );
+	virtual const HlmsCache* createShaderCacheEntry(uint32 renderableHash,
+			const HlmsCache &passCache, uint32 finalHash,
+			const QueuedRenderable &queuedRenderable);
 
-    virtual HlmsDatablock* createDatablockImpl( IdString datablockName,
-                                                const HlmsMacroblock *macroblock,
-                                                const HlmsBlendblock *blendblock,
-                                                const HlmsParamVec &paramVec );
-    virtual void destroyAllBuffers(void);
+	virtual HlmsDatablock* createDatablockImpl(IdString datablockName,
+			const HlmsMacroblock *macroblock, const HlmsBlendblock *blendblock,
+			const HlmsParamVec &paramVec);
 
+	virtual void createTextureCache(uint32 renderableHash,
+			const HlmsCache &passCache, uint32 finalHash,
+			const QueuedRenderable &queuedRenderable,const HlmsCache * cache);
 
-    virtual uint32 fillBuffersFor( const HlmsCache *cache, const QueuedRenderable &queuedRenderable,
-                                   bool casterPass, uint32 lastCacheHash,
-                                   uint32 lastTextureHash );
-    FORCEINLINE uint32 fillBuffersFor( const HlmsCache *cache,
-                                       const QueuedRenderable &queuedRenderable,
-                                       bool casterPass, uint32 lastCacheHash,
-                                       CommandBuffer *commandBuffer, bool isV1 );
-    virtual uint32 fillBuffersForV1( const HlmsCache *cache,
-                                     const QueuedRenderable &queuedRenderable,
-                                     bool casterPass, uint32 lastCacheHash,
-                                     CommandBuffer *commandBuffer );
-    virtual uint32 fillBuffersForV2( const HlmsCache *cache,
-                                     const QueuedRenderable &queuedRenderable,
-                                     bool casterPass, uint32 lastCacheHash,
-                                     CommandBuffer *commandBuffer );
+	virtual void destroyAllBuffers(void);
 
-    Ogre::String getShaderProfile();
+	virtual uint32 fillBuffersFor(const HlmsCache *cache,
+			const QueuedRenderable &queuedRenderable, bool casterPass,
+			uint32 lastCacheHash, uint32 lastTextureHash);FORCEINLINE uint32 fillBuffersFor(
+			const HlmsCache *cache, const QueuedRenderable &queuedRenderable,
+			bool casterPass, uint32 lastCacheHash, CommandBuffer *commandBuffer,
+			bool isV1);
+	virtual uint32 fillBuffersForV1(const HlmsCache *cache,
+			const QueuedRenderable &queuedRenderable, bool casterPass,
+			uint32 lastCacheHash, CommandBuffer *commandBuffer);
+	virtual uint32 fillBuffersForV2(const HlmsCache *cache,
+			const QueuedRenderable &queuedRenderable, bool casterPass,
+			uint32 lastCacheHash, CommandBuffer *commandBuffer);
 
-    virtual void frameEnded(void);
+	Ogre::String getShaderProfile();
 
+	virtual void frameEnded(void);
 
+	ModuleBroker* getModuleBroker();
 };
 }
 #endif /* SRC_DS_OGREHLMSDS_H_ */

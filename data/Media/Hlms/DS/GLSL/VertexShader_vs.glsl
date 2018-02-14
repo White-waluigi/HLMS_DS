@@ -13,6 +13,7 @@ in vec3 normal;
 in vec3 uv0;
 in uint drawId;
 
+
 out block
 {
 @insertpiece( VStoPS_block )
@@ -21,7 +22,7 @@ out block
 
 
 
-
+@insertpiece( MaterialDecl )
 
 void main()
 {
@@ -31,8 +32,8 @@ void main()
 	
 	vec4 ff=worldViewProj*vertex ;
     gl_Position =ff; 
-	outVs.normal=uv0;
-	
+	outVs.normal=normal;
+	outVs.uv0=uv0;
 
 }
     

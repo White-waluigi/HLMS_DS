@@ -35,7 +35,7 @@ include(CMakeConfig.txt)
 if(${CMAKE_BUILD_TYPE}!="Debug")
 endif()
 add_definitions(-DNDEBUG)
-message(STATUS "Copying files...")
+message(STATUS "Copying Media and Library files from ${PROJECT_SOURCE_DIR}/data/ to ${PROJECT_BINARY_DIR}")
 
 file(GLOB DEMO_LIB_FILES
   "${OGRE_SDK_FOLDER}/lib/${PF_LIB_FOLDER}*Ogre*.${PF_LIB_EXT}*"
@@ -49,8 +49,6 @@ file(COPY ${DEMO_RTLIB_FILES} DESTINATION "${PROJECT_BINARY_DIR}")
 file(GLOB DEMO_CFG_FILES
   "${PROJECT_SOURCE_DIR}/data/*"
 )
-message(${PROJECT_SOURCE_DIR})
-message(${PROJECT_BINARY_DIR})
 
 file(COPY ${DEMO_CFG_FILES} DESTINATION "${PROJECT_BINARY_DIR}")
 

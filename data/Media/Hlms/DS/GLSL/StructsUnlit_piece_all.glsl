@@ -1,22 +1,12 @@
 
 @piece( PassInternalDecl )
-	//Vertex shader
-	vec4 color;
-	mat4 viewProj[2];
-	@property( hlms_global_clip_distances )
-		vec4 clipPlane0;
-	@end
-	@property( hlms_global_clip_distances || exponential_shadow_maps || hlms_shadowcaster_point )float4x4 invViewProj;@end
-	@property( hlms_shadowcaster )
-		@property( exponential_shadow_maps )float4 viewZRow;@end
-		vec4 depthRange;
-		@property( hlms_shadowcaster_point )
-		vec4 cameraPosWS;	//Camera position in world space
-		@end
-	@end
-	//Pixel Shader
-	vec4 invWindowSize;
-	@insertpiece( custom_passBuffer )
+	mat4 viewProj;
+	mat4 view;
+	mat4 proj;
+	
+	vec4 depth;
+	vec4 resolution;
+	
 @end
 @piece( PassDecl )
 //Uniforms that change per pass
@@ -27,21 +17,15 @@ layout_constbuffer(binding = 0) uniform PassBuffer
 @end
 
 @piece( MaterialDecl )
-struct Material
+layout(binding = 1) uniform MaterialBuffer
 {
-	vec4 alpha_test_threshold;
-	vec4 diffuse;
+	//usefull for finding out which materials have the same material block and a way to have materials without params, which glsl doesn't allow
+	vec4 idColor;
+@insertpiece(MaterialDataParams)
 
-	uvec4 indices0_3;
-	uvec4 indices4_7;
 
-	@insertpiece( custom_materialBuffer )
-};
 
-layout_constbuffer(binding = 1) uniform MaterialBuf
-{
-	Material m[@value( materials_per_buffer )];
-} materialArray;
+} material;
 @end
 
 
@@ -83,5 +67,7 @@ layout_constbuffer(binding = 2) uniform InstanceBuffer
 		@end
 	@end
 	vec3 normal;
+	vec3 uv0;
+
 	@insertpiece( custom_VStoPS )
 @end
