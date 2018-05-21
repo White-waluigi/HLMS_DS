@@ -11,7 +11,7 @@ class MT_WrongDTException : std::exception{
 		return "wrong datatype";
 	}
 };
-
+   
 class MT_Meta {
 	enum type {
 		Template, Material, Library
