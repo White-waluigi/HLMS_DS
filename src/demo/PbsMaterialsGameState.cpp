@@ -12,14 +12,12 @@
 #include "OgreCamera.h"
 #include "OgreRenderWindow.h"
 
-#include "Datablocks/DSDatablock.h"
 #include "OgreHlmsSamplerblock.h"
 
 #include "OgreRoot.h"
 #include "OgreHlmsManager.h"
 #include "OgreHlmsTextureManager.h"
 #include "OgreHlmsDS.h"
-#include "Helper/HLMSDSWorkspaceListener.h"
 
 #include "Museum/Museum.h"
 
@@ -159,7 +157,8 @@ void PbsMaterialsGameState::createScene01(void) {
 	museum->setupExhibits();
 	museum->setupMuseum();
 	museum->setupLights();
-	mGraphicsSystem->mWorkspace->setListener(hlmsDS->mWSListener);
+	//temp
+	//mGraphicsSystem->mWorkspace->setListener(hlmsDS->mWSListener);
 
 //	Ogre::Light *light = sceneManager->createLight();
 //	Ogre::SceneNode *lightNode = rootNode->createChildSceneNode();
@@ -291,7 +290,8 @@ void PbsMaterialsGameState::generateDebugText(float timeSinceLast,
 
 
 	outText += "\n\ndaycycle: "+Ogre::StringConverter::toString(daycycle.dayphase)+"\n";
-	outText += "\nNumDSLights: "+Ogre::StringConverter::toString(hlmsDS->getNumDSLights())+"\n";
+	//temp
+	//outText += "\nNumDSLights: "+Ogre::StringConverter::toString(hlmsDS->getNumDSLights())+"\n";
 
 //	outText += "\nmorningweight: "+Ogre::StringConverter::toString(daycycle.morningweight)+"\n";
 //	outText += "\nsunweight: "+Ogre::StringConverter::toString(daycycle.dayweight)+"\n";
@@ -375,34 +375,38 @@ void PbsMaterialsGameState::keyReleased(const SDL_KeyboardEvent &arg) {
 		cycleMode*=-1;
 	} else if (arg.keysym.sym == SDLK_F6) {
 		cycleDM+=cycleMode;
-		int max = Ogre::HlmsDS::DM_NUM;
+		//temp
+		//int max = Ogre::HlmsDS::DM_NUM;
 
-		cycleDM %= *reinterpret_cast<int*>(&max);
+		//cycleDM %= *reinterpret_cast<int*>(&max);
 		if(cycleDM<0){cycleDM=0;}
 
-
-		hlmsDS->setDebugMode((Ogre::HlmsDS::DebugMode) cycleDM);
+		//temp
+		//hlmsDS->setDebugMode((Ogre::HlmsDS::DebugMode) cycleDM);
 
 
 	} else if (arg.keysym.sym == SDLK_F7) {
 		cycleFBM+=cycleMode;
-		int max = Ogre::HlmsDS::FBM_NUM;
+		//temp
+		//int max = Ogre::HlmsDS::FBM_NUM;
 
-		cycleFBM %= *reinterpret_cast<int*>(&max);
+		//cycleFBM %= *reinterpret_cast<int*>(&max);
 		if(cycleFBM<0){cycleFBM=0;}
 
-
-		hlmsDS->setFullBright((Ogre::HlmsDS::FullBrightMode) cycleFBM);
+		//temp
+		//hlmsDS->setFullBright((Ogre::HlmsDS::FullBrightMode) cycleFBM);
 	} else if (arg.keysym.sym == SDLK_F8) {
 		cycleX+=cycleMode;
 
 		if(cycleX<0){cycleX=0;}
-		hlmsDS->setDebugz(cycleX);
+		//temp
+		//hlmsDS->setDebugz(cycleX);
 	} else if (arg.keysym.sym == SDLK_F9) {
 		cycleY+=cycleMode;
 
 		if(cycleY<0){cycleY=0;}
-		hlmsDS->setDebugw(cycleY);
+		//temp
+		//hlmsDS->setDebugw(cycleY);
 	} else if (arg.keysym.sym == SDLK_l) {
 		museum->slowDown=!museum->slowDown;
 	} else if (arg.keysym.sym == SDLK_h) {

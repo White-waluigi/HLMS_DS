@@ -1,291 +1,190 @@
 /*
- * OgreDSHLMS.cpp
+ * OgreHlmsDS.cpp
  *
- *  Created on: 24.11.2015
+ *  Created on: Jan 4, 2018
  *      Author: marvin
  */
-#include "Datablocks/Data/DSMaterialParamType.h"
+#include <iostream>
+#include <OgreHlmsDS.h>
+#include <Compositor/OgreCompositorCommon.h>
+#include "Compositor/OgreCompositorShadowNode.h"
+#include <OgreSceneManager.h>
+#include <OgreConstBufferPacked.h>
+#include <OgreHlmsListener.h>
+#include "CommandBuffer/OgreCommandBuffer.h"
 #include "OgreStableHeaders.h"
 
-#include "OgreHlmsDS.h"
-#include "Datablocks/DSDatablock.h"
-#include "Datablocks/DSLightDatablock.h"
-#include "OgreHlmsManager.h"
-#include "OgreHlmsListener.h"
+#if !OGRE_NO_JSON
+#include "OgreHlmsJsonUnlit.h"
+#endif
 
 #include "OgreViewport.h"
 #include "OgreRenderTarget.h"
+#include "OgreCamera.h"
 #include "OgreHighLevelGpuProgramManager.h"
 #include "OgreHighLevelGpuProgram.h"
-#include "OgreForward3D.h"
 
 #include "OgreSceneManager.h"
 #include "Compositor/OgreCompositorShadowNode.h"
 #include "Vao/OgreVaoManager.h"
 #include "Vao/OgreConstBufferPacked.h"
 #include "Vao/OgreTexBufferPacked.h"
+#include "Vao/OgreStagingBuffer.h"
+
+#include "OgreHlmsManager.h"
+#include "OgreLogManager.h"
 
 #include "CommandBuffer/OgreCommandBuffer.h"
 #include "CommandBuffer/OgreCbTexture.h"
 #include "CommandBuffer/OgreCbShaderBuffer.h"
 
-#include "Animation/OgreSkeletonInstance.h"
+#include "Modules/ModuleBroker.h"
 
-#include "Light/StringValueUtils.h"
+#include "HLMSManagers/PassBufferManager.h"
+#include "HLMSManagers/LightManager.h"
+#include "HLMSManagers/InstanceManager.h"
 
-#include "Datablocks/Data/DSVec4Param.h"
-#include "Datablocks/Data/DSTextureParam.h"
-#include "Datablocks/Data/DSTextureParamType.h"
-#include "Datablocks/DSMaterialDatablock.h"
-#include "limits"
+#include "Util/DSMath.h"
 
-#include "OgreHlmsJson.h"
-#include "OgreLwString.h"
+#include "Modules/Resources/Property.h"
+#include "Modules/Resources/Piece.h"
+#include "Modules/Resources/Value.h"
+#include "Modules/Resources/DSTexture.h"
+#include "Util/ShaderGenerator.h"
 
-#include "HLMSHelper/PassBuffer/PassBuffer.h"
+#include "OgreHlmsSamplerblock.h"
+
 namespace Ogre {
-
-//Initaliaze Shadercode Keywords
-const IdString DSProperty::MaterialsPerBuffer = IdString(
-		"materials_per_buffer");
-
-const IdString DSProperty::isForward = IdString("isForward");
-const IdString DSProperty::isGBuffer = IdString("isGBuffer");
-const IdString DSProperty::isLight = IdString("isLight");
-
-const IdString DSProperty::noTransf = IdString("noTransf");
-
-const IdString DSProperty::NumTextures = IdString("num_textures");
-
-const IdString DSProperty::DiffuseMap = IdString("diffuse_map");
-
-const IdString DSProperty::NormalMap = IdString("normal_map");
-
-const IdString DSProperty::SignedIntTex = IdString("signed_int_textures");
-
-const Ogre::String DSProperty::Vec4Defines = ("vec4_");
-const Ogre::String DSProperty::Vec4ValDefines = ("vec4v_");
-
-const Ogre::String DSProperty::TextureLoc = ("tex_");
-const Ogre::String DSProperty::TextureValLoc = ("texv_");
-const Ogre::String DSProperty::TextureDefines = ("texd_");
-const Ogre::String DSProperty::TextureUVindex = ("uvi_");
-
-const String DSProperty::NumTextureParams = ("NumTextureDefines");
-const String DSProperty::NumVec4Params = ("NumVec4Defines");
-
-const String DSProperty::MaxTextureParams = ("MaxTextureDefines");
-const String DSProperty::MaxVec4Params = ("MaxVec4Defines");
-
-const String DSProperty::Shadow = ("Shadow");
-
-const Ogre::String DSProperty::MaterialVec4Params = ("MaterialVec4Params");
-const Ogre::String DSProperty::MaterialTexParams = ("MaterialTexParams");
-const Ogre::String DSProperty::MaterialAutoparamParams =
-		("MaterialAutoparamParams");
-const Ogre::String DSProperty::MaterialAutoTexParams = ("MaterialAutoTexParams");
-
-const Ogre::String DSProperty::TextureHelper = ("TextureHelper");
-
-const Ogre::String DSProperty::NumSubTextures = ("NumSubTextures");
-
-const Ogre::String DSProperty::NumShadowTex = ("NumShadowTex");
 
 HlmsDS::HlmsDS(Archive* dataFolder, ArchiveVec* libraryFolders) :
 		HlmsBufferManager(HLMS_PBS, "ds", dataFolder, libraryFolders), ConstBufferPool(
-				DSDatablock::MaterialSizeInGpuAligned,
-				ConstBufferPool::ExtraBufferParams()) {
-	//std::cout <<"*****************************************\n"<<"HlmsDS"<<"\n";
-	this->lightmanager = new DSLightManager(this);
-	this->mShadowmapCmpSamplerblock = 0;
-	this->mShadowmapSamplerblock = 0;
-	this->mCurrentShadowmapSamplerblock = 0;
+				16, ConstBufferPool::ExtraBufferParams()) {
 
-	mCurrentPassBuffer = 0;
-	mGBuffer = new std::vector<TexturePtr>();
-	mGBufferInd = new std::vector<int>();
+	//create the Module Broker
+	this->mBroker = new ModuleBroker();
 
-	this->dsDatablocks = new std::vector<Ogre::DSDatablock*>();
-	this->timer = new Ogre::Timer();
+	//create all the Managers
+	this->mPBMgr = new PassBufferManager(this);
+	this->mLMgr = new LightManager(this);
+	this->mIMgr = new InstanceManager(this);
 
-	this->debugMode = DM_OFF;
-	this->fullBrightMode = FBM_OFF;
-
-	this->mWSListener = new HLMSDSWorkspaceListener();
-
-	this->jsonDs = new JsonParser(mHlmsManager, this);
-
-	mLastBoundPool = NULL;
-	mLastTextureHash = -1;
-	NumPssmSplits = -1;
-	requiresTextureFlipping = false;
-
-	this->passbuffer = new PassBuffer(this);
-
-	shadowmanager = NULL;
-	this->mLightGatheringMode = LightGatherDeferred;
+	//todo set light gather mode
+	//Not wanna make a mess in the build directory
+	this->setDebugOutputPath(true, true, "shaderDump/");
 }
+
+HlmsDS::~HlmsDS() {
+	//todo clean up
+	destroyAllBuffers();
+}
+void HlmsDS::uploadDirtyDSDatablocks() {
+
+	//upload all DSDatablocks which are not marked as synced
+	int i = 0;
+
+	for (std::list<Ogre::DSDatablock*>::iterator it = mDSDatablocks.begin();
+			it != mDSDatablocks.end(); ++it) {
+		if (!(*it)->isClean()) {
+			(*it)->upload();
+		}
+
+	}
+
+}
+
+//fill Passbuffer, execute pass related things (in this case create light volumes and assign Gbuffers and Shadow textures to the right Textures)
 HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 		bool casterPass, bool dualParaboloid, SceneManager* sceneManager) {
-	//std::cout <<"****************************preparePassHash***************\n";
-	incr = 0;
-	currentpassID++;
+	//clear properties from last pass
+	//todo offload to PassBufferManager
 	mSetProperties.clear();
 
-	int GbufferTexID = -1;
-	int Post1TexID = -1;
-	int Post2TexID = -1;
+	//Set the properties and create/retrieve the cache.
+	//todo offload to PassBufferManager
+	if (casterPass) {
+		setProperty(HlmsBaseProp::ShadowCaster, 1);
 
-	//find the GBUffer Compoistor texture
-	uint size = sceneManager->getCompositorTextures().size();
-	for (uint i = 0; i < size; i++) {
-
-		IdString name = sceneManager->getCompositorTextures().at(i).name;
-
-		if ((name == IdString("GBuffer"))) {
-			GbufferTexID = i;
-		}
-		if ((name == IdString("Post1"))) {
-			Post1TexID = i;
-		}
-		if ((name == IdString("Post2"))) {
-			Post2TexID = i;
-		}
 	}
-	//Do we need a GBUffer Compositor Texture?
+
+	Camera *camera = sceneManager->getCameraInProgress();
+
+	//call all the listeners
+	for (ListenerList::iterator it = mListeners.begin(); it != mListeners.end();
+			it++) {
+		(*it)->preparePassHash(shadowNode, casterPass, dualParaboloid,
+				sceneManager, this);
+	}
+
+	//generate passchache for return value
+	PassCache passCache;
+	passCache.passPso = getPassPsoForScene(sceneManager);
+	passCache.properties = mSetProperties;
+
 	assert(
-			GbufferTexID != -1
-					|| mWSListener->passID != HLMSDSWorkspaceListener::LightID);
+			mPassCache.size() <= (size_t )HlmsBits::PassMask
+					&& "Too many passes combinations, we'll overflow the bits assigned in the hash!");
 
-	if (GbufferTexID != -1) {
-		for (int i = 0; i < this->mNumGBuffers; i++) {
-
-			mGBuffer->push_back(
-					sceneManager->getCompositorTextures().at(GbufferTexID).textures->at(
-							i));
-		}
-	} else {
-
-	}
-	if (Post1TexID != -1) {
-			mPost1=
-					sceneManager->getCompositorTextures().at(Post1TexID).textures->at(
-							0);
-	}
-	if (Post2TexID != -1) {
-			mPost2=
-					sceneManager->getCompositorTextures().at(Post1TexID).textures->at(
-							0);
-	}
-	//clear the old shadowMaps
-	mPreparedPass.shadowMaps.clear();
-
-	HlmsCache retVal = Hlms::preparePassHashBase(shadowNode, casterPass,
-			dualParaboloid, sceneManager);
-
-	int32 numShadowMaps = 0;
-
-	if (shadowNode != 0) {
-		const TextureVec &contiguousShadowMapTex =
-				shadowNode->getContiguousShadowMapTex();
-
-		numShadowMaps = contiguousShadowMapTex.size();
-		mPreparedPass.shadowMaps.reserve(contiguousShadowMapTex.size());
-
-		//      TextureVec::const_iterator itShadowMap = contiguousShadowMapTex.begin();
-		//      TextureVec::const_iterator enShadowMap = contiguousShadowMapTex.end();
-
-		for (int i = 0; i < numShadowMaps; i++) {
-
-			mPreparedPass.shadowMaps.push_back(contiguousShadowMapTex.at(i));
-
-		}
-	} else {
-
-	}
-	int32 numPssmSplits = getProperty(HlmsBaseProp::PssmSplits);
-	this->NumPssmSplits = numPssmSplits;
-
-	this->roundPVMat = false;
-	if (sceneManager->getCameraInProgress()->getProjectionType()
-			== PT_ORTHOGRAPHIC) {
-
-		this->roundPVMat = true;
-
+	//Initialize passchach
+	PassCacheVec::iterator it = std::find(mPassCache.begin(), mPassCache.end(),
+			passCache);
+	if (it == mPassCache.end()) {
+		mPassCache.push_back(passCache);
+		it = mPassCache.end() - 1;
 	}
 
-	//check check if we are in the first pass
-	if (mWSListener->passType == HLMSDSWorkspaceListener::PT_SHADOW
-			&& !casterPass) {
+	const uint32 hash = (it - mPassCache.begin()) << HlmsBits::PassShift;
 
-		lightmanager->CheckForNewLights(sceneManager, shadowNode,
-				numPssmSplits);
-		lightmanager->updateLightData(sceneManager, shadowNode, numPssmSplits);
+	//Fill the buffers
+	HlmsCache retVal(hash, mType, HlmsPso());
+	retVal.setProperties = mSetProperties;
+	retVal.pso.pass = passCache.passPso;
 
-		mWSListener->passType = (HLMSDSWorkspaceListener::PassType) 0;
+	//mSetProperties.clear();
 
+	bool isShadowCastingPointLight = false;
+
+	//mat4 viewProj[2] + vec4 invWindowSize;
+	size_t mapSize = (16 + 16 + 4) * 4;
+
+	const bool isCameraReflected = camera->isReflected();
+	//mat4 invViewProj
+	// if( isCameraReflected || (casterPass && (mUsingExponentialShadowMaps || isShadowCastingPointLight)) )
+	//    mapSize += 16 * 4;
+
+	//todo remove
+	if (casterPass) {
+		isShadowCastingPointLight = getProperty(HlmsBaseProp::ShadowCasterPoint)
+				!= 0;
+
+		//vec4 viewZRow
+		//if( mUsingExponentialShadowMaps )
+		//   mapSize += 4 * 4;
+		//vec4 depthRange
+		mapSize += (2 + 2) * 4;
+		//vec4 cameraPosWS
+		if (isShadowCastingPointLight)
+			mapSize += 4 * 4;
 	}
 
-	if (mShadowmapSamplerblock
-			&& !getProperty(HlmsBaseProp::ShadowUsesDepthTexture))
-		mCurrentShadowmapSamplerblock = mShadowmapSamplerblock;
-	else
-		mCurrentShadowmapSamplerblock = mShadowmapCmpSamplerblock;
+	//vec4 clipPlane0
+	if (isCameraReflected)
+		mapSize += 4 * 4;
 
-	Ogre::Camera * camera = sceneManager->getCameraInProgress();
-	//map all the matrixes to the passbuffer
-	view = sceneManager->getCameraInProgress()->getViewMatrix();
-	proj = sceneManager->getCameraInProgress()->getProjectionMatrix();
-
-	RenderTarget *renderTarget =
-			sceneManager->getCurrentViewport()->getTarget();
-	requiresTextureFlipping = false;
-
-	if (renderTarget->requiresTextureFlipping()) {
-		proj[1][0] = -proj[1][0];
-		proj[1][1] = -proj[1][1];
-		proj[1][2] = -proj[1][2];
-		proj[1][3] = -proj[1][3];
-		requiresTextureFlipping = true;
-
+	for (ListenerList::iterator it = mListeners.begin(); it != mListeners.end();
+			it++) {
+		(*it)->getPassBufferSize(shadowNode, casterPass, dualParaboloid,
+				sceneManager);
 	}
 
-	mPreparedPass.viewMatrix = view;
+	//Arbitrary 2kb (minimum supported by GL is 64kb), should be enough.
+	//todo remove
+	const size_t maxBufferSize = 2 * 1024;
+	assert(mapSize <= maxBufferSize);
 
-	mPreparedPass.projMatrix = proj;
-	curviewProjMatrix = proj;
+	//create new Passbuffer if necessary
+	mPBMgr->update(mCurrentPassBuffer++);
 
-//	}
-	Matrix4 tempTexProjMat;
-
-//seams more modern to hold the passbufferdata in a buffer instead of directly sending to thre GPU, since its just a few kb at most and lets me keep better track of it and debug it easier
-
-	std::vector<float> * passbufferBuffer =
-			this->passbuffer->getPassBufferArray(camera, shadowNode, casterPass,
-					dualParaboloid);
-////The Pass Buffer is available to every material and is used for debugging and setting the matrixes
-
-	size_t maxBufferSize = passbufferBuffer->size() * sizeof(float);
-
-	//Arbitrary 16kb (minimum supported by GL), should be enough.
-	maxBufferSize = 16 * 1024;
-
-	if (mCurrentPassBuffer >= mPassBuffers.size()) {
-		mPassBuffers.push_back(
-				mVaoManager->createConstBuffer(maxBufferSize,
-						BT_DYNAMIC_PERSISTENT, 0, false));
-	}
-	ConstBufferPacked *passBuffer = mPassBuffers[mCurrentPassBuffer++];
-
-	float *passBufferPtr = reinterpret_cast<float*>(passBuffer->map(0,
-			maxBufferSize));
-
-	for (uint i = 0; i < passbufferBuffer->size(); i++) {
-		//finally upload it to the Passsbuffer to the GPU
-
-		*passBufferPtr++ = passbufferBuffer->at(i);
-	}
-
+	//mTexBuffers must hold at least one buffer to prevent out of bound exceptions.
 	if (mTexBuffers.empty()) {
 		size_t bufferSize = std::min<size_t>(mTextureBufferDefaultSize,
 				mVaoManager->getTexBufferMaxSize());
@@ -294,128 +193,140 @@ HlmsCache HlmsDS::preparePassHash(const Ogre::CompositorShadowNode* shadowNode,
 		mTexBuffers.push_back(newBuffer);
 	}
 
-	//*********************Cleaning Up*********************************************
-
-	passBuffer->unmap(UO_KEEP_PERSISTENT);
-
-	uploadDirtyDatablocks();
-	uploadDirtyDSDatablocks();
-
 	mLastTextureHash = 0;
-
 	mLastBoundPool = 0;
-
-	if (passDet.find(currentpassID) == passDet.end()
-			|| passDet[currentpassID] != retVal.hash) {
-		//std::cout <<  mWSListener->getName() << "\t" << retVal.hash<<"\t";
-		passDet[currentpassID] = retVal.hash;
-		passDetNL = true;
+	if (firstPass) {
+		uploadDirtyDSDatablocks();
 	}
+	uploadDirtyDatablocks();
 
-	if (passCSC != 0			&& mWSListener->passID == HLMSDSWorkspaceListener::GbufferID			&& passDetNL) {
-		passDetNL = false;
-		//std::cout << "num rebuilds\t" << passCSC << "\n";
-		passCSC = 0;
-	}
-
+	this->firstPass = false;
 	return retVal;
 }
+
+//set Material related properties
 void HlmsDS::setProperties(Renderable* renderable, PiecesMap* inOutPieces,
-		bool ishadow) {
-	IdString("hw_gamma_read");
-	setProperty(IdString("NumShadowMaps"), mPreparedPass.shadowMaps.size());
-
-	//might be obsolete soon
-	int dbType = getDatablocktype(renderable->getDatablock());
-	DSDatablock * datablock =
-			dynamic_cast<DSDatablock*>(renderable->getDatablock());
-
-	int count = 0;
-
-	if (dbType == DT_Forward) {
-		count++;
-		//setProperty(DSProperty::isForward, 1);
-		datablock->getPropertyParams()->push_back(
-				new DSPropertyParam(DSProperty::isForward, 1));
+		DSDatablock * datablock, bool ishadow) {
+	//simply set all properties of the datablock
+	DSResource::PropertyList l = datablock->genProperties();
+	for (DSResource::PropertyList::iterator it = l.begin(); it != l.end();
+			++it) {
+		setProperty(it->first, it->second);
 	}
-
-	if (dbType == DT_Light) {
-		count++;
-		//setProperty(DSProperty::isLight, 1);
-		datablock->getPropertyParams()->push_back(
-				new DSPropertyParam(DSProperty::isLight, 1));
-	}
-
-	if (dbType == DT_GBuffer) {
-
-		count++;
-		//setProperty(DSProperty::isGBuffer, 1);
-		datablock->getPropertyParams()->push_back(
-				new DSPropertyParam(DSProperty::isGBuffer, 1));
-	}
-	assert(count == 1);
-
-	setProperty(DSProperty::NumTextures, datablock->mBakedTextures.size());
-
-	for (uint i = 0; i < datablock->getPropertyParams()->size(); i++) {
-		DSPropertyParam *param = datablock->getPropertyParams()->at(i);
-
-		setProperty(param->getKey(), param->getValue());
-	}
-
 }
+//set Material related shader pieces
 void HlmsDS::setPieces(Renderable* renderable, PiecesMap* inOutPieces,
-		bool bool1) {
-
-	//all necessary pieces are already defined in the datablocks
-	DSDatablock * datablock =
-			dynamic_cast<DSDatablock*>(renderable->getDatablock());
-
-	for (uint i = 0; i < datablock->getPieceParams()->size(); i++) {
-		DSPieceParam *param = datablock->getPieceParams()->at(i);
-		inOutPieces[param->getShader()][param->getId()] = param->getPiece();
+		DSDatablock * datablock, bool isshadow) {
+	//simply set all properties of the datablock (for all shader types)
+	std::map<IdString, String> l = datablock->genPieces();
+	for (std::map<IdString, String>::iterator it = l.begin(); it != l.end();
+			++it) {
+		inOutPieces[PixelShader][it->first] = it->second;
+		inOutPieces[VertexShader][it->first] = it->second;
+		inOutPieces[GeometryShader][it->first] = it->second;
+		inOutPieces[HullShader][it->first] = it->second;
+		inOutPieces[DomainShader][it->first] = it->second;
 	}
 
 }
+
+//set Texture bindings
 void HlmsDS::calculateHashForPreCreate(Renderable* renderable,
 		PiecesMap* inOutPieces) {
 
-	Ogre::String uwot = renderable->getDatablock()->getName().getFriendlyText();
-	setProperty(IdString("MAX_FORWARD_LIGHTS"),DSLightManager::MAX_LIGHT_FORWARD);
+	assert(dynamic_cast<DSDatablock*>(renderable->getDatablock()));
+	DSDatablock *datablock =
+			static_cast<DSDatablock*>(renderable->getDatablock());
 
-	setProperties(renderable, inOutPieces, false);
-	setPieces(renderable, inOutPieces, false);
-	String slotsPerPoolStr = StringConverter::toString(mSlotsPerPool);
+	//todo offload to InstanceManger
 
-	inOutPieces[VertexShader][DSProperty::MaterialsPerBuffer] = slotsPerPoolStr;
-	inOutPieces[PixelShader][DSProperty::MaterialsPerBuffer] = slotsPerPoolStr;
+//	setProperty(HlmsBaseProp::Skeleton, 0);
+//	setProperty(HlmsBaseProp::Normal, 0);
+//	setProperty(HlmsBaseProp::QTangent, 0);
+//	setProperty(HlmsBaseProp::Tangent, 0);
+//	setProperty(HlmsBaseProp::BonesPerVertex, 0);
 
+	setProperties(renderable, inOutPieces, datablock, false);
+	setPieces(renderable, inOutPieces, datablock, false);
 }
 
+//Set shadowmap texture units
 void Ogre::HlmsDS::calculateHashForPreCaster(Renderable* renderable,
 		PiecesMap* inOutPieces) {
-	int dbType = getDatablocktype(renderable->getDatablock());
+	DSDatablock *datablock =
+			static_cast<DSDatablock*>(renderable->getDatablock());
+
+// todo offload all to InstanceManager
 
 	HlmsPropertyVec::iterator itor = mSetProperties.begin();
 	HlmsPropertyVec::iterator end = mSetProperties.end();
 
-	//todo skeleton, animation support
-
-	DSDatablock *datablock =
-			static_cast<DSDatablock*>(renderable->getDatablock());
-
-	//ShadowObjects always treated as GBuffer objects
-	setProperty(DSProperty::isGBuffer, 1);
-	setPieces(renderable, inOutPieces, false);
-
-	String slotsPerPoolStr = StringConverter::toString(mSlotsPerPool);
-	inOutPieces[VertexShader][DSProperty::MaterialsPerBuffer] = slotsPerPoolStr;
-	inOutPieces[PixelShader][DSProperty::MaterialsPerBuffer] = slotsPerPoolStr;
+	while (itor != end) {
+		if ( /*itor->keyName != UnlitProperty::HwGammaRead &&*/
+		//itor->keyName != UnlitProperty::UvDiffuse &&
+		itor->keyName != HlmsBaseProp::Skeleton
+				&& itor->keyName != HlmsBaseProp::BonesPerVertex
+				&& itor->keyName != HlmsBaseProp::DualParaboloidMapping
+				&& itor->keyName != HlmsBaseProp::AlphaTest
+				&& itor->keyName != HlmsBaseProp::AlphaBlend) {
+			itor = mSetProperties.erase(itor);
+			end = mSetProperties.end();
+		} else {
+			++itor;
+		}
+	}
+	setProperties(renderable, inOutPieces, datablock, true);
+	setPieces(renderable, inOutPieces, datablock, true);
 }
+void HlmsDS::createTextureCache(uint32 renderableHash,
+		const HlmsCache &passCache, uint32 finalHash,
+		const QueuedRenderable &queuedRenderable, const HlmsCache* retVal) {
 
+	//start at 2 because of the Instance Data Buffer
+	int texUnit = 2;
+
+	//get current datablock
+	DSDatablock *datablock =
+			static_cast<DSDatablock*>(queuedRenderable.renderable->getDatablock());
+
+	GpuProgramParametersSharedPtr psParams =
+			retVal->pso.pixelShader->getDefaultParameters();
+
+	int numArrayTextures = 0;
+
+	//Simply upload all the textures inside the array provided by the datablock
+	if (!retVal->pso.pixelShader.isNull()) {
+
+		GpuProgramParametersSharedPtr psParams =
+				retVal->pso.pixelShader->getDefaultParameters();
+
+		DSResource::TextureRef::TextureBuffList l = datablock->genTextureBufs();
+		for (DSResource::TextureRef::TextureBuffList::iterator it = l.begin();
+				it != l.end(); ++it) {
+
+			DSResource::TextureRef * lol = (*it);
+
+			//if no custom name is provided, store it in the main texture array, otherwise store under chosen name
+			if ("" == lol->mCustomName) {
+
+				psParams->setNamedConstant(
+						"textureMapsArray["
+								+ StringConverter::toString(numArrayTextures++)
+								+ "]", texUnit++);
+
+			} else {
+
+				psParams->setNamedConstant((*it)->mCustomName, texUnit++);
+
+			}
+		}
+
+	}
+}
+//clean up
 void HlmsDS::destroyAllBuffers(void) {
 	HlmsBufferManager::destroyAllBuffers();
-	OGRE_DELETE lightmanager;
+
 	mCurrentPassBuffer = 0;
 
 	{
@@ -429,620 +340,356 @@ void HlmsDS::destroyAllBuffers(void) {
 			++itor;
 		}
 
-		for (size_t i = 0; i < dsDatablocks->size(); i++) {
-			dsDatablocks->at(i)->frameEnded();
-
-			if (dsDatablocks->at(i)->MaterialBuffer->getMappingState()
-					!= MS_UNMAPPED)
-				dsDatablocks->at(i)->MaterialBuffer->unmap(UO_UNMAP_ALL);
-			mVaoManager->destroyConstBuffer(
-					dsDatablocks->at(i)->MaterialBuffer);
-
-			if (dsDatablocks->at(i)->ShadowMaterialBuffer != NULL
-					&& dsDatablocks->at(i)->ShadowMaterialBuffer->getMappingState()
-							!= MS_UNMAPPED) {
-				dsDatablocks->at(i)->ShadowMaterialBuffer->unmap(UO_UNMAP_ALL);
-				mVaoManager->destroyConstBuffer(
-						dsDatablocks->at(i)->ShadowMaterialBuffer);
-			}
-
-		}
-
 		mPassBuffers.clear();
+
+		//todo destroy all Managers, Datablocks and DSLights
+
 	}
 }
-//very usefull for testing if buffers are uploaded correctly
-void SaveImage(TexturePtr TextureToSave, String filename)
-{
-     Ogre::v1::HardwarePixelBufferSharedPtr readbuffer;
-     readbuffer = TextureToSave->getBuffer(0, 0);
-     readbuffer->lock(Ogre::v1::HardwareBuffer::HBL_NORMAL );
-     const PixelBox &readrefpb = readbuffer->getCurrentLock();
-     uchar *readrefdata = static_cast<uchar*>(readrefpb.data);
 
-     Image img;
-     img = img.loadDynamicImage (readrefdata, TextureToSave->getWidth(),
-         TextureToSave->getHeight(), TextureToSave->getFormat());
-     img.save(filename);
-
-     readbuffer->unlock();
-}
+//Update material buffers
 inline uint32 HlmsDS::fillBuffersFor(const HlmsCache* cache,
 		const QueuedRenderable& queuedRenderable, bool casterPass,
 		uint32 lastCacheHash, CommandBuffer* commandBuffer, bool isV1) {
 
-	int dbt = getDatablocktype(queuedRenderable.renderable->getDatablock());
-	if (casterPass) {
-		const DSDatablock *ldatablock =
-				static_cast<const DSDatablock*>(queuedRenderable.renderable->getDatablock());
-
-	}
-	//if ( OGRE_EXTRACT_HLMS_TYPE_FROM_CACHE_HASH( lastCacheHash ) != HLMS_PBS) {
-	ConstBufferPacked *passBuffer = mPassBuffers[mCurrentPassBuffer - 1];
-
-	int i = mPassBuffers.size();
-//    	    *commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer( PixelShader,
-//    	                                                                   2, passBuffer, 0,
-//																		   passBuffer->getTotalSizeBytes() );
-	int texUnit = 1;
-
-	//map the Gbuffer
-	if (dbt == this->DT_Forward){
-		DSDatablock *datablock =
-				static_cast<DSDatablock*>(queuedRenderable.renderable->getDatablock());
-
-
-		TexBufferPacked *forwardBuffer = lightmanager->getForwardLightBuffer();
-
-		*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(PixelShader,
-				LightListTexUnit, forwardBuffer, 0, 0);
-
-
-		texUnit++;
-		*commandBuffer->addCommand<CbTexture>() = CbTexture(
-				this->mPost1Ind, true, this->mPost1.get(),
-				mGbufferSamplerBlock);
-
-		texUnit++;
-		*commandBuffer->addCommand<CbTexture>() = CbTexture(
-				this->mPost2Ind, true, this->mPost2.get(),
-				mGbufferSamplerBlock);
-
-		texUnit++;
-
-	}
-	if (dbt == this->DT_Light || dbt == this->DT_Forward) {
-		//texUnit += this->mNumGBuffers;
-
-
-		FastArray<TexturePtr>::const_iterator itors =
-				mPreparedPass.shadowMaps.begin();
-		FastArray<TexturePtr>::const_iterator ends =
-				mPreparedPass.shadowMaps.end();
-
-		int i = 0;
-		while (itors != ends) {
-			*commandBuffer->addCommand<CbTexture>() = CbTexture(
-					mPreparedPass.shadowMapTUs[i], true, itors->get(),
-					mCurrentShadowmapSamplerblock);
-
-			++texUnit;
-			++itors;
-			++i;
-		}
-		HlmsSamplerblock sba;
-
-		for (int i = 0; i < this->mNumGBuffers; i++) {
-
-			*commandBuffer->addCommand<CbTexture>() = CbTexture(
-					this->mGBufferInd->at(i), true, this->mGBuffer->at(i).get(),
-					mGbufferSamplerBlock);
-
-			texUnit++;
-		}
-
-//						mHlmsManager->getTextureManager()->createOrRetrieveTexture("BumpyMetal.jpg",HlmsTextureManager::TEXTURE_TYPE_DIFFUSE).texture.get()
-
-	}
-
-	*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(VertexShader,
-			0, passBuffer, 0, passBuffer->getTotalSizeBytes());
-
-	mLastTextureHash = 0;
-	mLastBoundPool = 0;
-
-	//layout(binding = 2) uniform InstanceBuffer {} instance
-	if (mCurrentConstBuffer < mConstBuffers.size()
-			&& (size_t) ((mCurrentMappedConstBuffer - mStartMappedConstBuffer)
-					+ 4) <= mCurrentConstBufferSize) {
-
-		*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(
-				VertexShader, 2, mConstBuffers[mCurrentConstBuffer], 0, 0);
-		*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(
-				PixelShader, 2, mConstBuffers[mCurrentConstBuffer], 0, 0);
-	}
-
-	rebindTexBuffer(commandBuffer);
-
-	mListener->hlmsTypeChanged(casterPass, commandBuffer,
-			queuedRenderable.renderable->getDatablock());
-
-	//}
-
-	uint32 assSlot = 0;
-
+	//convert datablock
 	DSDatablock *datablock =
 			static_cast<DSDatablock*>(queuedRenderable.renderable->getDatablock());
 
-//	if (datablock->getParam("position") != NULL) {
-//		std::cout << *datablock->getParam("position") << "\t" <<datablock->isDirty()<< "\n";
-//	}
-	ConstBufferPacked *materialBuffer = datablock->getMaterialBuffer();
+	//Check if HLMS was changed
+	if ( OGRE_EXTRACT_HLMS_TYPE_FROM_CACHE_HASH(lastCacheHash) != this->mType) {
+		//We changed HlmsType, rebind the shared textures.
+		mLastTextureHash = 0;
+		mLastBoundPool = 0;
 
+		//layout(binding = 0) uniform PassBuffer {} pass
+		ConstBufferPacked *passBuffer = mPBMgr->get(mCurrentPassBuffer - 1);
+		*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(
+				VertexShader, 0, passBuffer, 0,
+				passBuffer->getTotalSizeBytes());
+		*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(
+				PixelShader, 0, passBuffer, 0, passBuffer->getTotalSizeBytes());
+
+		//layout(binding = 2) uniform InstanceBuffer {} instance
+		if (mCurrentConstBuffer < mConstBuffers.size()
+				&& (size_t) ((mCurrentMappedConstBuffer
+						- mStartMappedConstBuffer) + 4)
+						<= mCurrentConstBufferSize) {
+
+			*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(
+					VertexShader, 2, mConstBuffers[mCurrentConstBuffer], 0, 0);
+			*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(
+					PixelShader, 2, mConstBuffers[mCurrentConstBuffer], 0, 0);
+		}
+
+		rebindTexBuffer(commandBuffer);
+
+		for (ListenerList::iterator it = mListeners.begin();
+				it != mListeners.end(); it++) {
+			(*it)->hlmsTypeChanged(casterPass, commandBuffer, datablock);
+		}
+	}
+
+	//Don't bind the material buffer on caster passes (important to keep
+	//MDI & auto-instancing running on shadow map passes)
+
+	//layout(binding = 1) uniform MaterialBuf {} materialArray
+
+	ConstBufferPacked * materialbuffer = datablock->getMaterialBuffer();
 	*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(PixelShader,
-			1, materialBuffer, 0, materialBuffer->getTotalSizeBytes());
+			MaterialBuffer, materialbuffer, 0,
+			materialbuffer->getTotalSizeBytes());
+
+	*commandBuffer->addCommand<CbShaderBuffer>() = CbShaderBuffer(VertexShader,
+			MaterialBuffer, materialbuffer, 0,
+			materialbuffer->getTotalSizeBytes());
+
+	//---------------------------------------------------------------------------
+	// Upload the IndexInstanceBuffer (currentMappedConstBuffer) and the DataInstanceBuffer (mCurrentMappedTexBuffer)
+	//---------------------------------------------------------------------------
+
+	//Map the Buffer to pointers
+	uint32 * RESTRICT_ALIAS currentMappedConstBuffer = currentMappedConstBuffer;
+	float * RESTRICT_ALIAS currentMappedTexBuffer = mCurrentMappedTexBuffer;
+
+	int IndexBufferSize = 4;
+	//Check if we exceed the Index Buffer
+	bool exceedsConstBuffer = (size_t) ((currentMappedConstBuffer
+			- mStartMappedConstBuffer) + IndexBufferSize)
+			> mCurrentConstBufferSize;
+
+	int DataBufferSize = 16;
+	//Check if we Exceed the databuffer
+	bool exceedsTexBuffer = (currentMappedTexBuffer - mStartMappedTexBuffer)
+			+ DataBufferSize >= mCurrentTexBufferSize;
+
+	//Change the Buffer
+	if (exceedsConstBuffer || exceedsTexBuffer) {
+		currentMappedConstBuffer = mapNextConstBuffer(commandBuffer);
+
+		if (exceedsTexBuffer)
+			mapNextTexBuffer(commandBuffer, DataBufferSize * sizeof(float));
+		else
+			rebindTexBuffer(commandBuffer, true,
+					DataBufferSize * sizeof(float));
+
+		currentMappedTexBuffer = mCurrentMappedTexBuffer;
+	}
 
 	//---------------------------------------------------------------------------
 	//                          ---- VERTEX SHADER ----
 	//---------------------------------------------------------------------------
-	int drawid = generateWorldMatrixBuffer(cache, queuedRenderable, casterPass,
-			lastCacheHash, commandBuffer, isV1);
+
+	bool useIdentityProjection =
+			queuedRenderable.renderable->getUseIdentityProjection();
+
+	//Data TextureBuffer
+	GPUPointer* ptrD = new GPUPointer();
+	//Index ConstBuffer
+	GPUPointer * ptrI = new GPUPointer();
+
+	ptrD->start(currentMappedTexBuffer);
+	ptrI->start(currentMappedConstBuffer);
+
+	//upload necessary data using InstanceManager
+	mIMgr->upload(queuedRenderable, ptrI, ptrD);
+
+	//set Necessary offsets
+	currentMappedTexBuffer += ptrD->getSize();
+	currentMappedConstBuffer += ptrI->getSize();
 	//---------------------------------------------------------------------------
 	//                          ---- PIXEL SHADER ----
 	//---------------------------------------------------------------------------
-	{
-		const DSDatablock *datablock =
-				static_cast<const DSDatablock*>(queuedRenderable.renderable->getDatablock());
 
+	//upload all stored textures
+	uint texUnit = 2;
+	DSResource::TextureRef::TextureBuffList l = datablock->genTextureBufs();
 
+	for (DSResource::TextureRef::TextureBuffList::iterator it = l.begin();
+			it != l.end(); it++) {
 
-		if (datablock->mTextureHash != mLastTextureHash) {
-			//Rebind textures
-
-			DSDatablock::DSBakedTexturesArray::const_iterator itor =
-					datablock->mBakedTextures.begin();
-			DSDatablock::DSBakedTexturesArray::const_iterator end =
-					datablock->mBakedTextures.end();
-			///texUnit=datablock->texunitstart;
-			while (itor != end) {
-
-//				*commandBuffer->addCommand<CbTexture>() = CbTexture(texUnit++,
-//						true, this->mGBuffer->at(0).get(), itor->samplerBlock);
-
-
-				*commandBuffer->addCommand<CbTexture>() = CbTexture(texUnit++,
-						true, itor->texture.get(), itor->samplerBlock);
-
-				++itor;
-
-			}
-
-			*commandBuffer->addCommand<CbTextureDisableFrom>() =
-					CbTextureDisableFrom(texUnit);
-
-			mLastTextureHash = datablock->mTextureHash;
-		}
+		*commandBuffer->addCommand<CbTexture>() = CbTexture(texUnit++, true,
+				(*it)->texloc.texture.get(), (*it)->samplerBlock);
 
 	}
-	//return ((mCurrentMappedConstBuffer - mStartMappedConstBuffer) >> 2) - 1;
-	return drawid;
+	*commandBuffer->addCommand<CbTextureDisableFrom>() = CbTextureDisableFrom(
+			texUnit);
+
+	mLastTextureHash = datablock->mTextureHash;
+	mCurrentMappedConstBuffer = currentMappedConstBuffer;
+	mCurrentMappedTexBuffer = currentMappedTexBuffer;
+
+	return ((mCurrentMappedConstBuffer - mStartMappedConstBuffer) >> 2) - 1;
+
 }
 
 uint32 HlmsDS::fillBuffersForV1(const HlmsCache* cache,
 		const QueuedRenderable& queuedRenderable, bool casterPass,
 		uint32 lastCacheHash, CommandBuffer* commandBuffer) {
-//	std::cout <<"*****************************************\n"<<"fillBuffersForV1"<<"\n";
+	//redirect to main fullBuffersFor
 	return fillBuffersFor(cache, queuedRenderable, casterPass, lastCacheHash,
 			commandBuffer, true);
 }
-
 uint32 HlmsDS::fillBuffersForV2(const HlmsCache* cache,
 		const QueuedRenderable& queuedRenderable, bool casterPass,
 		uint32 lastCacheHash, CommandBuffer* commandBuffer) {
-//	std::cout <<"*****************************************\n"<<"fillBuffersForV2"<<"\n";
+	//redirect to main fullBuffersFor
 	return fillBuffersFor(cache, queuedRenderable, casterPass, lastCacheHash,
 			commandBuffer, false);
-}
 
+}
 void HlmsDS::frameEnded(void) {
 
+	//Notify Buffer Manager
 	HlmsBufferManager::frameEnded();
-	mCurrentPassBuffer = 0;
+	//set firstPass, to notify first pass of Frame
+	this->firstPass = true;
 
-	for (size_t i = 0; i < dsDatablocks->size(); i++) {
-		dsDatablocks->at(i)->frameEnded();
-	}
-	CurLightMat = 0;
-	currentpassID = 0;
-	frame++;
+	//reset passbuffer
+	mCurrentPassBuffer = 0;
 }
 const HlmsCache* HlmsDS::createShaderCacheEntry(uint32 renderableHash,
 		const HlmsCache& passCache, uint32 finalHash,
 		const QueuedRenderable& queuedRenderable) {
 
+	//call base chache
 	const HlmsCache *retVal = Hlms::createShaderCacheEntry(renderableHash,
 			passCache, finalHash, queuedRenderable);
 
-	static int counter = 0;
-
-
-	passCSC++;
-
-
-	assert(queuedRenderable.movableObject->getName().compare("") != 0);
-
-	if (mShaderProfile == "hlsl") {
-		mListener->shaderCacheEntryCreated(mShaderProfile, retVal, passCache,
-				mSetProperties, queuedRenderable);
+	//Speical case for hlsl and metal
+	if (mShaderProfile == "hlsl" || mShaderProfile == "metal") {
+		for (ListenerList::iterator it = mListeners.begin();
+				it != mListeners.end(); it++) {
+			(*it)->shaderCacheEntryCreated(mShaderProfile, retVal, passCache,
+					mSetProperties, queuedRenderable);
+		}
 		return retVal; //D3D embeds the texture slots in the shader.
 	}
+
 	//Set samplers.
-	if (!retVal->pso.pixelShader.isNull()) {
+	assert(
+			dynamic_cast<const DSDatablock*>(queuedRenderable.renderable->getDatablock()));
+	const DSDatablock *datablock =
+			static_cast<const DSDatablock*>(queuedRenderable.renderable->getDatablock());
 
-		GpuProgramParametersSharedPtr psParams =
-				retVal->pso.pixelShader->getDefaultParameters();
-
-		int texUnit = 1; //Vertex shader consumes 1 slot with its tbuffer.
-		Datablock_Type tp = getDatablocktype(
-				queuedRenderable.renderable->getDatablock());
-
-		if (tp == DT_Light || tp == DT_Forward) {
-
-			if (!mPreparedPass.shadowMaps.empty()) {
-				vector<int>::type shadowMaps;
-				shadowMaps.reserve(mPreparedPass.shadowMaps.size());
-				mPreparedPass.shadowMapTUs.reserve(
-						mPreparedPass.shadowMaps.size());
-				for (size_t i = 0; i < mPreparedPass.shadowMaps.size(); ++i) {
-					shadowMaps.push_back(texUnit);
-					mPreparedPass.shadowMapTUs.push_back(texUnit);
-					texUnit++;
-				}
-				psParams->setNamedConstant("texShadowMap", &shadowMaps[0],
-						shadowMaps.size(), 1);
-
-			}
-			mGBufferInd = new std::vector<int>();
-
-			for (int i = 0; i < this->mNumGBuffers; i++) {
-
-				std::stringstream ss;
-				ss << "GBuffer" << i;
-				std::string s = ss.str();
-				this->mGBufferInd->push_back(texUnit);
-				psParams->setNamedConstant(s, texUnit++);
-			}
-		}
-		if(tp == DT_Forward){
-			LightListTexUnit=texUnit;
-			psParams->setNamedConstant("fLightList", texUnit++);
-			mPost1Ind=texUnit;
-			psParams->setNamedConstant("Post1", texUnit++);
-			mPost2Ind=texUnit;
-			psParams->setNamedConstant("Post2", texUnit++);
-		}
-
-		DSDatablock *datablock =
-				static_cast<DSDatablock*>(queuedRenderable.renderable->getDatablock());
-		//printf("%i %i\n**********************\n",tp,texUnit);
-		//datablock->texunitstart=texUnit;
-
-		int numTextures = getProperty(DSProperty::NumTextures);
-		for (int i = 0; i < numTextures; ++i) {
-			psParams->setNamedConstant(
-					"textureMaps[" + StringConverter::toString(i) + "]",
-					texUnit++);
-
-
-		}
-
-
-	}
-	DSDatablock *datablock =
-			static_cast<DSDatablock*>(queuedRenderable.renderable->getDatablock());
-
-	// std::cout.setstate(std::ios_base::failbit);
+	createTextureCache(renderableHash, passCache, finalHash, queuedRenderable,
+			retVal);
 
 	GpuProgramParametersSharedPtr vsParams =
 			retVal->pso.vertexShader->getDefaultParameters();
+	//vsParams->setNamedConstant("worldMatBuf", 0);
+	//if( getProperty( UnlitProperty::TextureMatrix ) )
+	//vsParams->setNamedConstant("animationMatrixBuf", 1);
 
-	mListener->shaderCacheEntryCreated(mShaderProfile, retVal, passCache,
-			mSetProperties, queuedRenderable);
+	for (ListenerList::iterator it = mListeners.begin(); it != mListeners.end();
+			it++) {
+		(*it)->shaderCacheEntryCreated(mShaderProfile, retVal, passCache,
+				mSetProperties, queuedRenderable);
+	}
 	mRenderSystem->_setPipelineStateObject(&retVal->pso);
-	//mRenderSystem->pso._setProgramsFromHlms(retVal);
+
 	mRenderSystem->bindGpuProgramParameters(GPT_VERTEX_PROGRAM, vsParams,
 			GPV_ALL);
 	if (!retVal->pso.pixelShader.isNull()) {
 		GpuProgramParametersSharedPtr psParams =
 				retVal->pso.pixelShader->getDefaultParameters();
-
 		mRenderSystem->bindGpuProgramParameters(GPT_FRAGMENT_PROGRAM, psParams,
 				GPV_ALL);
 	}
-	//std::cout.clear();
-	return retVal;
-}
 
+	if (!mRenderSystem->getCapabilities()->hasCapability(
+			RSC_CONST_BUFFER_SLOTS_IN_SHADER)) {
+		//Setting it to the vertex shader will set it to the PSO actually.
+		retVal->pso.vertexShader->setUniformBlockBinding("PassBuffer", 0);
+		retVal->pso.vertexShader->setUniformBlockBinding("MaterialBuf", 1);
+		retVal->pso.vertexShader->setUniformBlockBinding("InstanceBuffer", 2);
+	}
+
+	return retVal;
+
+}
 HlmsDatablock* HlmsDS::createDatablockImpl(IdString datablockName,
 		const HlmsMacroblock* macroblock, const HlmsBlendblock* blendblock,
 		const HlmsParamVec& paramVec) {
 
-	Ogre::DSDatablock* datab;
+	DSDatablock*db = new Ogre::DSDatablock(datablockName, this, macroblock,
+			blendblock, paramVec);
 
-	bool light = false;
+	//todo remove temporary testcode once passers are done
 
-	for (uint i = 0; i < paramVec.size(); i++) {
 
-		if (paramVec.at(i).first == IdString("type")) {
-			light = paramVec[i].second.compare("light") == 0;
-		}
-	}
 
-	if (light) {
+		static int ctr = 0;
+		ctr++;
 
-		datab = OGRE_NEW DSLightDatablock(datablockName, this, macroblock,
-				blendblock, paramVec);
+		reflist l;
+		l["datablock"] = db;
+		l["hlms"] = this;
+		l["mandatory"] = new DSResource::MandatoryInit("testdata");
+		Value * test = dynamic_cast<Value *>(mBroker->loadModule("Value", l));
 
-	} else {
+		l["mandatory"] = new DSResource::MandatoryInit("testpiece");
+		Piece * test2 = dynamic_cast<Piece *>(mBroker->loadModule("Piece", l));
+		l["mandatory"] = new DSResource::MandatoryInit("testprop");
+		Property * test3 = dynamic_cast<Property *>(mBroker->loadModule(
+				"Property", l));
+		l["mandatory"] = new DSResource::MandatoryInit("testtex");
 
-		datab = OGRE_NEW DSMaterialDatablock(datablockName, this, macroblock,
-				blendblock, paramVec);
-	}
-	dsDatablocks->push_back(datab);
-	return datab;
+		int texctr = rand() % 628;
+
+		HlmsSamplerblock sb = HlmsSamplerblock();
+		sb.setFiltering(TFO_ANISOTROPIC);
+		sb.mU = TAM_UNKNOWN;
+
+		const HlmsSamplerblock *mainSb = NULL;
+		mainSb = mHlmsManager->getSamplerblock(sb);
+
+		l["texinit"] = new DSTexture::TexInitData(
+				StringConverter::toString(texctr + 2) + ".png",
+				HlmsTextureManager::TEXTURE_TYPE_DIFFUSE, mainSb);
+		DSTexture * test4 = dynamic_cast<DSTexture *>(mBroker->loadModule(
+				"DSTexture", l));
+
+		l["mandatory"] = new DSResource::MandatoryInit("testtex2");
+		texctr = rand() % 628;
+		l["texinit"] = new DSTexture::TexInitData(
+				StringConverter::toString(texctr + 2) + ".png",
+				HlmsTextureManager::TEXTURE_TYPE_DIFFUSE, mainSb);
+		DSTexture * test5 = dynamic_cast<DSTexture *>(mBroker->loadModule(
+				"DSTexture", l));
+
+		static float rc = 0;
+
+		rc += 1.0 / 13.0;
+		float * data = DSMath::quickArray(DSMath::rainbow(rc));
+
+		test->set(data);
+		test2->setCode(
+				ShaderGenerator::genTestFunction("", Vector4(0.3, 0.8, 0.2, 0),
+						"test"));
+		test3->setValue(80085);
+
+		db->addResource(test);
+		db->addResource(test2);
+		db->addResource(test3);
+
+		db->addResource(test4);
+		db->addResource(test5);
+
+
+		db->initalize(NULL);
+
+
+	mDSDatablocks.push_back(db);
+
+	return db;
 
 }
 void HlmsDS::_changeRenderSystem(RenderSystem* newRs) {
-//std::cout <<"*****************************************\n"<<"_changeRenderSystem"<<"\n";
+	//std::cout << "*****************************************\n"
+	//		<< "_changeRenderSystem" << "\n";
+	if (this->mVaoManager)
+		destroyAllBuffers();
+
 	ConstBufferPool::_changeRenderSystem(newRs);
 	HlmsBufferManager::_changeRenderSystem(newRs);
 
 	if (newRs) {
-		HlmsSamplerblock sb;
-
-		mGbufferSamplerBlock = getSamplerBlock(sb);
-
 		HlmsDatablockMap::const_iterator itor = mDatablocks.begin();
 		HlmsDatablockMap::const_iterator end = mDatablocks.end();
 
 		while (itor != end) {
-			assert(dynamic_cast<DSDatablock*>(itor->second.datablock));
 			DSDatablock *datablock =
 					static_cast<DSDatablock*>(itor->second.datablock);
-
+//            requestSlot( datablock->mNumEnabledAnimationMatrices != 0, datablock,
+//                         datablock->mNumEnabledAnimationMatrices != 0 );
 			++itor;
 		}
-
-		HlmsSamplerblock samplerblock;
-		samplerblock.mU = TAM_BORDER;
-		samplerblock.mV = TAM_BORDER;
-		samplerblock.mW = TAM_CLAMP;
-		samplerblock.mBorderColour = ColourValue::White;
-
-		if (mShaderProfile != "hlsl") {
-			samplerblock.mMinFilter = FO_ANISOTROPIC;
-			samplerblock.mMagFilter = FO_ANISOTROPIC;
-			samplerblock.mMipFilter = FO_ANISOTROPIC;
-
-			if (!mShadowmapSamplerblock)
-				mShadowmapSamplerblock = mHlmsManager->getSamplerblock(
-						samplerblock);
-		}
-
-		samplerblock.mMinFilter = FO_LINEAR;
-		samplerblock.mMagFilter = FO_LINEAR;
-		samplerblock.mMipFilter = FO_NONE;
-		samplerblock.mCompareFunction = CMPF_LESS_EQUAL;
-
-		if (!mShadowmapCmpSamplerblock)
-			mShadowmapCmpSamplerblock = mHlmsManager->getSamplerblock(
-					samplerblock);
 	}
+
 }
 
 uint32 HlmsDS::fillBuffersFor(const HlmsCache* cache,
 		const QueuedRenderable& queuedRenderable, bool casterPass,
 		uint32 lastCacheHash, uint32 lastTextureHash) {
-//std::cout <<"*****************************************\n"<<"fillBuffersFor"<<"\n";
 	return 0;
 }
-void HlmsDS::mapMatrixToBuffer(float *passBufferPtr, Matrix4 mat) {
 
-	for (int i = 0; i < 4; i++) {
-		for (int ii = 0; ii < 4; ii++) {
-
-			*passBufferPtr++ = mat[i][ii];
-		}
-
-	}
+ModuleBroker * HlmsDS::getModuleBroker() {
+	return this->mBroker;
 }
-HlmsDS::Datablock_Type HlmsDS::getDatablocktype(
-		const HlmsDatablock * hlmsDatablock) {
-
-	if (dynamic_cast<const DSDatablock*>(hlmsDatablock)->dbtype
-			== DSDatablock::DS_DATABLOCK_MATERIAL) {
-
-		return DT_GBuffer;
-	} else if (dynamic_cast<const DSDatablock*>(hlmsDatablock)->dbtype
-			== DSDatablock::DS_DATABLOCK_LIGHT) {
-		return DT_Light;
-	} else if (dynamic_cast<const DSDatablock*>(hlmsDatablock)->dbtype
-			== DSDatablock::DS_DATABLOCK_FORWARD) {
-
-		return HlmsDS::DT_Forward;
-
-	} else {
-
-		assert(false);
-	}
-	assert(false);
-
-}
-const DSLightDatablock* HlmsDS::CastDatablockLight(
-		const HlmsDatablock*hlmsDatablock) {
-	if (dynamic_cast<const DSDatablock*>(hlmsDatablock)->dbtype
-			== DSDatablock::DS_DATABLOCK_MATERIAL) {
-
-		assert(false);
-	} else if (dynamic_cast<const DSDatablock*>(hlmsDatablock)->dbtype
-			== DSDatablock::DS_DATABLOCK_LIGHT) {
-
-		return dynamic_cast<const DSLightDatablock*>(hlmsDatablock);
-	} else {
-
-		assert(false);
-	}
-
-	return NULL;
-}
-
-const DSDatablock* HlmsDS::CastDatablockGBuffer(
-		const HlmsDatablock* hlmsDatablock) {
-	if (dynamic_cast<const DSDatablock*>(hlmsDatablock) != NULL) {
-
-		return dynamic_cast<const DSDatablock*>(hlmsDatablock);
-	} else if (dynamic_cast<const DSLightDatablock*>(hlmsDatablock) != NULL) {
-
-		assert(false);
-	} else {
-
-		assert(false);
-	}
-}
-void HlmsDS::setDebugMode(DebugMode dm) {
-	this->debugMode = dm;
-}
-void HlmsDS::setFullBright(FullBrightMode fbm) {
-	this->fullBrightMode = fbm;
-}
-void HlmsDS::uploadDirtyDSDatablocks() {
-	for (size_t i = 0; i < this->dsDatablocks->size(); ++i) {
-		this->dsDatablocks->at(i)->syncWithGPU();
-	}
-}
-int HlmsDS::getDebugw() const {
-	return Debugw;
-}
-
-void HlmsDS::setDebugw(int debugw) {
-	Debugw = debugw;
-}
-
-int HlmsDS::getDebugz() const {
-	return Debugz;
-}
-
-void HlmsDS::setDebugz(int debugz) {
-	Debugz = debugz;
-}
-int HlmsDS::generateWorldMatrixBuffer(const HlmsCache* cache,
-		const QueuedRenderable& queuedRenderable, bool casterPass,
-		uint32 lastCacheHash, CommandBuffer* commandBuffer, bool isV1) {
-
-	uint32 * RESTRICT_ALIAS currentMappedConstBuffer = mCurrentMappedConstBuffer;
-	float * RESTRICT_ALIAS currentMappedTexBuffer = mCurrentMappedTexBuffer;
-
-	bool hasSkeletonAnimation =
-			queuedRenderable.renderable->hasSkeletonAnimation();
-	const Matrix4 &worldMat =
-			queuedRenderable.movableObject->_getParentNodeFullTransform();
-
-#if !OGRE_DOUBLE_PRECISION
-
-	int drawid = ((mCurrentMappedConstBuffer - mStartMappedConstBuffer) / 4);
-
-	const size_t currentConstOffset = (currentMappedTexBuffer
-			- mStartMappedTexBuffer) >> (2 + 1);
-
-	currentMappedConstBuffer = currentConstOffset + mStartMappedConstBuffer;
-	bool exceedsConstBuffer = (size_t) ((currentMappedConstBuffer
-			- mStartMappedConstBuffer) + 4) > mCurrentConstBufferSize;
-
-	const size_t minimumTexBufferSize = 16 * (1 + 1);
-	bool exceedsTexBuffer = (currentMappedTexBuffer - mStartMappedTexBuffer)
-			+ minimumTexBufferSize >= mCurrentTexBufferSize;
-
-	if (exceedsConstBuffer || exceedsTexBuffer) {
-		currentMappedConstBuffer = mapNextConstBuffer(commandBuffer);
-
-		if (exceedsTexBuffer)
-			mapNextTexBuffer(commandBuffer,
-					minimumTexBufferSize * sizeof(float));
-		else
-			rebindTexBuffer(commandBuffer, true,
-					minimumTexBufferSize * sizeof(float));
-
-		currentMappedTexBuffer = mCurrentMappedTexBuffer;
-
-	}
-
-	memcpy(currentMappedTexBuffer, &worldMat, 4 * 4 * sizeof(float));
-
-	currentMappedTexBuffer += 16;
-
-	Matrix4 tmp = mPreparedPass.viewMatrix.concatenateAffine(worldMat);
-	tmp = mPreparedPass.viewMatrix * worldMat;
-#ifdef OGRE_GLES2_WORKAROUND_1
-	tmp = tmp.transpose();
-#endif
-
-	memcpy(currentMappedTexBuffer, &tmp, sizeof(Matrix4));
-	currentMappedTexBuffer += 16;
-
-#else
-#error Not Coded Yet! (cannot use memcpy on Matrix4)
-#endif
-
-	size_t distToWorldMatStart = mCurrentMappedTexBuffer
-			- mStartMappedTexBuffer;
-	distToWorldMatStart >>= 2;
-
-	*currentMappedConstBuffer = distToWorldMatStart;
-	currentMappedConstBuffer += 4;
-	mCurrentMappedConstBuffer = currentMappedConstBuffer;
-	mCurrentMappedTexBuffer = currentMappedTexBuffer;
-
-	return drawid;
-
-}
-
-#if !OGRE_NO_JSON
-//-----------------------------------------------------------------------------------
-void HlmsDS::_loadJson(const rapidjson::Value &jsonValue,
-		const HlmsJson::NamedBlocks &blocks, HlmsDatablock *datablock) const {
-
-	//take a default Datablock and transform it into a JSON Datablock
-	jsonDs->loadMaterial(jsonValue, blocks, datablock);
-}
-//-----------------------------------------------------------------------------------
-void HlmsDS::_saveJson(const HlmsDatablock *datablock,
-		String &outString) const {
-	//todo
-	jsonDs->saveMaterial(datablock, outString);
-}
-//-----------------------------------------------------------------------------------
-void HlmsDS::_collectSamplerblocks(
-		set<const HlmsSamplerblock*>::type &outSamplerblocks,
-		const HlmsDatablock *datablock) const {
-	//todo
-	JsonParser::collectSamplerblocks(datablock, outSamplerblocks);
-}
-#endif
-const HlmsSamplerblock* HlmsDS::getSamplerBlock(
-//shortcut
-		HlmsSamplerblock hlmsSamplerblock) {
-	return mHlmsManager->getSamplerblock(hlmsSamplerblock);
-}
-
 Ogre::String HlmsDS::getShaderProfile() {
 	return mShaderProfile;
 }
-HlmsDS::~HlmsDS() {
-	//destroyAllBuffers();
+void HlmsDS::addListener(HlmsListener* l) {
+	this->mListeners.push_back(l);
 }
-int HlmsDS::getNumDSLights() {
-	return this->lightmanager->lightList.size();
+const PassData HlmsDS::getPreparedPass() const {
+	return mPreparedPass;
 }
 
-} /* namespace Ogre */
+void HlmsDS::setPreparedPass(PassData preparedPass) {
+	mPreparedPass = preparedPass;
+}
+}
 
