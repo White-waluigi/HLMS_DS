@@ -3,6 +3,18 @@
  *
  *  Created on: Jan 4, 2018
  *      Author: marvin
+ *
+ *  Main file for the HLMS_DS Plugin
+ *  its Tasks consist of
+ *
+ *  - implementing HLMS Interface
+ *  - loading Datablocks
+ *  - redirect Renderevents to the responsible
+ *    Managers
+ *
+ *  This File is mostly meant to be an empty hask that
+ *  outsources the heavy lifting to other classes, as not
+ *  to bloat the HLMS
  */
 
 #ifndef SRC_DS_OGREHLMSDS_H_
@@ -26,8 +38,18 @@ namespace Ogre {
 class DSDatablock;
 class ModuleBroker;
 class PassBufferManager;
+class LightManager;
 class ConstBufferPackedVec;
 class PassBufferDefaultVal;
+class HlmsListener;
+
+
+struct PassData {
+	Matrix4 viewProjMatrix[2];
+
+
+};
+
 
 class _OgreHlmsDSExport HlmsDS: public Ogre::HlmsBufferManager,
 		public Ogre::ConstBufferPool,
@@ -37,15 +59,19 @@ class _OgreHlmsDSExport HlmsDS: public Ogre::HlmsBufferManager,
 	friend PassBufferManager;
 	friend PassBufferDefaultVal;
 
-	struct PassData {
-		Matrix4 viewProjMatrix[2];
-	};
-	std::list<Ogre::DSDatablock*> mDSDatablocks;
 
+	std::list<Ogre::DSDatablock*> mDSDatablocks;
+	float rbctr=0;
 	ModuleBroker * mBroker;
 
 	//Managers
 	PassBufferManager * mPBMgr;
+	LightManager * mLMgr;
+	InstanceManager* mIMgr;
+
+	//Multilistner
+	typedef std::list<HlmsListener *> ListenerList;
+	ListenerList   mListeners;
 
 	PassData mPreparedPass;
 	ConstBufferPackedVec mPassBuffers;
@@ -54,6 +80,8 @@ class _OgreHlmsDSExport HlmsDS: public Ogre::HlmsBufferManager,
 	ConstBufferPool::BufferPool const *mLastBoundPool;
 
 	uint32 mLastTextureHash;
+
+	bool firstPass=true;
 
 	enum BufferSlots {
 		PassBuffer, MaterialBuffer, InstanceBuffer
@@ -111,6 +139,12 @@ public:
 	Ogre::String getShaderProfile();
 
 	virtual void frameEnded(void);
+
+	void addListener(HlmsListener *);
+
+
+	const PassData  getPreparedPass () const;
+	void setPreparedPass(PassData preparedPass);
 
 	ModuleBroker* getModuleBroker();
 };

@@ -25,7 +25,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 -----------------------------------------------------------------------------
 */
-
+/*
+ * Compiler Instructions
+ */
 #include "Ogre.h"
 #ifndef _OgreHlmsDSPrerequisites_H_
 #define _OgreHlmsDSPrerequisites_H_

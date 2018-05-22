@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>HLMS_DS2</name>
+	<name>HLMS_DS</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -31,6 +31,10 @@
 		<variable>
 			<name>Ogre</name>
 			<value>file:/home/marvin/lib/ogre/sdk_d/include/OGRE</value>
+		</variable>
+		<variable>
+			<name>Ogre2</name>
+			<value>file:/home/marvin/lib/ogre/Components/Hlms/Common/include</value>
 		</variable>
 	</variableList>
 </projectDescription>
