@@ -23,15 +23,24 @@ set(OGRE_DEPS_FOLDER "/usr/include/" CACHE PATH "Ogre Dependencies")
 IF(NOT WIN32) 
   option(USE_BOOST "Use the Boost Library" true)
 ENDIF()
+#Load default
+
+include(CMakeConfig.txt)
+
+
+
+
+
 
 if(${CMAKE_BUILD_TYPE}!="Debug")
 endif()
-add_definitions(-DNDEBUG)
-message(STATUS "Copying files...")
+message(STATUS "Copying Media and Library files from ${PROJECT_SOURCE_DIR}/data/ to ${PROJECT_BINARY_DIR}")
 
 file(GLOB DEMO_LIB_FILES
   "${OGRE_SDK_FOLDER}/lib/${PF_LIB_FOLDER}*Ogre*.${PF_LIB_EXT}*"
 )
+
+
 file(COPY ${DEMO_LIB_FILES} DESTINATION "${PROJECT_BINARY_DIR}")
 file(GLOB DEMO_RTLIB_FILES
   "${OGRE_SDK_FOLDER}/lib/${PF_LIB_FOLDER}${PF_LIB_OPT_FOLDER}/*.${PF_LIB_EXT}*"
@@ -41,6 +50,7 @@ file(COPY ${DEMO_RTLIB_FILES} DESTINATION "${PROJECT_BINARY_DIR}")
 file(GLOB DEMO_CFG_FILES
   "${PROJECT_SOURCE_DIR}/data/*"
 )
+
 file(COPY ${DEMO_CFG_FILES} DESTINATION "${PROJECT_BINARY_DIR}")
 
 file(GLOB DEMO_DLL_FILES
@@ -62,8 +72,7 @@ include_directories("${OGRE_SDK_FOLDER}/include/OGRE/Overlay")
 include_directories("${PROJECT_SOURCE_DIR}/src/ds")
 include_directories("${PROJECT_SOURCE_DIR}/src/demo")
 
-file(GLOB_RECURSE SOURCES_DS     "src/ds/*.*")
-file(GLOB_RECURSE SOURCES_DEMO   "src/demo/*.*")
+include (src/CMakeLists.txt)
 set(DEMO_INCLUDE
     ${OGRE_SDK_FOLDER}/include/OGRE
     ${OGRE_DEPS_FOLDER}/include
@@ -75,25 +84,25 @@ set(DEMO_INCLUDE
 )
 include_directories(${DEMO_INCLUDE})
 set(DEMO_LIBS 
-    OgreHlmsUnlit
-    OgreHlmsUnlitMobile
-    OgreMain
-    OgreMeshLodGenerator
-    OgreOverlay
+    OgreHlmsUnlit_d
+    OgreHlmsUnlitMobile_d
+    OgreMain_d
+    OgreMeshLodGenerator_d
+    OgreOverlay_d
     SDL2
-)
+) 
 set(DS_LIBS 
-    OgreHlmsUnlit
-    OgreHlmsUnlitMobile
-    OgreMain
-)
+    OgreHlmsUnlit_d
+    OgreHlmsUnlitMobile_d
+    OgreMain_d
+) 
 IF(WIN32) # Check if we are on Windows
 list(APPEND DEMO_LIBS 
 	winmm
 	imm32
 	version
 	msimg32	
-)
+)  
 ENDIF()
 IF(USE_BOOST) # Check if we are on Windows
 list(APPEND DS_LIBS 
@@ -138,3 +147,4 @@ elseif(UNIX)
 else()
   message(SEND_ERROR "You are on an unsupported platform! (Not Win32 or Unix)")
 ENDIF()
+

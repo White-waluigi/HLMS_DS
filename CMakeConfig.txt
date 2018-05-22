@@ -1,0 +1,3 @@
+set(OGRE_SDK_FOLDER "/home/marvin/lib/ogre/sdk_d")
+set(CMAKE_BUILD_TYPE "Debug")
+add_definitions(-DDEBUG)
