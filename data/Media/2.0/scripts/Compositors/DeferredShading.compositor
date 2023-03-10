@@ -91,7 +91,7 @@ compositor_node DSNode
 			expose Post1
 			
 		
-  			visibility_mask 0xFFFFFFFF
+  			visibility_mask 0x00000F00
   			overlays	off
   			shadows		DeferredShadingShadowNode
   			identifier 802;

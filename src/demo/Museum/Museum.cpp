@@ -1135,21 +1135,21 @@ float Museum::randf(int threshold) {
 
 Ogre::DSDatablock* Museum::checkDouble(std::vector<Ogre::String> vec) {
 
-//	for (int i = 0; i < this->doubleCheck.size(); i++) {
-//		if (doubleCheck[i].str.size()!=vec.size()) {
-//			continue;
-//		}
-//		bool ContnueouterMainLoop=false;
-//		for (int ii = 0; ii < this->doubleCheck[i].str.size(); ii++) {
-//			if(doubleCheck[i].str[ii].compare(vec[ii])!=0){
-//				ContnueouterMainLoop=true;
-//			}
-//		}
-//		if(ContnueouterMainLoop){
-//			continue;
-//		}
-//		return doubleCheck[i].db;
-//	}
+	for (int i = 0; i < this->doubleCheck.size(); i++) {
+		if (doubleCheck[i].str.size()!=vec.size()) {
+			continue;
+		}
+		bool ContnueouterMainLoop=false;
+		for (int ii = 0; ii < this->doubleCheck[i].str.size(); ii++) {
+			if(doubleCheck[i].str[ii].compare(vec[ii])!=0){
+				ContnueouterMainLoop=true;
+			}
+		}
+		if(ContnueouterMainLoop){
+			continue;
+		}
+		return doubleCheck[i].db;
+	}
 
 	return NULL;
 }

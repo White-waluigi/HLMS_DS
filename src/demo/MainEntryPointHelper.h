@@ -13,8 +13,6 @@ INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE hInst2, LPSTR strCmdLine, INT int
 int main()
 #endif
 {
-
-	srand ( time(NULL) );
     int retVal = -1;
     try
     {
